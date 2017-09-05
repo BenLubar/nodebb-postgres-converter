@@ -1,34 +1,48 @@
 CREATE TABLE "posts" (
 	"pid" bigserial NOT NULL,
+	"uid" bigint,
+	"tid" bigint NOT NULL,
+	"toPid" bigint DEFAULT NULL,
+	"ip" inet,
+	"timestamp" timestamptz NOT NULL DEFAULT NOW(),
+	"content" text NOT NULL,
+	"handle" text DEFAULT NULL,
+	"bookmarks" bigint NOT NULL DEFAULT 0,
+	"upvotes" bigint NOT NULL DEFAULT 0,
+	"downvotes" bigint NOT NULL DEFAULT 0,
+	"replies" bigint NOT NULL DEFAULT 0,
+	"edited" timestamptz DEFAULT NULL,
+	"editor" bigint DEFAULT NULL,
+	"deleted" timestamptz DEFAULT NULL,
+	"deleterUid" bigint DEFAULT NULL,
 	"data" jsonb NOT NULL DEFAULT '{}'
 
 	-- TODO:
-	-- bookmarks
-	-- content
-	-- deleted
-	-- deleterUid
-	-- downvotes
-	-- edited
-	-- editor
 	-- flag:assignee
 	-- flag:history
 	-- flag:notes
 	-- flag:state
 	-- flags
-	-- handle
-	-- ip
-	-- replies
-	-- revisionCount
-	-- tid
-	-- timestamp
-	-- toPid
-	-- uid
-	-- upvotes
 );
 
 INSERT INTO "posts" SELECT
        (p."data"->>'pid')::bigint "pid",
-       p."data" - 'pid' "data"
+       COALESCE(NULLIF(p."data"->>'tid', ''), '0')::bigint "tid",
+       NULLIF(NULLIF(p."data"->>'uid', ''), '0')::bigint "uid",
+       NULLIF(NULLIF(p."data"->>'toPid', ''), '0')::bigint "toPid",
+       NULLIF(p."data"->>'ip', '')::inet "ip",
+       to_timestamp(NULLIF(NULLIF(p."data"->>'timestamp', ''), '0')::double precision / 1000) "timestamp",
+       COALESCE(p."data"->>'content', '') "content",
+       NULLIF(p."data"->>'handle', '') "handle",
+       COALESCE(NULLIF(p."data"->>'bookmarks', ''), '0')::bigint "bookmarks",
+       COALESCE(NULLIF(p."data"->>'upvotes', ''), '0')::bigint "upvotes",
+       COALESCE(NULLIF(p."data"->>'downvotes', ''), '0')::bigint "downvotes",
+       COALESCE(NULLIF(p."data"->>'replies', ''), '0')::bigint "replies",
+       to_timestamp(NULLIF(NULLIF(p."data"->>'edited', ''), '0')::double precision / 1000) "edited",
+       NULLIF(NULLIF(p."data"->>'editor', ''), '0')::bigint "editor",
+       to_timestamp(NULLIF(NULLIF(p."data"->>'deleted', ''), '0')::double precision / 1000) "deleted",
+       NULLIF(NULLIF(p."data"->>'deleterUid', ''), '0')::bigint "deleterUid",
+       p."data" - 'pid' - 'tid' - 'uid' - 'toPid' - 'timestamp' - 'content' - 'handle' - 'bookmarks' - 'upvotes' - 'downvotes' - 'replies' - 'edited' - 'editor' - 'deleted' - 'deleterUid' "data"
   FROM "objects_legacy" i,
        "objects_legacy" p
  WHERE i."key0" = 'posts'
