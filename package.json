@@ -1,8 +1,8 @@
 {
   "name": "@ben_lubar/nodebb-postgres-converter",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "",
-  "main": "index.js",
+  "main": "main.js",
   "bin": {
     "nodebb-postgres-converter": "bin/converter.js"
   },
@@ -23,6 +23,7 @@
     "console-stamp": "^0.2.5",
     "mongodb": "^2.2.31",
     "pg": "^7.3.0",
+    "pg-copy-streams": "^1.2.0",
     "pg-query-stream": "^1.1.1",
     "redis": "^2.8.0"
   }
