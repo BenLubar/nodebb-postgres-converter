@@ -3,7 +3,7 @@ CREATE TABLE "posts" (
 	"uid" bigint,
 	"tid" bigint NOT NULL,
 	"toPid" bigint DEFAULT NULL,
-	"ip" inet,
+	"ip" inet[] NOT NULL DEFAULT '{}',
 	"timestamp" timestamptz NOT NULL DEFAULT NOW(),
 	"content" text NOT NULL,
 	"handle" text DEFAULT NULL,
@@ -27,10 +27,10 @@ CREATE TABLE "posts" (
 
 INSERT INTO "posts" SELECT
        (p."data"->>'pid')::bigint "pid",
-       COALESCE(NULLIF(p."data"->>'tid', ''), '0')::bigint "tid",
        NULLIF(NULLIF(p."data"->>'uid', ''), '0')::bigint "uid",
+       COALESCE(NULLIF(p."data"->>'tid', ''), '0')::bigint "tid",
        NULLIF(NULLIF(p."data"->>'toPid', ''), '0')::bigint "toPid",
-       NULLIF(p."data"->>'ip', '')::inet "ip",
+       COALESCE(string_to_array(NULLIF(p."data"->>'ip', ''), ', ')::inet[], '{}') "ip",
        to_timestamp(NULLIF(NULLIF(p."data"->>'timestamp', ''), '0')::double precision / 1000) "timestamp",
        COALESCE(p."data"->>'content', '') "content",
        NULLIF(p."data"->>'handle', '') "handle",
