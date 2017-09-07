@@ -15,9 +15,9 @@ INSERT INTO "chat_rooms" SELECT
   FROM generate_series(0, (SELECT ("data"->>'nextChatRoomId')::bigint
                              FROM "objects_legacy"
 			    WHERE "key0" = 'global'
-		              AND "key1" = ARRAY[]::text[])) i(i),
-       "objects_legacy" r
- WHERE r."key0" = 'chat'
+		              AND "key1" = ARRAY[]::text[])) i(i)
+ INNER JOIN "objects_legacy" r
+    ON r."key0" = 'chat'
    AND r."key1" = ARRAY['room', i.i::text];
 
 DO $$

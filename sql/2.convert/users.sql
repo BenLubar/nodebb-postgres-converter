@@ -1,5 +1,6 @@
 CREATE TABLE "users" (
 	"uid" bigserial NOT NULL,
+	"settings" jsonb NOT NULL DEFAULT '{}',
 	"data" jsonb NOT NULL DEFAULT '{}'
 
 	-- TODO:
@@ -40,13 +41,17 @@ CREATE TABLE "users" (
 
 INSERT INTO "users" SELECT
        (u."data"->>'uid')::bigint "uid",
+       COALESCE(s."data", '{}') "settings",
        u."data" - 'uid' "data"
-  FROM "objects_legacy" i,
-       "objects_legacy" u
+  FROM "objects_legacy" i
+ INNER JOIN "objects_legacy" u
+    ON u."key0" = 'user'
+   AND u."key1" = ARRAY[i."score"::text]
+  LEFT OUTER JOIN "objects_legacy" s
+    ON s."key0" = 'user'
+   AND s."key1" = ARRAY[i."score"::text, 'settings']
  WHERE i."key0" = 'username'
-   AND i."key1" = ARRAY['uid']
-   AND u."key0" = 'user'
-   AND u."key1" = ARRAY[i."score"::text];
+   AND i."key1" = ARRAY['uid'];
 
 DO $$
 DECLARE

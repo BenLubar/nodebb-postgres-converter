@@ -39,12 +39,12 @@ INSERT INTO "topics" SELECT
        COALESCE(NULLIF(t."data"->>'viewcount', ''), '0')::bigint "viewcount",
        COALESCE(NULLIF(t."data"->>'postcount', ''), '0')::bigint "postcount",
        t."data" - 'tid' - 'cid' - 'uid' - 'slug' - 'title' - 'timestamp' - 'mainPid' - 'teaserPid' - 'locked' - 'deleted' - 'deletedTimestamp' - 'deleterUid' - 'oldCid' - 'viewcount' - 'postcount' "data"
-  FROM "objects_legacy" i,
-       "objects_legacy" t
+  FROM "objects_legacy" i
+ INNER JOIN "objects_legacy" t
+    ON t."key0" = 'topic'
+   AND t."key1" = ARRAY[i."value"]
  WHERE i."key0" = 'topics'
-   AND i."key1" = ARRAY['tid']
-   AND t."key0" = 'topic'
-   AND t."key1" = ARRAY[i."value"];
+   AND i."key1" = ARRAY['tid'];
 
 DO $$
 DECLARE

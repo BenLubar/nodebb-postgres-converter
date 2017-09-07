@@ -43,12 +43,12 @@ INSERT INTO "posts" SELECT
        to_timestamp(NULLIF(NULLIF(p."data"->>'deleted', ''), '0')::double precision / 1000) "deleted",
        NULLIF(NULLIF(p."data"->>'deleterUid', ''), '0')::bigint "deleterUid",
        p."data" - 'pid' - 'tid' - 'uid' - 'toPid' - 'timestamp' - 'content' - 'handle' - 'bookmarks' - 'upvotes' - 'downvotes' - 'replies' - 'edited' - 'editor' - 'deleted' - 'deleterUid' "data"
-  FROM "objects_legacy" i,
-       "objects_legacy" p
+  FROM "objects_legacy" i
+ INNER JOIN "objects_legacy" p
+    ON p."key0" = 'post'
+   AND p."key1" = ARRAY[i."value"]
  WHERE i."key0" = 'posts'
-   AND i."key1" = ARRAY['pid']
-   AND p."key0" = 'post'
-   AND p."key1" = ARRAY[i."value"];
+   AND i."key1" = ARRAY['pid'];
 
 DO $$
 DECLARE

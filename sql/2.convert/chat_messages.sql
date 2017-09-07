@@ -19,9 +19,9 @@ INSERT INTO "chat_messages" SELECT
   FROM generate_series(0, (SELECT ("data"->>'nextMid')::bigint
                              FROM "objects_legacy"
 			    WHERE "key0" = 'global'
-		              AND "key1" = ARRAY[]::text[])) i(i),
-       "objects_legacy" m
- WHERE m."key0" = 'message'
+		              AND "key1" = ARRAY[]::text[])) i(i)
+ INNER JOIN "objects_legacy" m
+    ON m."key0" = 'message'
    AND m."key1" = ARRAY[i.i::text];
 
 DO $$

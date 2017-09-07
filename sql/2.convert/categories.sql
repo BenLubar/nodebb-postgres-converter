@@ -35,12 +35,12 @@ INSERT INTO "categories" SELECT
        COALESCE(NULLIF(c."data"->>'post_count', ''), '0')::bigint "post_count",
        COALESCE(NULLIF(c."data"->>'topic_count', ''), '0')::bigint "topic_count",
        c."data" - 'cid' - 'parentCid' - 'name' - 'slug' - 'disabled' - 'order' - 'description' - 'descriptionParsed' - 'post_count' - 'topic_count' "data"
-  FROM "objects_legacy" i,
-       "objects_legacy" c
+  FROM "objects_legacy" i
+ INNER JOIN "objects_legacy" c
+    ON c."key0" = 'category'
+   AND c."key1" = ARRAY[i."value"]
  WHERE i."key0" = 'categories'
-   AND i."key1" = ARRAY['cid']
-   AND c."key0" = 'category'
-   AND c."key1" = ARRAY[i."value"];
+   AND i."key1" = ARRAY['cid'];
 
 DO $$
 DECLARE
