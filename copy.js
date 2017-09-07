@@ -63,7 +63,7 @@ function transformData(obj) {
 
 	// clean up importer bugs
 	delete obj.undefined;
-	if (key.startsWith('chat:room:') && key.endsWith('uids') && !key.endsWith(':uids')) {
+	if ((key.startsWith('chat:room:') && key.endsWith('uids') && !key.endsWith(':uids')) || (key.startsWith('uid:') && key.endsWith('sessionUUID:sessionId') && !key.endsWith(':sessionUUID:sessionId'))) {
 		return null;
 	}
 
