@@ -65,6 +65,5 @@ $$ LANGUAGE plpgsql;
 
 ALTER TABLE "posts" ADD PRIMARY KEY ("pid");
 
-CLUSTER "posts" USING "posts_pkey";
-
-ANALYZE "posts";
+ALTER TABLE "posts"
+      CLUSTER ON "posts_pkey";

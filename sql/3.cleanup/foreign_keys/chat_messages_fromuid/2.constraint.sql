@@ -1,4 +1,4 @@
-ALTER TABLE "chat_messages" 
+ALTER TABLE "chat_messages"
   ADD CONSTRAINT "fk__chat_messages__fromuid"
       FOREIGN KEY ("fromuid")
       REFERENCES "users"("uid")

@@ -36,8 +36,7 @@ INSERT INTO "groups" SELECT
 
 ALTER TABLE "groups" ADD PRIMARY KEY ("name");
 
-CLUSTER "groups" USING "groups_pkey";
-
 CREATE UNIQUE INDEX "uniq__groups__slug" ON "groups"("slug");
 
-ANALYZE "groups";
+ALTER TABLE "groups"
+      CLUSTER ON "groups_pkey";

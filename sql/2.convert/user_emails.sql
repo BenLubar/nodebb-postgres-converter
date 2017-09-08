@@ -17,8 +17,7 @@ INSERT INTO "user_emails" SELECT
 
 CREATE INDEX "idx__user_emails__uid__changed_at" ON "user_emails"("uid", "changed_at" DESC);
 
-CLUSTER "user_emails" USING "idx__user_emails__uid__changed_at";
-
 CREATE INDEX "idx__user_emails__email" ON "user_emails"("email");
 
-ANALYZE "user_emails";
+ALTER TABLE "user_emails"
+      CLUSTER ON "idx__user_emails__uid__changed_at";

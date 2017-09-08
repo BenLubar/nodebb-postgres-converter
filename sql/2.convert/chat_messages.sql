@@ -39,6 +39,5 @@ $$ LANGUAGE plpgsql;
 
 ALTER TABLE "chat_messages" ADD PRIMARY KEY ("mid");
 
-CLUSTER "chat_messages" USING "chat_messages_pkey";
-
-ANALYZE "chat_messages";
+ALTER TABLE "chat_messages"
+      CLUSTER ON "chat_messages_pkey";

@@ -68,6 +68,5 @@ $$ LANGUAGE plpgsql;
 
 ALTER TABLE "users" ADD PRIMARY KEY ("uid");
 
-CLUSTER "users" USING "users_pkey";
-
-ANALYZE "users";
+ALTER TABLE "users"
+      CLUSTER ON "users_pkey";

@@ -17,8 +17,7 @@ INSERT INTO "user_usernames" SELECT
 
 CREATE INDEX "idx__user_usernames__uid__changed_at" ON "user_usernames"("uid", "changed_at" DESC);
 
-CLUSTER "user_usernames" USING "idx__user_usernames__uid__changed_at";
-
 CREATE INDEX "idx__user_usernames__username" ON "user_usernames"("username");
 
-ANALYZE "user_usernames";
+ALTER TABLE "user_usernames"
+      CLUSTER ON "idx__user_usernames__uid__changed_at";

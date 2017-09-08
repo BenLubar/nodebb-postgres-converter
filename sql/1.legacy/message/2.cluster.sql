@@ -1,2 +1,2 @@
-CLUSTER "objects_legacy_message"
-  USING "uniq__objects_legacy_message__key__value";
+ALTER TABLE "objects_legacy_message"
+      CLUSTER ON "uniq__objects_legacy_message__key__value";

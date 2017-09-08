@@ -37,8 +37,6 @@ $$ LANGUAGE plpgsql;
 
 ALTER TABLE "events" ADD PRIMARY KEY ("eid");
 
-CLUSTER "events" USING "events_pkey";
-
 CREATE INDEX "idx__events__type" ON "events"("type");
 
 CREATE INDEX "idx__events__timestamp" ON "events"("timestamp" DESC);
@@ -47,4 +45,5 @@ CREATE INDEX "idx__events__uid" ON "events"("uid");
 
 CREATE INDEX "idx__events__ip" ON "events"("ip");
 
-ANALYZE "events";
+ALTER TABLE "events"
+      CLUSTER ON "events_pkey";

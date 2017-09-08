@@ -35,6 +35,5 @@ $$ LANGUAGE plpgsql;
 
 ALTER TABLE "chat_rooms" ADD PRIMARY KEY ("roomId");
 
-CLUSTER "chat_rooms" USING "chat_rooms_pkey";
-
-ANALYZE "chat_rooms";
+ALTER TABLE "chat_rooms"
+      CLUSTER ON "chat_rooms_pkey";

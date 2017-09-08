@@ -61,6 +61,5 @@ $$ LANGUAGE plpgsql;
 
 ALTER TABLE "topics" ADD PRIMARY KEY ("tid");
 
-CLUSTER "topics" USING "topics_pkey";
-
-ANALYZE "topics";
+ALTER TABLE "topics"
+      CLUSTER ON "topics_pkey";

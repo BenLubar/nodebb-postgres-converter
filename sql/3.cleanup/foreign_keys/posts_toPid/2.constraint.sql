@@ -1,4 +1,4 @@
-ALTER TABLE "posts" 
+ALTER TABLE "posts"
   ADD CONSTRAINT "fk__posts__toPid"
       FOREIGN KEY ("toPid")
       REFERENCES "posts"("pid")

@@ -9,44 +9,57 @@ const optionDefinitions = [
 	{
 		name: 'type',
 		alias: 't',
-		description: 'input database type (mongo/redis/postgres)'
+		description: 'input database type (mongo/redis/postgres)',
+		group: 'required'
 	},
 	{
 		name: 'input',
 		alias: 'i',
-		description: 'input database connection URL'
+		description: 'input database connection URL',
+		group: 'required'
 	},
 	{
 		name: 'output',
 		alias: 'o',
-		description: 'output database connection URL (PostgreSQL)'
+		description: 'output database connection URL (PostgreSQL)',
+		group: 'required'
 	},
 	{
 		name: 'concurrency',
 		alias: 'j',
 		type: Number,
 		description: 'number of queries executed at a time (default: 10)',
-		defaultValue: 10
+		defaultValue: 10,
+		group: 'optional'
 	}
 ];
 
 const usage = [
 	{
-		header: 'Parameters',
-		optionList: optionDefinitions
+		header: 'Required Parameters',
+		optionList: optionDefinitions,
+		group: ['required']
+	},
+	{
+		header: 'Additional Parameters',
+		optionList: optionDefinitions,
+		group: ['optional']
 	}
 ];
 
 var options;
 try {
-	options = commandLineArgs(optionDefinitions);
+	options = commandLineArgs(optionDefinitions)._all;
 } catch (ex) {
 	if (ex.message !== 'Unknown option: --help') {
 		console.error(ex.message);
+		process.exit(1);
+		return;
 	}
 }
 
-if (!options || !options.type || !options.input || !options.output || options.concurrency < 1) {
+if (!options || !options.type || !options.input || !options.output || options.concurrency < 1 || options.concurrency !== Math.floor(options.concurrency)) {
+	console.log(options);
 	console.log(commandLineUsage(usage));
 	process.exit(1);
 	return;

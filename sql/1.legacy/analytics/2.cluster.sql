@@ -1,2 +1,2 @@
-CLUSTER "objects_legacy_analytics"
-  USING "uniq__objects_legacy_analytics__key__value";
+ALTER TABLE "objects_legacy_analytics"
+      CLUSTER ON "uniq__objects_legacy_analytics__key__value";

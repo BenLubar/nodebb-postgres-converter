@@ -63,6 +63,5 @@ CREATE UNIQUE INDEX "uniq__categories__slug"
 CREATE INDEX "idx__categories__parentCid__order"
     ON "categories"("parentCid", "order");
 
-CLUSTER "categories" USING "categories_pkey";
-
-ANALYZE "categories";
+ALTER TABLE "categories"
+      CLUSTER ON "categories_pkey";

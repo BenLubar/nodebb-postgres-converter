@@ -23,8 +23,7 @@ DROP FUNCTION pg_temp.try_parse_inet(text);
 
 ALTER TABLE "ips" ADD PRIMARY KEY ("ip");
 
-CLUSTER "ips" USING "ips_pkey";
-
 CREATE INDEX "idx__ips__last_seen" ON "ips"("last_seen" DESC);
 
-ANALYZE "ips";
+ALTER TABLE "ips"
+      CLUSTER ON "ips_pkey";

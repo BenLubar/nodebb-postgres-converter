@@ -64,8 +64,7 @@ SELECT i."value" "groupName",
 
 ALTER TABLE "group_members" ADD PRIMARY KEY ("groupName", "uid");
 
-CLUSTER "group_members" USING "group_members_pkey";
-
 CREATE INDEX "idx__group_members__groupName__type" ON "group_members"("groupName", "type");
 
-ANALYZE "group_members";
+ALTER TABLE "group_members"
+      CLUSTER ON "group_members_pkey";
