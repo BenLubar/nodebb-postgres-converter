@@ -18,7 +18,7 @@ INSERT INTO "user_ips" SELECT
        to_timestamp(u."score"::double precision / 1000) "last_seen"
   FROM "objects_legacy" i
  INNER JOIN "objects_legacy" u
-    ON u."key0" = 'user'
+    ON u."key0" = 'uid'
    AND u."key1" = ARRAY[i."score"::text, 'ip']
  WHERE i."key0" = 'username'
    AND i."key1" = ARRAY['uid']
