@@ -1,6 +1,6 @@
 async function transaction(label, pool, callback) {
-	console.time(label);
 	const client = await pool.connect();
+	console.time(label);
 
 	try {
 		await client.query('START TRANSACTION;');
@@ -11,8 +11,8 @@ async function transaction(label, pool, callback) {
 		console.error('Transaction failed: ' + label);
 		throw ex;
 	} finally {
-		client.release();
 		console.timeEnd(label);
+		client.release();
 	}
 }
 
