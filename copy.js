@@ -21,14 +21,14 @@ async function copyDatabase(pool, input, connection) {
 			} else {
 				skipped++;
 			}
-			if ((copied + skipped) % 10000 === 0) {
+			if ((copied + skipped) % 100000 === 0) {
 				console.log(('  ' + Math.floor(100 * (copied + skipped) / total)).substr(-3) + '% - ' + copied + ' objects copied (' + skipped + ' skipped)');
 			}
 		});
 
 		stream.end();
 
-		if ((copied + skipped) % 10000 !== 0) {
+		if ((copied + skipped) % 100000 !== 0) {
 			console.log('100% - ' + copied + ' objects copied (' + skipped + ' skipped)');
 		}
 
