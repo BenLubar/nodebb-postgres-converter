@@ -12,91 +12,91 @@ CREATE TABLE "objects_legacy" (
 
 CREATE TABLE "objects_legacy_imported_set" (
 	CHECK ("key0" IN ('_imported', '_telligent'))
-) INHERITS ("objects_legacy");
+) INHERITS ("objects_legacy") WITH (autovacuum_enabled = false);
 
 CREATE TABLE "objects_legacy_imported_object" (
 	CHECK ("key0" IN ('_imported_bookmark', '_imported_category', '_imported_favourite', '_imported_group', '_imported_message', '_imported_post', '_imported_room', '_imported_topic', '_imported_user', '_imported_vote'))
-) INHERITS ("objects_legacy");
+) INHERITS ("objects_legacy") WITH (autovacuum_enabled = false);
 
 CREATE TABLE "objects_legacy_uid" (
 	CHECK ("key0" = 'uid')
-) INHERITS ("objects_legacy");
+) INHERITS ("objects_legacy") WITH (autovacuum_enabled = false);
 
 CREATE TABLE "objects_legacy_pid" (
 	CHECK ("key0" = 'pid')
-) INHERITS ("objects_legacy");
+) INHERITS ("objects_legacy") WITH (autovacuum_enabled = false);
 
 CREATE TABLE "objects_legacy_tid" (
 	CHECK ("key0" = 'tid')
-) INHERITS ("objects_legacy");
+) INHERITS ("objects_legacy") WITH (autovacuum_enabled = false);
 
 CREATE TABLE "objects_legacy_user" (
 	CHECK ("key0" = 'user')
-) INHERITS ("objects_legacy");
+) INHERITS ("objects_legacy") WITH (autovacuum_enabled = false);
 
 CREATE TABLE "objects_legacy_users" (
 	CHECK ("key0" = 'users')
-) INHERITS ("objects_legacy");
+) INHERITS ("objects_legacy") WITH (autovacuum_enabled = false);
 
 CREATE TABLE "objects_legacy_post" (
 	CHECK ("key0" = 'post')
-) INHERITS ("objects_legacy");
+) INHERITS ("objects_legacy") WITH (autovacuum_enabled = false);
 
 CREATE TABLE "objects_legacy_posts" (
 	CHECK ("key0" = 'posts')
-) INHERITS ("objects_legacy");
+) INHERITS ("objects_legacy") WITH (autovacuum_enabled = false);
 
 CREATE TABLE "objects_legacy_topic" (
 	CHECK ("key0" = 'topic')
-) INHERITS ("objects_legacy");
+) INHERITS ("objects_legacy") WITH (autovacuum_enabled = false);
 
 CREATE TABLE "objects_legacy_topics" (
 	CHECK ("key0" = 'topics')
-) INHERITS ("objects_legacy");
+) INHERITS ("objects_legacy") WITH (autovacuum_enabled = false);
 
 CREATE TABLE "objects_legacy_cid" (
 	CHECK ("key0" = 'cid')
-) INHERITS ("objects_legacy");
+) INHERITS ("objects_legacy") WITH (autovacuum_enabled = false);
 
 CREATE TABLE "objects_legacy_ip" (
 	CHECK ("key0" = 'ip')
-) INHERITS ("objects_legacy");
+) INHERITS ("objects_legacy") WITH (autovacuum_enabled = false);
 
 CREATE TABLE "objects_legacy_group" (
 	CHECK ("key0" = 'group')
-) INHERITS ("objects_legacy");
+) INHERITS ("objects_legacy") WITH (autovacuum_enabled = false);
 
 CREATE TABLE "objects_legacy_username" (
 	CHECK ("key0" = 'username')
-) INHERITS ("objects_legacy");
+) INHERITS ("objects_legacy") WITH (autovacuum_enabled = false);
 
 CREATE TABLE "objects_legacy_email" (
 	CHECK ("key0" = 'email')
-) INHERITS ("objects_legacy");
+) INHERITS ("objects_legacy") WITH (autovacuum_enabled = false);
 
 CREATE TABLE "objects_legacy_userslug" (
 	CHECK ("key0" = 'userslug')
-) INHERITS ("objects_legacy");
+) INHERITS ("objects_legacy") WITH (autovacuum_enabled = false);
 
 CREATE TABLE "objects_legacy_analytics" (
 	CHECK ("key0" = 'analytics')
-) INHERITS ("objects_legacy");
+) INHERITS ("objects_legacy") WITH (autovacuum_enabled = false);
 
 CREATE TABLE "objects_legacy_errors" (
 	CHECK ("key0" = 'errors')
-) INHERITS ("objects_legacy");
+) INHERITS ("objects_legacy") WITH (autovacuum_enabled = false);
 
 CREATE TABLE "objects_legacy_message" (
 	CHECK ("key0" = 'message')
-) INHERITS ("objects_legacy");
+) INHERITS ("objects_legacy") WITH (autovacuum_enabled = false);
 
 CREATE TABLE "objects_legacy_notifications" (
 	CHECK ("key0" = 'notifications')
-) INHERITS ("objects_legacy");
+) INHERITS ("objects_legacy") WITH (autovacuum_enabled = false);
 
 CREATE TABLE "objects_legacy_misc" (
 	CHECK ("key0" NOT IN ('_imported', '_imported_bookmark', '_imported_category', '_imported_favourite', '_imported_group', '_imported_message', '_imported_post', '_imported_room', '_imported_topic', '_imported_user', '_imported_vote', '_telligent', 'uid', 'pid', 'tid', 'user', 'users', 'post', 'posts', 'topic', 'topics', 'cid', 'ip', 'group', 'username', 'email', 'userslug', 'analytics', 'errors', 'message', 'notifications'))
-) INHERITS ("objects_legacy");
+) INHERITS ("objects_legacy") WITH (autovacuum_enabled = false);
 
 CREATE FUNCTION "fun__objects_legacy__insert"()
 RETURNS TRIGGER AS $$

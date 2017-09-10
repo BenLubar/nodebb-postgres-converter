@@ -1,7 +1,7 @@
 CREATE TABLE "analytics_posts" (
 	"timestamp" timestamptz NOT NULL CHECK (date_trunc('hour', "timestamp") = "timestamp"),
 	"count" bigint NOT NULL DEFAULT 0
-);
+) WITH (autovacuum_enabled = false);
 
 INSERT INTO "analytics_posts" SELECT
        to_timestamp(p."value"::double precision / 1000) "timestamp",

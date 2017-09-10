@@ -1,7 +1,7 @@
 CREATE TABLE "analytics_pageviews" (
 	"timestamp" timestamptz NOT NULL CHECK (date_trunc('hour', "timestamp") = "timestamp"),
 	"count" bigint NOT NULL DEFAULT 0
-);
+) WITH (autovacuum_enabled = false);
 
 INSERT INTO "analytics_pageviews" SELECT
        to_timestamp(v."value"::double precision / 1000) "timestamp",

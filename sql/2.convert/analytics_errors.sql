@@ -2,7 +2,7 @@ CREATE TABLE "analytics_errors" (
 	"code" int NOT NULL,
 	"timestamp" timestamptz NOT NULL CHECK (date_trunc('hour', "timestamp") = "timestamp"),
 	"count" bigint NOT NULL DEFAULT 0
-);
+) WITH (autovacuum_enabled = false);
 
 INSERT INTO "analytics_errors" SELECT
        c.c "code",

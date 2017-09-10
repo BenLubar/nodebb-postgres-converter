@@ -7,7 +7,7 @@ CREATE TABLE "group_members" (
 	"joined" timestamptz DEFAULT NULL,
 
 	CHECK (("type" IN ('member', 'owner')) = ("joined" IS NOT NULL))
-);
+) WITH (autovacuum_enabled = false);
 
 INSERT INTO "group_members" SELECT
        i."value" "groupName",

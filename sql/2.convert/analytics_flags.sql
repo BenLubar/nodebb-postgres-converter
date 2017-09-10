@@ -1,7 +1,7 @@
 CREATE TABLE "analytics_flags" (
 	"timestamp" timestamptz NOT NULL CHECK (date_trunc('hour', "timestamp") = "timestamp"),
 	"count" bigint NOT NULL DEFAULT 0
-);
+) WITH (autovacuum_enabled = false);
 
 INSERT INTO "analytics_flags" SELECT
        to_timestamp(f."value"::double precision / 1000) "timestamp",

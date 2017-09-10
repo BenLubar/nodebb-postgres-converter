@@ -23,7 +23,7 @@ CREATE TABLE "posts" (
 	-- flag:notes
 	-- flag:state
 	-- flags
-);
+) WITH (autovacuum_enabled = false);
 
 INSERT INTO "posts" SELECT
        (p."data"->>'pid')::bigint "pid",

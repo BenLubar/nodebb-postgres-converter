@@ -43,6 +43,8 @@ async function main(reader, input, output, concurrency) {
 	await pool.query('VACUUM FULL VERBOSE ANALYZE;');
 	console.timeEnd('Vacuum');
 
+	await executeSQL(pool, '4.finalize');
+
 	console.timeEnd('Conversion');
 
 	await pool.end();

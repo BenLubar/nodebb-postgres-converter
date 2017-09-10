@@ -2,7 +2,7 @@ CREATE TABLE "chat_room_members" (
 	"roomId" bigint NOT NULL,
 	"uid" bigint NOT NULL,
 	"joined_at" timestamptz NOT NULL DEFAULT NOW()
-);
+) WITH (autovacuum_enabled = false);
 
 INSERT INTO "chat_room_members" SELECT
        i.i::bigint "roomId",

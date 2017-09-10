@@ -20,7 +20,7 @@ CREATE TABLE "topics" (
 	-- lastposttime
 	-- pinned
 	-- thumb
-);
+) WITH (autovacuum_enabled = false);
 
 INSERT INTO "topics" SELECT
        (t."data"->>'tid')::bigint "tid",

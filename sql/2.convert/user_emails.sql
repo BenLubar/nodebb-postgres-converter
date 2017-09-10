@@ -2,7 +2,7 @@ CREATE TABLE "user_emails" (
 	"uid" bigint NOT NULL,
 	"email" text NOT NULL,
 	"changed_at" timestamptz NOT NULL DEFAULT NOW()
-);
+) WITH (autovacuum_enabled = false);
 
 INSERT INTO "user_emails" SELECT
        i."score"::bigint "uid",

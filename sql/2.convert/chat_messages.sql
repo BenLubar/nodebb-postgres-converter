@@ -6,7 +6,7 @@ CREATE TABLE "chat_messages" (
 	"timestamp" timestamptz NOT NULL DEFAULT NOW(),
 	"edited" timestamptz DEFAULT NULL,
 	"data" jsonb NOT NULL DEFAULT '{}'
-);
+) WITH (autovacuum_enabled = false);
 
 INSERT INTO "chat_messages" SELECT
        i.i "mid",

@@ -14,7 +14,7 @@ CREATE TABLE "flags" (
 	CHECK(CASE WHEN "targetPid" IS NULL THEN 0 ELSE 1 END
             + CASE WHEN "targetUid" IS NULL THEN 0 ELSE 1 END
             = 1)
-);
+) WITH (autovacuum_enabled = false);
 
 INSERT INTO "flags" SELECT
        (f."data"->>'flagId')::bigint "flagId",

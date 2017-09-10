@@ -5,7 +5,7 @@ CREATE TABLE "events" (
 	"uid" bigint DEFAULT NULL,
 	"ip" inet[] NOT NULL DEFAULT '{}',
 	"data" jsonb NOT NULL DEFAULT '{}'
-);
+) WITH (autovacuum_enabled = false);
 
 
 INSERT INTO "events" SELECT

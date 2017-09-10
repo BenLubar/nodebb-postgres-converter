@@ -3,7 +3,7 @@ CREATE TABLE "post_votes" (
 	"uid" bigint NOT NULL,
 	"up" boolean NOT NULL,
 	"timestamp" timestamptz NOT NULL DEFAULT NOW()
-);
+) WITH (autovacuum_enabled = false);
 
 INSERT INTO "post_votes" SELECT
        v."value"::bigint "pid",

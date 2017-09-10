@@ -1,7 +1,7 @@
 CREATE TABLE "ips" (
 	"ip" inet NOT NULL,
 	"last_seen" timestamptz NOT NULL DEFAULT NOW()
-);
+) WITH (autovacuum_enabled = false);
 
 CREATE FUNCTION pg_temp.try_parse_inet(text) RETURNS inet AS $$
 BEGIN

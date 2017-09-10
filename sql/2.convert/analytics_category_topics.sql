@@ -2,7 +2,7 @@ CREATE TABLE "analytics_category_topics" (
 	"cid" bigint NOT NULL,
 	"timestamp" timestamptz NOT NULL CHECK (date_trunc('hour', "timestamp") = "timestamp"),
 	"count" bigint NOT NULL DEFAULT 0
-);
+) WITH (autovacuum_enabled = false);
 
 INSERT INTO "analytics_category_topics" SELECT
        i."value"::bigint "cid",

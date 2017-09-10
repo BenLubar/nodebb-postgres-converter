@@ -20,7 +20,7 @@ CREATE TABLE "groups" (
 	-- system
 	-- userTitle
 	-- userTitleEnabled
-);
+) WITH (autovacuum_enabled = false);
 
 INSERT INTO "groups" SELECT
        g."data"->>'name' "name",

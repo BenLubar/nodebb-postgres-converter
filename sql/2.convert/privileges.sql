@@ -5,14 +5,14 @@ CREATE TABLE "category_user_privileges" (
 	"uid" bigint NOT NULL,
 	"privilege" category_privilege NOT NULL,
 	"granted_at" timestamptz NOT NULL DEFAULT NOW()
-);
+) WITH (autovacuum_enabled = false);
 
 CREATE TABLE "category_group_privileges" (
 	"cid" bigint NOT NULL,
 	"groupName" text NOT NULL,
 	"privilege" category_privilege NOT NULL,
 	"granted_at" timestamptz NOT NULL DEFAULT NOW()
-);
+) WITH (autovacuum_enabled = false);
 
 INSERT INTO "category_user_privileges" SELECT
        i."value"::bigint "cid",

@@ -21,7 +21,7 @@ CREATE TABLE "categories" (
 	-- link
 	-- numRecentReplies
 	-- timesClicked
-);
+) WITH (autovacuum_enabled = false);
 
 INSERT INTO "categories" SELECT
        (c."data"->>'cid')::bigint "cid",

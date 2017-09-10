@@ -2,7 +2,7 @@ CREATE TABLE "user_usernames" (
 	"uid" bigint NOT NULL,
 	"username" text NOT NULL,
 	"changed_at" timestamptz NOT NULL DEFAULT NOW()
-);
+) WITH (autovacuum_enabled = false);
 
 INSERT INTO "user_usernames" SELECT
        i."score"::bigint "uid",

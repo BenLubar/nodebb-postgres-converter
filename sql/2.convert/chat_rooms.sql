@@ -4,7 +4,7 @@ CREATE TABLE "chat_rooms" (
 	"roomName" text NOT NULL,
 	"groupChat" boolean NOT NULL DEFAULT false,
 	"data" jsonb NOT NULL DEFAULT '{}'
-);
+) WITH (autovacuum_enabled = false);
 
 INSERT INTO "chat_rooms" SELECT
        i.i::bigint "roomId",

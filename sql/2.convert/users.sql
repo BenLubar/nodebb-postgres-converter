@@ -37,7 +37,7 @@ CREATE TABLE "users" (
 	-- username
 	-- userslug
 	-- website
-);
+) WITH (autovacuum_enabled = false);
 
 INSERT INTO "users" SELECT
        (u."data"->>'uid')::bigint "uid",

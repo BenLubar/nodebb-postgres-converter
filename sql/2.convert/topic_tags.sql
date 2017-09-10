@@ -1,7 +1,7 @@
 CREATE TABLE "topic_tags" (
 	"tid" bigint NOT NULL,
 	"tag" text NOT NULL
-);
+) WITH (autovacuum_enabled = false);
 
 INSERT INTO "topic_tags" SELECT
        i."value"::bigint "tid",
