@@ -1,7 +1,7 @@
 const path = require('path');
-const bluebird = require('bluebird');
-const readDir = bluebird.promisify(require('fs').readdir);
-const readFile = bluebird.promisify(require('fs').readFile);
+const { promisify } = require('util');
+const readDir = promisify(require('fs').readdir);
+const readFile = promisify(require('fs').readFile);
 const transaction = require('./transaction.js');
 
 async function executeSQL(pool, category) {

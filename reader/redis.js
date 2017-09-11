@@ -1,9 +1,11 @@
 'use strict';
 
-const bluebird = require('bluebird');
 const redis = require('redis');
-bluebird.promisifyAll(redis.RedisClient.prototype);
-bluebird.promisifyAll(redis.Multi.prototype);
+const { promisify } = require('util');
+
+for (var fn of ['dbsize', 'scan', 'type', 'get', 'lrange', 'smembers', 'hgetall', 'zscan']) {
+	redis.RedisClient.prototype[fn + 'Async'] = promisify(redis.RedisClient.prototype[fn]);
+}
 
 module.exports = async function(connection, count, each) {
 	const client = redis.createClient(connection);
