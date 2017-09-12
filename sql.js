@@ -1,5 +1,6 @@
 const path = require('path');
 const { promisify } = require('util');
+const stat = promisify(require('fs').stat);
 const readDir = promisify(require('fs').readdir);
 const readFile = promisify(require('fs').readFile);
 const transaction = require('./transaction.js');
@@ -28,8 +29,10 @@ async function executeSQL(pool, category) {
 				await transaction('SQL: ' + subCategory, pool, async function(tx) {
 					await tx.query(sql);
 				});
-			} else {
+			} else if ((await stat(fileName)).isDirectory()) {
 				await executeSQL(pool, subCategory);
+			} else {
+				console.log('Skipping non-SQL file: ' + name);
 			}
 		}));
 	} else if (sequential) {
@@ -45,8 +48,10 @@ async function executeSQL(pool, category) {
 				await transaction('SQL: ' + subCategory, pool, async function(tx) {
 					await tx.query(sql);
 				});
-			} else {
+			} else if ((await stat(fileName)).isDirectory()) {
 				await executeSQL(pool, subCategory);
+			} else {
+				console.log('Skipping non-SQL file: ' + name);
 			}
 		}
 	}
