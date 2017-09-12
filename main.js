@@ -23,10 +23,6 @@ async function main(reader, input, output, concurrency) {
 
 	await executeSQL(pool, '1.legacy');
 
-	console.time('Cluster');
-	await pool.query('CLUSTER VERBOSE;');
-	console.timeEnd('Cluster');
-
 	console.time('Analyze');
 	await pool.query('ANALYZE VERBOSE;');
 	console.timeEnd('Analyze');

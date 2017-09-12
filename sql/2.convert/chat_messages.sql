@@ -24,18 +24,10 @@ INSERT INTO "chat_messages" SELECT
     ON m."key0" = 'message'
    AND m."key1" = ARRAY[i.i::text];
 
-DO $$
-DECLARE
-	"nextMid" bigint;
-BEGIN
-	SELECT "data"->>'nextMid' INTO "nextMid"
-	  FROM "objects_legacy"
-	 WHERE "key0" = 'global'
-	   AND "key1" = ARRAY[]::text[];
-
-	EXECUTE 'ALTER SEQUENCE "chat_messages_mid_seq" RESTART WITH ' || ("nextMid" + 1) || ';';
-END;
-$$ LANGUAGE plpgsql;
+SELECT setval('"chat_messages_mid_seq"', ("data"->>'nextMid')::bigint)
+  FROM "objects_legacy"
+ WHERE "key0" = 'global'
+   AND "key1" = ARRAY[]::text[];
 
 ALTER TABLE "chat_messages" ADD PRIMARY KEY ("mid");
 

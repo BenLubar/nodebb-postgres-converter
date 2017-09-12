@@ -46,18 +46,10 @@ INSERT INTO "topics" SELECT
  WHERE i."key0" = 'topics'
    AND i."key1" = ARRAY['tid'];
 
-DO $$
-DECLARE
-	"nextTid" bigint;
-BEGIN
-	SELECT "data"->>'nextTid' INTO "nextTid"
-	  FROM "objects_legacy"
-	 WHERE "key0" = 'global'
-	   AND "key1" = ARRAY[]::text[];
-
-	EXECUTE 'ALTER SEQUENCE "topics_tid_seq" RESTART WITH ' || ("nextTid" + 1) || ';';
-END;
-$$ LANGUAGE plpgsql;
+SELECT setval('"topics_tid_seq"', ("data"->>'nextTid')::bigint)
+  FROM "objects_legacy"
+ WHERE "key0" = 'global'
+   AND "key1" = ARRAY[]::text[];
 
 ALTER TABLE "topics" ADD PRIMARY KEY ("tid");
 

@@ -33,18 +33,10 @@ INSERT INTO "flags" SELECT
  WHERE i."key0" = 'flags'
    AND i."key1" = ARRAY['datetime'];
 
-DO $$
-DECLARE
-	"nextFlagId" bigint;
-BEGIN
-	SELECT "data"->>'nextFlagId' INTO "nextFlagId"
-	  FROM "objects_legacy"
-	 WHERE "key0" = 'global'
-	   AND "key1" = ARRAY[]::text[];
-
-	EXECUTE 'ALTER SEQUENCE "flags_flagId_seq" RESTART WITH ' || ("nextFlagId" + 1) || ';';
-END;
-$$ LANGUAGE plpgsql;
+SELECT setval('"flags_flagId_seq"', ("data"->>'nextFlagId')::bigint)
+  FROM "objects_legacy"
+ WHERE "key0" = 'global'
+   AND "key1" = ARRAY[]::text[];
 
 ALTER TABLE "flags" ADD PRIMARY KEY ("flagId");
 

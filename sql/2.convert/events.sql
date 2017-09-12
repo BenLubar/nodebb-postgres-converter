@@ -22,18 +22,10 @@ INSERT INTO "events" SELECT
  WHERE i."key0" = 'events'
    AND i."key1" = ARRAY['time'];
 
-DO $$
-DECLARE
-	"nextEid" bigint;
-BEGIN
-	SELECT "data"->>'nextEid' INTO "nextEid"
-	  FROM "objects_legacy"
-	 WHERE "key0" = 'global'
-	   AND "key1" = ARRAY[]::text[];
-
-	EXECUTE 'ALTER SEQUENCE "events_eid_seq" RESTART WITH ' || ("nextEid" + 1) || ';';
-END;
-$$ LANGUAGE plpgsql;
+SELECT setval('"events_eid_seq"', ("data"->>'nextEid')::bigint)
+  FROM "objects_legacy"
+ WHERE "key0" = 'global'
+   AND "key1" = ARRAY[]::text[];
 
 ALTER TABLE "events" ADD PRIMARY KEY ("eid");
 

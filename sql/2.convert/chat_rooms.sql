@@ -20,18 +20,10 @@ INSERT INTO "chat_rooms" SELECT
     ON r."key0" = 'chat'
    AND r."key1" = ARRAY['room', i.i::text];
 
-DO $$
-DECLARE
-	"nextChatRoomId" bigint;
-BEGIN
-	SELECT "data"->>'nextChatRoomId' INTO "nextChatRoomId"
-	  FROM "objects_legacy"
-	 WHERE "key0" = 'global'
-	   AND "key1" = ARRAY[]::text[];
-
-	EXECUTE 'ALTER SEQUENCE "chat_rooms_roomId_seq" RESTART WITH ' || ("nextChatRoomId" + 1) || ';';
-END;
-$$ LANGUAGE plpgsql;
+SELECT setval('"chat_rooms_roomId_seq"', ("data"->>'nextChatRoomId')::bigint)
+  FROM "objects_legacy"
+ WHERE "key0" = 'global'
+   AND "key1" = ARRAY[]::text[];
 
 ALTER TABLE "chat_rooms" ADD PRIMARY KEY ("roomId");
 

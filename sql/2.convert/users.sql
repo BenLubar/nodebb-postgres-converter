@@ -53,18 +53,10 @@ INSERT INTO "users" SELECT
  WHERE i."key0" = 'username'
    AND i."key1" = ARRAY['uid'];
 
-DO $$
-DECLARE
-	"nextUid" bigint;
-BEGIN
-	SELECT "data"->>'nextUid' INTO "nextUid"
-	  FROM "objects_legacy"
-	 WHERE "key0" = 'global'
-	   AND "key1" = ARRAY[]::text[];
-
-	EXECUTE 'ALTER SEQUENCE "users_uid_seq" RESTART WITH ' || ("nextUid" + 1) || ';';
-END;
-$$ LANGUAGE plpgsql;
+SELECT setval('"users_uid_seq"', ("data"->>'nextUid')::bigint)
+  FROM "objects_legacy"
+ WHERE "key0" = 'global'
+   AND "key1" = ARRAY[]::text[];
 
 ALTER TABLE "users" ADD PRIMARY KEY ("uid");
 

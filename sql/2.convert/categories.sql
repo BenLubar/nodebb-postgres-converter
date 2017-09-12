@@ -42,18 +42,10 @@ INSERT INTO "categories" SELECT
  WHERE i."key0" = 'categories'
    AND i."key1" = ARRAY['cid'];
 
-DO $$
-DECLARE
-	"nextCid" bigint;
-BEGIN
-	SELECT "data"->>'nextCid' INTO "nextCid"
-	  FROM "objects_legacy"
-	 WHERE "key0" = 'global'
-	   AND "key1" = ARRAY[]::text[];
-
-	EXECUTE 'ALTER SEQUENCE "categories_cid_seq" RESTART WITH ' || ("nextCid" + 1) || ';';
-END;
-$$ LANGUAGE plpgsql;
+SELECT setval('"categories_cid_seq"', ("data"->>'nextCid')::bigint)
+  FROM "objects_legacy"
+ WHERE "key0" = 'global'
+   AND "key1" = ARRAY[]::text[];
 
 ALTER TABLE "categories" ADD PRIMARY KEY ("cid");
 

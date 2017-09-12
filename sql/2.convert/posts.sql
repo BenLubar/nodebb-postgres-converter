@@ -50,18 +50,10 @@ INSERT INTO "posts" SELECT
  WHERE i."key0" = 'posts'
    AND i."key1" = ARRAY['pid'];
 
-DO $$
-DECLARE
-	"nextPid" bigint;
-BEGIN
-	SELECT "data"->>'nextPid' INTO "nextPid"
-	  FROM "objects_legacy"
-	 WHERE "key0" = 'global'
-	   AND "key1" = ARRAY[]::text[];
-
-	EXECUTE 'ALTER SEQUENCE "posts_pid_seq" RESTART WITH ' || ("nextPid" + 1) || ';';
-END;
-$$ LANGUAGE plpgsql;
+SELECT setval('"posts_pid_seq"', ("data"->>'nextPid')::bigint)
+  FROM "objects_legacy"
+ WHERE "key0" = 'global'
+   AND "key1" = ARRAY[]::text[];
 
 ALTER TABLE "posts" ADD PRIMARY KEY ("pid");
 
