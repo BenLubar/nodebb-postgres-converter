@@ -13,10 +13,20 @@ async function copyDatabase(pool, input, connection) {
 			stream.on('end', resolve);
 		});
 
+		function write(values) {
+			return new Promise(function(resolve) {
+				var ok = stream.write(values, 'utf8');
+				if (ok) {
+					return resolve();
+				}
+				stream.once('drain', resolve);
+			});
+		}
+
 		await input(connection, async function(count) { total = count; }, async function(data) {
 			var values = transformData(data);
 			if (values) {
-				stream.write(values, 'utf8');
+				await write(values);
 				copied++;
 			} else {
 				skipped++;

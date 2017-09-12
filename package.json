@@ -1,6 +1,6 @@
 {
   "name": "@ben_lubar/nodebb-postgres-converter",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "Converts an existing NodeBB NoSQL database to a relational PostgreSQL database.",
   "main": "main.js",
   "bin": {
