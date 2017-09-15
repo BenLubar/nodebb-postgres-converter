@@ -1,6 +1,7 @@
 const { Pool } = require('pg');
 const copyDatabase = require('./copy.js');
 const executeSQL = require('./sql.js');
+const makeReport = require('./report.js');
 
 async function main(reader, input, output, concurrency) {
 	const pool = new Pool({
@@ -42,6 +43,10 @@ async function main(reader, input, output, concurrency) {
 	await executeSQL(pool, '4.finalize');
 
 	console.timeEnd('Conversion');
+
+	console.time('Report');
+	await makeReport(pool);
+	console.timeEnd('Report');
 
 	await pool.end();
 }
