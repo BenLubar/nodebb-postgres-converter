@@ -1,0 +1,7 @@
+DELETE FROM "imported_discourse_rooms"
+ USING "imported_discourse_rooms" t1
+  LEFT OUTER JOIN "chat_rooms" t2
+    ON t1."nodebb_room_id" = t2."roomId"
+ WHERE t1."discourse_room_id" = "imported_discourse_rooms"."discourse_room_id"
+   AND t1."nodebb_room_id" IS NOT NULL
+   AND t2."roomId" IS NULL;

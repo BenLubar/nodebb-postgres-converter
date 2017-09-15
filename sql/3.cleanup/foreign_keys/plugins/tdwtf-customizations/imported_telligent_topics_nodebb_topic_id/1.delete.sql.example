@@ -1,0 +1,7 @@
+DELETE FROM "imported_telligent_topics"
+ USING "imported_telligent_topics" t1
+  LEFT OUTER JOIN "topics" t2
+    ON t1."nodebb_topic_id" = t2."tid"
+ WHERE t1."telligent_topic_id" = "imported_telligent_topics"."telligent_topic_id"
+   AND t1."nodebb_topic_id" IS NOT NULL
+   AND t2."tid" IS NULL;

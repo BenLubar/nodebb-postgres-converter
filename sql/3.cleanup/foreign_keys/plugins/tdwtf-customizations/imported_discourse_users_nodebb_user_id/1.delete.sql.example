@@ -1,0 +1,7 @@
+DELETE FROM "imported_discourse_users"
+ USING "imported_discourse_users" t1
+  LEFT OUTER JOIN "users" t2
+    ON t1."nodebb_user_id" = t2."uid"
+ WHERE t1."discourse_user_id" = "imported_discourse_users"."discourse_user_id"
+   AND t1."nodebb_user_id" IS NOT NULL
+   AND t2."uid" IS NULL;

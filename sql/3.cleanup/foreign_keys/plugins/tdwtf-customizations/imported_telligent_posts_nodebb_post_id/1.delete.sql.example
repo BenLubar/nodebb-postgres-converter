@@ -1,0 +1,7 @@
+DELETE FROM "imported_telligent_posts"
+ USING "imported_telligent_posts" t1
+  LEFT OUTER JOIN "posts" t2
+    ON t1."nodebb_post_id" = t2."pid"
+ WHERE t1."telligent_post_id" = "imported_telligent_posts"."telligent_post_id"
+   AND t1."nodebb_post_id" IS NOT NULL
+   AND t2."pid" IS NULL;

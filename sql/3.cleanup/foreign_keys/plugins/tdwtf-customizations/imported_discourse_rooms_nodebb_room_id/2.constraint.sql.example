@@ -1,0 +1,5 @@
+ALTER TABLE "imported_discourse_rooms"
+  ADD CONSTRAINT "fk__imported_discourse_rooms__nodebb_room_id"
+      FOREIGN KEY ("nodebb_room_id")
+      REFERENCES "chat_rooms"("roomId")
+      ON DELETE CASCADE;

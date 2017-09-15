@@ -1,0 +1,5 @@
+ALTER TABLE "imported_telligent_topics"
+  ADD CONSTRAINT "fk__imported_telligent_topics__nodebb_topic_id"
+      FOREIGN KEY ("nodebb_topic_id")
+      REFERENCES "topics"("tid")
+      ON DELETE CASCADE;

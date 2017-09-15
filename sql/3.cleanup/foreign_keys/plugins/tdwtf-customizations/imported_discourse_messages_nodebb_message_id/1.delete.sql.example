@@ -1,0 +1,7 @@
+DELETE FROM "imported_discourse_messages"
+ USING "imported_discourse_messages" t1
+  LEFT OUTER JOIN "chat_messages" t2
+    ON t1."nodebb_message_id" = t2."mid"
+ WHERE t1."discourse_message_id" = "imported_discourse_messages"."discourse_message_id"
+   AND t1."nodebb_message_id" IS NOT NULL
+   AND t2."mid" IS NULL;

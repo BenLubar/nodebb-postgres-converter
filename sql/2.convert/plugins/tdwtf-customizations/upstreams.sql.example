@@ -1,0 +1,18 @@
+CREATE TABLE "tdwtf_upstreams_started" (
+	"ip" inet NOT NULL,
+	"port" integer NOT NULL,
+	"last_started" timestamptz NOT NULL DEFAULT NOW()
+);
+
+INSERT INTO "tdwtf_upstreams_started" SELECT
+       split_part(i."value", ':', 1)::inet "ip",
+       split_part(i."value", ':', 2)::integer "port",
+       to_timestamp(i."score"::double precision / 1000) "last_started"
+  FROM "objects_legacy" i
+ WHERE i."key0" = 'tdwtf-upstreams'
+   AND i."key1" = ARRAY['started'];
+
+ALTER TABLE "tdwtf_upstreams_started" ADD PRIMARY KEY ("ip", "port");
+
+ALTER TABLE "tdwtf_upstreams_started"
+      CLUSTER ON "tdwtf_upstreams_started_pkey";

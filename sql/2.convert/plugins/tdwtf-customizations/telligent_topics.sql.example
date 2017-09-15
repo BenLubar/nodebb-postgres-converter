@@ -1,0 +1,17 @@
+CREATE TABLE "imported_telligent_topics" (
+	"telligent_topic_id" bigint NOT NULL,
+	"nodebb_topic_id" bigint NOT NULL
+);
+
+INSERT INTO "imported_telligent_topics" SELECT
+       i."value"::bigint / 2 "telligent_topic_id",
+       i."score"::bigint "nodebb_topic_id"
+  FROM "objects_legacy" i
+ WHERE i."key0" = '_imported'
+   AND i."key1" = ARRAY['_topics']
+   AND i."value"::bigint % 2 = 0;
+
+ALTER TABLE "imported_telligent_topics" ADD PRIMARY KEY ("telligent_topic_id");
+
+ALTER TABLE "imported_telligent_topics"
+      CLUSTER ON "imported_telligent_topics_pkey";

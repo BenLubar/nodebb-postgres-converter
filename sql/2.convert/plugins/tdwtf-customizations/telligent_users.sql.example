@@ -1,0 +1,20 @@
+CREATE TABLE "imported_telligent_users" (
+	"telligent_user_id" bigint NOT NULL,
+	"nodebb_user_id" bigint NOT NULL
+);
+
+INSERT INTO "imported_telligent_users" SELECT
+       t."value"::bigint "telligent_user_id",
+       d."score"::bigint "nodebb_user_id"
+  FROM "objects_legacy" t
+ INNER JOIN "objects_legacy" d
+    ON d."key0" = '_imported'
+   AND d."key1" = ARRAY['_users']
+   AND d."value" = t."score"::text
+ WHERE t."key0" = '_telligent'
+   AND t."key1" = ARRAY['_users'];
+
+ALTER TABLE "imported_telligent_users" ADD PRIMARY KEY ("telligent_user_id");
+
+ALTER TABLE "imported_telligent_users"
+      CLUSTER ON "imported_telligent_users_pkey";

@@ -1,0 +1,5 @@
+ALTER TABLE "imported_telligent_posts"
+  ADD CONSTRAINT "fk__imported_telligent_posts__nodebb_post_id"
+      FOREIGN KEY ("nodebb_post_id")
+      REFERENCES "posts"("pid")
+      ON DELETE CASCADE;

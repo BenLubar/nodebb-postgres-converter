@@ -1,0 +1,5 @@
+ALTER TABLE "imported_discourse_categories"
+  ADD CONSTRAINT "fk__imported_discourse_categories__nodebb_category_id"
+      FOREIGN KEY ("nodebb_category_id")
+      REFERENCES "categories"("cid")
+      ON DELETE CASCADE;

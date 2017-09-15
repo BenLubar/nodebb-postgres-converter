@@ -1,0 +1,20 @@
+CREATE TABLE "imported_telligent_categories" (
+	"telligent_category_id" bigint NOT NULL,
+	"nodebb_category_id" bigint NOT NULL
+);
+
+INSERT INTO "imported_telligent_categories" SELECT
+       t."value"::bigint "telligent_category_id",
+       d."score"::bigint "nodebb_category_id"
+  FROM "objects_legacy" t
+ INNER JOIN "objects_legacy" d
+    ON d."key0" = '_imported'
+   AND d."key1" = ARRAY['_categories']
+   AND d."value" = t."score"::text
+ WHERE t."key0" = '_telligent'
+   AND t."key1" = ARRAY['_categories'];
+
+ALTER TABLE "imported_telligent_categories" ADD PRIMARY KEY ("telligent_category_id");
+
+ALTER TABLE "imported_telligent_categories"
+      CLUSTER ON "imported_telligent_categories_pkey";

@@ -1,0 +1,5 @@
+ALTER TABLE "imported_discourse_users"
+  ADD CONSTRAINT "fk__imported_discourse_users__nodebb_user_id"
+      FOREIGN KEY ("nodebb_user_id")
+      REFERENCES "users"("uid")
+      ON DELETE CASCADE;

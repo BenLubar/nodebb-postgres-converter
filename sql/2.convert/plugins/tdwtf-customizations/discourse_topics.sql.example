@@ -1,0 +1,17 @@
+CREATE TABLE "imported_discourse_topics" (
+	"discourse_topic_id" bigint NOT NULL,
+	"nodebb_topic_id" bigint NOT NULL
+);
+
+INSERT INTO "imported_discourse_topics" SELECT
+       (i."value"::bigint - 1) / 2 "discourse_topic_id",
+       i."score"::bigint "nodebb_topic_id"
+  FROM "objects_legacy" i
+ WHERE i."key0" = '_imported'
+   AND i."key1" = ARRAY['_topics']
+   AND i."value"::bigint % 2 = 1;
+
+ALTER TABLE "imported_discourse_topics" ADD PRIMARY KEY ("discourse_topic_id");
+
+ALTER TABLE "imported_discourse_topics"
+      CLUSTER ON "imported_discourse_topics_pkey";

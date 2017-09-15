@@ -1,0 +1,5 @@
+ALTER TABLE "imported_discourse_messages"
+  ADD CONSTRAINT "fk__imported_discourse_messages__nodebb_message_id"
+      FOREIGN KEY ("nodebb_message_id")
+      REFERENCES "chat_messages"("mid")
+      ON DELETE CASCADE;

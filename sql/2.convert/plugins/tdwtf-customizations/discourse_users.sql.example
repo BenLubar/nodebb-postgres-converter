@@ -1,0 +1,16 @@
+CREATE TABLE "imported_discourse_users" (
+	"discourse_user_id" bigint NOT NULL,
+	"nodebb_user_id" bigint NOT NULL
+);
+
+INSERT INTO "imported_discourse_users" SELECT
+       i."value"::bigint "discourse_user_id",
+       i."score"::bigint "nodebb_user_id"
+  FROM "objects_legacy" i
+ WHERE i."key0" = '_imported'
+   AND i."key1" = ARRAY['_users'];
+
+ALTER TABLE "imported_discourse_users" ADD PRIMARY KEY ("discourse_user_id");
+
+ALTER TABLE "imported_discourse_users"
+      CLUSTER ON "imported_discourse_users_pkey";
