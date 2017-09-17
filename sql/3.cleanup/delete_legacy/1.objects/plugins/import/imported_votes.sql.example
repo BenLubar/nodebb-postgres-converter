@@ -1,0 +1,6 @@
+DELETE FROM "objects_legacy" t1
+ USING "objects_legacy" t2
+ WHERE t1."key0" = '_imported_vote'
+   AND t1."key1" = ARRAY[t2."value"]
+   AND t2."key0" = '_imported'
+   AND t2."key1" = ARRAY['_votes'];
