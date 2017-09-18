@@ -38,6 +38,7 @@ ALTER TABLE "chat_messages" SET (autovacuum_enabled = true);
 ALTER TABLE "chat_room_members" SET (autovacuum_enabled = true);
 ALTER TABLE "chat_rooms" SET (autovacuum_enabled = true);
 ALTER TABLE "events" SET (autovacuum_enabled = true);
+ALTER TABLE "flag_notes" SET (autovacuum_enabled = true);
 ALTER TABLE "flags" SET (autovacuum_enabled = true);
 ALTER TABLE "group_members" SET (autovacuum_enabled = true);
 ALTER TABLE "groups" SET (autovacuum_enabled = true);
