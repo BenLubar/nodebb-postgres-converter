@@ -31,6 +31,13 @@ const optionDefinitions = [
 		description: 'number of queries executed at a time (default: 10)',
 		defaultValue: 10,
 		group: 'optional'
+	},
+	{
+		name: 'memory',
+		alias: 'm',
+		description: 'amount of memory PostgreSQL should use for maintenance tasks',
+		defaultValue: '64MB',
+		group: 'optional'
 	}
 ];
 
@@ -82,7 +89,7 @@ try {
 
 consoleStamp(console, {pattern: 'yyyy-mm-dd HH:MM:ss.l'});
 
-main(reader, options.input, options.output, options.concurrency).catch(function(ex) {
+main(reader, options.input, options.output, options.concurrency, options.memory).catch(function(ex) {
 	console.error(ex.stack);
 	process.exit(2);
 });

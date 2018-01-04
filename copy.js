@@ -73,27 +73,41 @@ function transformData(obj) {
 	return transformRow([JSON.stringify(data)]);
 }
 
-function transformValue(v) {
-	if (v instanceof Date) {
-		return v.getTime();
-	}
-	if (typeof v === 'number' && Number.isNaN(v)) {
-		return 'NaN';
-	}
-	if (typeof v === 'string') {
-		return v.replace(/\x00/g, 'x00');
-	}
-	if (v === null) {
-		return null;
-	}
-
-	if (typeof v === 'object') {
-		for (var k of Object.keys(v)) {
-			v[k] = transformValue(v[k]);
+function transformValue(obj) {
+	for (var k in obj) {
+		if (!Object.prototype.hasOwnProperty.call(obj, k)) {
+			continue;
 		}
+		var v = obj[k];
+		if (!v || v === true) {
+			continue;
+		}
+		if (v instanceof Date) {
+			obj[k] = v.getTime();
+			continue;
+		}
+		if (typeof v === 'number') {
+			if (Number.isNaN(v)) {
+				obj[k] = 'NaN';
+			}
+			continue;
+		}
+		if (typeof v === 'string') {
+			if (v.indexOf('\x00') !== -1) {
+				obj[k] = v.replace(/\x00/g, 'x00');
+			}
+			continue;
+		}
+		if (Array.isArray(v)) {
+			obj[k] = v.map(function(a) {
+				return String(a || '').replace(/\x00/g, 'x00');
+			});
+			continue;
+		}
+		throw new Error('Unexpected object in JSON from database: ' + JSON.stringify(v));
 	}
 
-	return v;
+	return obj;
 }
 
 function transformArray(array) {
