@@ -59,7 +59,10 @@ async function main(reader, input, output, concurrency, memory) {
 
 	console.time('Cluster');
 
-	await query('Cluster objects', pool, {text: 'SELECT set_config(\'maintenance_work_mem\', $1::TEXT, false); CLUSTER VERBOSE "objects" USING "idx__objects__key__score"', values: [memory]});
+	await transaction('Cluster objects', pool, async function(db) {
+		await db.query('SELECT set_config(\'maintenance_work_mem\', $1::TEXT, true)', [memory]);
+		await query('Cluster objects', db, 'CLUSTER VERBOSE "objects" USING "idx__objects__key__score"'),
+	});
 
 	console.timeEnd('Cluster');
 
@@ -124,7 +127,10 @@ async function main(reader, input, output, concurrency, memory) {
 		query('Cluster legacy_string', pool, 'ALTER TABLE "legacy_string" CLUSTER ON "legacy_string_pkey"')
 	]);
 
-	await query('Cluster', pool, {text: 'SELECT set_config(\'maintenance_work_mem\', $1::TEXT, false); CLUSTER VERBOSE', values: [memory]}),
+	await transaction('Cluster', pool, async function(db) {
+		await db.query('SELECT set_config(\'maintenance_work_mem\', $1::TEXT, true)', [memory]);
+		await query('Cluster', db, 'CLUSTER VERBOSE'),
+	});
 
 	console.time('Analyze');
 
