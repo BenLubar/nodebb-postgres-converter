@@ -119,7 +119,7 @@ async function main(reader, input, output, concurrency, memory) {
 		query('Cluster legacy_object', pool, 'ALTER TABLE "legacy_object" CLUSTER ON "legacy_object_pkey"'),
 		query('Cluster legacy_hash', pool, 'ALTER TABLE "legacy_hash" CLUSTER ON "legacy_hash_pkey"'),
 		query('Cluster legacy_zset', pool, 'ALTER TABLE "legacy_zset" CLUSTER ON "legacy_zset_pkey"'),
-		query('Cluster legacy_set', pool, 'ALTER TABLE "legacy_set" CLUSTER ON "legacy_set_pkey"', values: [memory]}),
+		query('Cluster legacy_set', pool, 'ALTER TABLE "legacy_set" CLUSTER ON "legacy_set_pkey"'),
 		query('Cluster legacy_list', pool, 'ALTER TABLE "legacy_list" CLUSTER ON "legacy_list_pkey"'),
 		query('Cluster legacy_string', pool, 'ALTER TABLE "legacy_string" CLUSTER ON "legacy_string_pkey"')
 	]);
