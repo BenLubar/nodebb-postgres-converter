@@ -104,7 +104,7 @@ function transformValue(obj) {
 			});
 			continue;
 		}
-		throw new Error('Unexpected object in JSON from database: ' + JSON.stringify(v));
+		console.error('Unexpected object in JSON from database: ' + JSON.stringify(v));
 	}
 
 	return obj;
