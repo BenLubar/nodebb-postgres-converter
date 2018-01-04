@@ -104,7 +104,9 @@ function transformValue(obj) {
 			});
 			continue;
 		}
-		console.error('Unexpected object in JSON from database: ' + JSON.stringify(v));
+
+		// Object, possibly from a plugin
+		obj[k] = transformValue(v);
 	}
 
 	return obj;
