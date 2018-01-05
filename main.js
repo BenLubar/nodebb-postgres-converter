@@ -123,10 +123,14 @@ async function main(reader, input, output, concurrency, memory) {
 		query('Cluster legacy_string', pool, 'ALTER TABLE "legacy_string" CLUSTER ON "legacy_string_pkey"')
 	]);
 
-	await transaction('Cluster', pool, async function(db) {
-		await db.query('SELECT set_config(\'maintenance_work_mem\', $1::TEXT, true)', [memory]);
+	var db = await pool.connect();
+
+	try {
+		await db.query('SELECT set_config(\'maintenance_work_mem\', $1::TEXT, false)', [memory]);
 		await query('Cluster all tables', db, 'CLUSTER VERBOSE');
-	});
+	} finally {
+		db.release();
+	}
 
 	console.time('Analyze');
 
