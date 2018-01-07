@@ -225,6 +225,30 @@ END
 
 	console.timeEnd('Convert');
 
+	await transaction('Split imported data', pool, async function(db) {
+		await query('Create type legacy_imported_type', db, `CREATE TYPE LEGACY_IMPORTED_TYPE AS ENUM ( 'bookmark', 'category', 'favourite', 'group', 'message', 'post', 'room', 'topic', 'user', 'vote' )`);
+
+		await query('Create table legacy_imported', db, `CREATE TABLE "legacy_imported" (
+	"type" LEGACY_IMPORTED_TYPE NOT NULL,
+	"id" BIGINT NOT NULL,
+	"data" JSONB NOT NULL,
+	PRIMARY KEY ("type", "id")
+)`);
+
+		await query('Insert into legacy_imported', db, `INSERT INTO "legacy_imported" ("type", "id", "data")
+SELECT (regexp_match(o."_key", '^_imported_(.*):'))[1]::LEGACY_IMPORTED_TYPE, (regexp_match(o."_key", ':(.*)$'))[1]::BIGINT, h."data"
+  FROM "legacy_object_live" o
+ INNER JOIN "legacy_hash" h
+         ON o."_key" = h."_key"
+        AND o."type" = h."type"
+ WHERE o."_key" LIKE '_imported_%:%'`);
+
+		await query('Delete from legacy_object', db, `DELETE FROM "legacy_object" o
+ USING "legacy_imported" i
+ WHERE o."_key" = '_imported_' || i."type" || ':' || i."id"
+   AND o."type" = 'hash'`);
+	});
+
 	console.time('Cleanup');
 
 	await Promise.all([
@@ -257,7 +281,8 @@ ALTER TABLE "legacy_hash" CLUSTER ON "legacy_hash_pkey";
 ALTER TABLE "legacy_zset" CLUSTER ON "legacy_zset_pkey";
 ALTER TABLE "legacy_set" CLUSTER ON "legacy_set_pkey";
 ALTER TABLE "legacy_list" CLUSTER ON "legacy_list_pkey";
-ALTER TABLE "legacy_string" CLUSTER ON "legacy_string_pkey"`);
+ALTER TABLE "legacy_string" CLUSTER ON "legacy_string_pkey";
+ALTER TABLE "legacy_imported" CLUSTER ON "legacy_imported_pkey"`);
 		await db.query(`SELECT set_config('maintenance_work_mem', $1::TEXT, false)`, [memory]);
 		await query('Cluster all tables', db, `CLUSTER VERBOSE`);
 	} finally {

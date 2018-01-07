@@ -17,7 +17,6 @@ module.exports = async function(connection, count, each) {
 		try {
 			res = await client.query(`SELECT COUNT(*) c FROM "objects"`);
 		} catch (ex) {
-			res = await client.query(`SELECT (SELECT COUNT(*) FROM "legacy_object" WHERE "type" <> 'zset') + (SELECT COUNT(*) FROM "legacy_zset") c`);
 			getAllQuery = `WITH o AS (SELECT CASE
 	WHEN o."expireAt" IS NULL THEN jsonb_build_object('_key', o."_key")
 	ELSE jsonb_build_object('_key', o."_key", 'expireAt', EXTRACT(EPOCH FROM o."expireAt") * 1000)
@@ -52,6 +51,15 @@ SELECT jsonb_build_object('data', s."data") || o."data" "data"
  INNER JOIN o
          ON o."_key" = s."_key"
 	AND o."type" = s."type"`;
+			try {
+				res = await client.query(`SELECT (SELECT COUNT(*) FROM "legacy_object" WHERE "type" <> 'zset') + (SELECT COUNT(*) FROM "legacy_zset") + (SELECT COUNT(*) FROM "legacy_imported") c`);
+				getAllQuery += `
+UNION ALL
+SELECT i."data" || jsonb_build_object('_key', '_imported_' || i."type" || ':' || i."id") "data"
+  FROM "legacy_imported" i`;
+			} catch (ex) {
+				res = await client.query(`SELECT (SELECT COUNT(*) FROM "legacy_object" WHERE "type" <> 'zset') + (SELECT COUNT(*) FROM "legacy_zset") c`);
+			}
 		}
 
 		await count(res.rows[0].c);
