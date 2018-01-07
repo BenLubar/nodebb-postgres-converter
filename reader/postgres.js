@@ -11,10 +11,52 @@ module.exports = async function(connection, count, each) {
 	await client.connect();
 
 	try {
-		var res = await client.query('SELECT COUNT(*) c FROM "objects";');
+		var getAllQuery = `SELECT "data" FROM "objects"`;
+		var res;
+
+		try {
+			res = await client.query(`SELECT COUNT(*) c FROM "objects"`);
+		} catch (ex) {
+			res = await client.query(`SELECT (SELECT COUNT(*) FROM "legacy_object" WHERE "type" <> 'zset') + (SELECT COUNT(*) FROM "legacy_zset") c`);
+			getAllQuery = `WITH o AS (SELECT CASE
+	WHEN o."expireAt" IS NULL THEN jsonb_build_object('_key', o."_key")
+	ELSE jsonb_build_object('_key', o."_key", 'expireAt', EXTRACT(EPOCH FROM o."expireAt") * 1000)
+END "data", o."_key", o."type"
+  FROM "legacy_object" o)
+SELECT h."data" || o."data" "data"
+  FROM "legacy_hash" h
+ INNER JOIN o
+         ON o."_key" = h."_key"
+	AND o."type" = h."type"
+UNION ALL
+SELECT jsonb_build_object('value', z."value", 'score', z."score") || o."data" "data"
+  FROM "legacy_zset" z
+ INNER JOIN o
+         ON o."_key" = z."_key"
+	AND o."type" = z."type"
+UNION ALL
+SELECT jsonb_build_object('members', to_jsonb(array_agg(s."member"))) || o."data" "data"
+  FROM "legacy_set" s
+ INNER JOIN o
+         ON o."_key" = s."_key"
+	AND o."type" = s."type"
+UNION ALL
+SELECT jsonb_build_object('array', to_jsonb(l."array")) || o."data" "data"
+  FROM "legacy_list" l
+ INNER JOIN o
+         ON o."_key" = l."_key"
+	AND o."type" = l."type"
+UNION ALL
+SELECT jsonb_build_object('data', s."data") || o."data" "data"
+  FROM "legacy_string" s
+ INNER JOIN o
+         ON o."_key" = s."_key"
+	AND o."type" = s."type"`;
+		}
+
 		await count(res.rows[0].c);
 
-		const stream = client.query(new QueryStream('SELECT "data" FROM "objects";'));
+		const stream = client.query(new QueryStream(getAllQuery));
 		const reader = new Transform({
 			transform(chunk, encoding, callback) {
 				each(chunk.data).then(callback);

@@ -6,7 +6,7 @@ async function copyDatabase(pool, input, connection) {
 	var copied = 0;
 	var skipped = 0;
 	await transaction('Copy objects', pool, async function(tx) {
-		var stream = tx.query(copyFrom('COPY "objects" FROM STDIN'));
+		var stream = tx.query(copyFrom(`COPY "objects" FROM STDIN`));
 
 		var promise = new Promise(function(resolve, reject) {
 			stream.on('error', reject);

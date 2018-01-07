@@ -18,10 +18,10 @@
   "homepage": "https://github.com/BenLubar/nodebb-postgres-converter#readme",
   "dependencies": {
     "command-line-args": "^4.0.7",
-    "command-line-usage": "^4.0.1",
-    "console-stamp": "^0.2.5",
-    "mongodb": "^2.2.31",
-    "pg": "^7.3.0",
+    "command-line-usage": "^4.0.2",
+    "console-stamp": "^0.2.6",
+    "mongodb": "^2.2.34",
+    "pg": "^7.4.1",
     "pg-copy-streams": "^1.2.0",
     "pg-query-stream": "^1.1.1",
     "redis": "^2.8.0"
