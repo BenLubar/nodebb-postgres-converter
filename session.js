@@ -21,7 +21,7 @@ async function copySessions(pool, input, connection) {
 		}
 
 		await input(connection, async function(data) {
-			var row = transformRow([data.sid, data.sess, data.expire]);
+			var row = transformRow([data.sid, data.sess, new Date(data.expire).toISOString()]);
 			await write(row);
 		});
 

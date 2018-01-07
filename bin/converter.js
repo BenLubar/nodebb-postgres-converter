@@ -20,13 +20,13 @@ const optionDefinitions = [
 	},
 	{
 		name: 'sessionType',
-		alias: 'st',
+		alias: 'T',
 		description: 'database containing sessions (mongo/redis/postgres)',
 		group: 'optional'
 	},
 	{
 		name: 'sessionInput',
-		alias: 'si',
+		alias: 'I',
 		description: 'database connection URL for the database containing sessions',
 		group: 'optional'
 	},
