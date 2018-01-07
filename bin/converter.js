@@ -19,6 +19,18 @@ const optionDefinitions = [
 		group: 'required'
 	},
 	{
+		name: 'sessionType',
+		alias: 'st',
+		description: 'database containing sessions (mongo/redis/postgres)',
+		group: 'optional'
+	},
+	{
+		name: 'sessionInput',
+		alias: 'si',
+		description: 'database connection URL for the database containing sessions',
+		group: 'optional'
+	},
+	{
 		name: 'output',
 		alias: 'o',
 		description: 'output database connection URL (PostgreSQL)',
@@ -65,7 +77,7 @@ try {
 	}
 }
 
-if (!options || !options.type || !options.input || !options.output || options.concurrency < 1 || options.concurrency !== Math.floor(options.concurrency)) {
+if (!options || !options.type || !options.input || !options.output || options.concurrency < 1 || options.concurrency !== Math.floor(options.concurrency) || (options.sessionType && !options.sessionInput) || (!options.sessionType && options.sessionInput)) {
 	console.log(options);
 	console.log(commandLineUsage(usage));
 	process.exit(1);
@@ -74,6 +86,12 @@ if (!options || !options.type || !options.input || !options.output || options.co
 
 if (!/^[a-z]+$/.test(options.type)) {
 	console.error('Invalid input database type.');
+	process.exit(1);
+	return;
+}
+
+if (options.sessionType && !/^[a-z]+$/.test(options.sessionType)) {
+	console.error('Invalid session database type.');
 	process.exit(1);
 	return;
 }
@@ -87,9 +105,18 @@ try {
 	return;
 }
 
+var sessionReader;
+try {
+	sessionReader = require('../session/' + options.sessionType + '.js');
+} catch (ex) {
+	console.error('Invalid session database type.');
+	process.exit(1);
+	return;
+}
+
 consoleStamp(console, {pattern: 'yyyy-mm-dd HH:MM:ss.l'});
 
-main(reader, options.input, options.output, options.concurrency, options.memory).catch(function(ex) {
+main(reader, options.input, options.output, options.concurrency, options.memory, sessionReader, options.sessionInput).catch(function(ex) {
 	console.error(ex.stack);
 	process.exit(2);
 });

@@ -25,7 +25,7 @@ async function query(label, conn, query) {
 	}
 }
 
-async function main(reader, input, output, concurrency, memory) {
+async function main(reader, input, output, concurrency, memory, sessionReader, sessionInput) {
 	const pool = new Pool({
 		connectionString: output,
 		max: concurrency,
@@ -38,16 +38,42 @@ async function main(reader, input, output, concurrency, memory) {
 		});
 	});
 
-	console.time('Copy');
+	await Promise.all([
+		async function() {
+			if (!sessionInput) {
+				return;
+			}
 
-	await query('Create table objects', pool, `CREATE TABLE "objects" (
+			console.time('Sessions');
+
+			await query('Create table session', pool, `CREATE TABLE IF NOT EXISTS "session" (
+	"sid" VARCHAR NOT NULL
+		COLLATE "default",
+	"sess" JSON NOT NULL,
+	"expire" TIMESTAMP(6) NOT NULL,
+	CONSTRAINT "session_pkey"
+	           PRIMARY KEY ("sid")
+	           NOT DEFERRABLE
+	           INITIALLY IMMEDIATE
+) WITH (OIDS=FALSE)`);
+
+			await require('./session.js')(pool, sessionReader, sessionInput);
+
+			console.timeEnd('Sessions');
+		}(),
+		async function() {
+			console.time('Copy');
+
+			await query('Create table objects', pool, `CREATE TABLE "objects" (
 	"data" JSONB NOT NULL
 		CHECK (("data" ? '_key'))
 )`);
 
-	await copyDatabase(pool, reader, input);
+			await copyDatabase(pool, reader, input);
 
-	console.timeEnd('Copy');
+			console.timeEnd('Copy');
+		}()
+	]);
 
 	console.time('Index');
 
@@ -258,17 +284,7 @@ SELECT (regexp_match(o."_key", '^_imported_(.*):'))[1]::LEGACY_IMPORTED_TYPE, (r
 SELECT "_key", "type"
   FROM "legacy_object"
  WHERE "expireAt" IS NULL
-    OR "expireAt" > CURRENT_TIMESTAMP`),
-		query('Create table session', pool, `CREATE TABLE IF NOT EXISTS "session" (
-	"sid" VARCHAR NOT NULL
-		COLLATE "default",
-	"sess" JSON NOT NULL,
-	"expire" TIMESTAMP(6) NOT NULL,
-	CONSTRAINT "session_pkey"
-	           PRIMARY KEY ("sid")
-	           NOT DEFERRABLE
-	           INITIALLY IMMEDIATE
-) WITH (OIDS=FALSE)`)
+    OR "expireAt" > CURRENT_TIMESTAMP`)
 	]);
 
 	console.timeEnd('Cleanup');

@@ -3,12 +3,20 @@
 const redis = require('redis');
 const { promisify } = require('util');
 
-for (var fn of ['dbsize', 'scan', 'type', 'get', 'lrange', 'smembers', 'hgetall', 'zscan']) {
+for (var fn of ['dbsize', 'scan', 'type', 'get', 'lrange', 'smembers', 'hgetall', 'zscan', 'pttl']) {
 	redis.RedisClient.prototype[fn + 'Async'] = promisify(redis.RedisClient.prototype[fn]);
 }
 
-module.exports = async function(connection, count, each) {
+module.exports = async function(connection, count, realEach) {
 	const client = redis.createClient(connection);
+
+	const each = async function(data) {
+		var ttl = parseInt(await client.pttlAsync(data._key), 10);
+		if (ttl >= 0) {
+			data.expireAt = Date.now() + ttl;
+		}
+		await realEach(data);
+	};
 
 	try {
 		await count(parseInt(await client.dbsizeAsync(), 10));
