@@ -251,6 +251,10 @@ SELECT (regexp_match(o."_key", '^_imported_(.*):'))[1]::LEGACY_IMPORTED_TYPE, (r
  USING "legacy_imported" i
  WHERE o."_key" = '_imported_' || i."type" || ':' || i."id"
    AND o."type" = 'hash'`);
+
+		await query('Delete from legacy_hash', db, `DELETE FROM "legacy_hash" h
+ USING "legacy_imported" i
+ WHERE h."_key" = '_imported_' || i."type" || ':' || i."id"`);
 	});
 
 	console.time('Constraints');
