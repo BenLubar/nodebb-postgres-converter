@@ -177,7 +177,7 @@ END
 )`);
 
 	await query('Create table legacy_string', pool, `CREATE TABLE "legacy_string" (
-	"_key" TEXT NOT NULL
+	"_key" TEXT NOT NULL,
 	"data" TEXT NOT NULL,
 	"type" LEGACY_OBJECT_TYPE NOT NULL
 		DEFAULT 'string'::LEGACY_OBJECT_TYPE
