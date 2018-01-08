@@ -1,9 +1,11 @@
-const transaction = require('./transaction.js');
 const copyFrom = require('pg-copy-streams').from;
+const transformRow = require('./transform.js').row;
 
-async function copySessions(pool, input, connection) {
-	await transaction('Copy sessions', pool, async function(tx) {
-		var stream = tx.query(copyFrom(`COPY "session" FROM STDIN`));
+async function copySessions(db, input, connection) {
+	console.time('Copy sessions');
+
+	try {
+		var stream = db.query(copyFrom(`COPY "session" FROM STDIN`));
 
 		var promise = new Promise(function(resolve, reject) {
 			stream.on('error', reject);
@@ -28,28 +30,9 @@ async function copySessions(pool, input, connection) {
 		stream.end();
 
 		await promise;
-	});
-}
-
-function transformRow(columns) {
-	return columns.map(function(col) {
-		if (col === null) {
-			return '\\N';
-		}
-
-		return String(col).replace(/[\\\n\r\t]/g, function(x) {
-			switch (x) {
-				case '\\':
-					return '\\\\';
-				case '\n':
-					return '\\n';
-				case '\r':
-					return '\\r';
-				case '\t':
-					return '\\t';
-			}
-		});
-	}).join('\t') + '\n';
+	} finally {
+		console.timeEnd('Copy sessions');
+	}
 }
 
 module.exports = copySessions;

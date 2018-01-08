@@ -29,7 +29,16 @@ async function main(reader, input, output, concurrency, memory, sessionReader, s
 	const pool = new Pool({
 		connectionString: output,
 		max: concurrency,
-		application_name: 'nodebb-postgres-converter'
+		application_name: 'nodebb-postgres-converter',
+		verify: async function (client, callback) {
+			try {
+				await client.query(`SELECT set_config('maintenance_work_mem', $1::TEXT, false)`, [memory]);
+			} catch (err) {
+				client.release(err);
+				return callback(err);
+			}
+			callback(null, client, client.release);
+		}
 	});
 
 	pool.on('connect', function(client) {
@@ -39,40 +48,32 @@ async function main(reader, input, output, concurrency, memory, sessionReader, s
 	});
 
 	await Promise.all([
-		async function() {
-			if (!sessionInput) {
-				return;
-			}
-
-			console.time('Sessions');
-
-			await query('Create table session', pool, `CREATE TABLE IF NOT EXISTS "session" (
+		!sessionInput ? Promise.resolve() : transaction('Sessions', pool, async function(db) {
+			await query('Create table session', db, `CREATE TABLE IF NOT EXISTS "session" (
 	"sid" VARCHAR NOT NULL
 		COLLATE "default",
 	"sess" JSON NOT NULL,
-	"expire" TIMESTAMP(6) NOT NULL,
-	CONSTRAINT "session_pkey"
-	           PRIMARY KEY ("sid")
-	           NOT DEFERRABLE
-	           INITIALLY IMMEDIATE
+	"expire" TIMESTAMP(6) NOT NULL
 ) WITH (OIDS=FALSE)`);
 
-			await require('./session.js')(pool, sessionReader, sessionInput);
+			await require('./session.js')(db, sessionReader, sessionInput);
 
-			console.timeEnd('Sessions');
-		}(),
-		async function() {
-			console.time('Copy');
+			await query('Add primary key to session', db, `ALTER TABLE "session"
+	ADD CONSTRAINT "session_pkey"
+	PRIMARY KEY ("sid")
+	NOT DEFERRABLE
+	INITIALLY IMMEDIATE`);
 
-			await query('Create table objects', pool, `CREATE TABLE "objects" (
+			await query('Analyze session', db, `ANALYZE VERBOSE "session"`);
+		}),
+		transaction('Copy', pool, async function(db) {
+			await query('Create table objects', db, `CREATE TABLE "objects" (
 	"data" JSONB NOT NULL
 		CHECK (("data" ? '_key'))
 )`);
 
-			await copyDatabase(pool, reader, input);
-
-			console.timeEnd('Copy');
-		}()
+			await copyDatabase(db, reader, input);
+		})
 	]);
 
 	console.time('Index');
@@ -98,12 +99,10 @@ async function main(reader, input, output, concurrency, memory, sessionReader, s
 		await query('Create type legacy_object_type', db, `CREATE TYPE LEGACY_OBJECT_TYPE AS ENUM ( 'hash', 'zset', 'set', 'list', 'string' )`);
 
 		await query('Create table legacy_object', db, `CREATE TABLE "legacy_object" (
-	"_key" TEXT NOT NULL
-		PRIMARY KEY,
+	"_key" TEXT NOT NULL,
 	"type" LEGACY_OBJECT_TYPE NOT NULL,
 	"expireAt" TIMESTAMPTZ
-		DEFAULT NULL,
-	UNIQUE ( "_key", "type" )
+		DEFAULT NULL
 )`);
 
 		await query('Insert into legacy_object (zset)', db, `INSERT INTO "legacy_object" ("_key", "type", "expireAt")
@@ -133,23 +132,23 @@ END
   FROM "objects"
  WHERE NOT ("data" ? 'score')`);
 
+		await query('Add primary key to legacy_object', db, `ALTER TABLE "legacy_object"
+	ADD PRIMARY KEY ( "_key" )`);
+
+		await query('Create unique index on key__type', db, `ALTER TABLE "legacy_object"
+	ADD UNIQUE ( "_key", "type" )`);
+
 		await query('Create index on expireAt', db, `CREATE INDEX "idx__legacy_object__expireAt" ON "legacy_object"("expireAt" ASC)`);
 
 		await query('Create temporary index on type', db, `CREATE INDEX "idx__legacy_object__type" ON "legacy_object"("type")`);
 	});
 
 	await query('Create table legacy_hash', pool, `CREATE TABLE "legacy_hash" (
-	"_key" TEXT NOT NULL
-		PRIMARY KEY,
+	"_key" TEXT NOT NULL,
 	"data" JSONB NOT NULL,
 	"type" LEGACY_OBJECT_TYPE NOT NULL
 		DEFAULT 'hash'::LEGACY_OBJECT_TYPE
-		CHECK ( "type" = 'hash' ),
-	CONSTRAINT "fk__legacy_hash__key"
-	           FOREIGN KEY ("_key", "type")
-	           REFERENCES "legacy_object"("_key", "type")
-	           ON UPDATE CASCADE
-	           ON DELETE CASCADE
+		CHECK ( "type" = 'hash' )
 )`);
 
 	await query('Create table legacy_zset', pool, `CREATE TABLE "legacy_zset" (
@@ -158,13 +157,7 @@ END
 	"score" NUMERIC NOT NULL,
 	"type" LEGACY_OBJECT_TYPE NOT NULL
 		DEFAULT 'zset'::LEGACY_OBJECT_TYPE
-		CHECK ( "type" = 'zset' ),
-	PRIMARY KEY ("_key", "value"),
-	CONSTRAINT "fk__legacy_zset__key"
-	           FOREIGN KEY ("_key", "type")
-	           REFERENCES "legacy_object"("_key", "type")
-	           ON UPDATE CASCADE
-	           ON DELETE CASCADE
+		CHECK ( "type" = 'zset' )
 )`);
 
 	await query('Create table legacy_set', pool, `CREATE TABLE "legacy_set" (
@@ -172,41 +165,23 @@ END
 	"member" TEXT NOT NULL,
 	"type" LEGACY_OBJECT_TYPE NOT NULL
 		DEFAULT 'set'::LEGACY_OBJECT_TYPE
-		CHECK ( "type" = 'set' ),
-	PRIMARY KEY ("_key", "member"),
-	CONSTRAINT "fk__legacy_set__key"
-	           FOREIGN KEY ("_key", "type")
-	           REFERENCES "legacy_object"("_key", "type")
-	           ON UPDATE CASCADE
-	           ON DELETE CASCADE
+		CHECK ( "type" = 'set' )
 )`);
 
 	await query('Create table legacy_list', pool, `CREATE TABLE "legacy_list" (
-	"_key" TEXT NOT NULL
-		PRIMARY KEY,
+	"_key" TEXT NOT NULL,
 	"array" TEXT[] NOT NULL,
 	"type" LEGACY_OBJECT_TYPE NOT NULL
 		DEFAULT 'list'::LEGACY_OBJECT_TYPE
-		CHECK ( "type" = 'list' ),
-	CONSTRAINT "fk__legacy_list__key"
-	           FOREIGN KEY ("_key", "type")
-	           REFERENCES "legacy_object"("_key", "type")
-	           ON UPDATE CASCADE
-	           ON DELETE CASCADE
+		CHECK ( "type" = 'list' )
 )`);
 
 	await query('Create table legacy_string', pool, `CREATE TABLE "legacy_string" (
 	"_key" TEXT NOT NULL
-		PRIMARY KEY,
 	"data" TEXT NOT NULL,
 	"type" LEGACY_OBJECT_TYPE NOT NULL
 		DEFAULT 'string'::LEGACY_OBJECT_TYPE
-		CHECK ( "type" = 'string' ),
-	CONSTRAINT "fk__legacy_string__key"
-	           FOREIGN KEY ("_key", "type")
-	           REFERENCES "legacy_object"("_key", "type")
-	           ON UPDATE CASCADE
-	           ON DELETE CASCADE
+		CHECK ( "type" = 'string' )
 )`);
 
 	await Promise.all([
@@ -247,9 +222,13 @@ END
  WHERE l."type" = 'string'`)
 	]);
 
-	await query('Create index on key__score', pool, `CREATE INDEX "idx__legacy_zset__key__score" ON "legacy_zset"("_key" ASC, "score" DESC)`);
-
 	console.timeEnd('Convert');
+
+	await query('Create view legacy_object_live', pool, `CREATE VIEW "legacy_object_live" AS
+SELECT "_key", "type"
+  FROM "legacy_object"
+ WHERE "expireAt" IS NULL
+    OR "expireAt" > CURRENT_TIMESTAMP`);
 
 	await transaction('Split imported data', pool, async function(db) {
 		await query('Create type legacy_imported_type', db, `CREATE TYPE LEGACY_IMPORTED_TYPE AS ENUM ( 'bookmark', 'category', 'favourite', 'group', 'message', 'post', 'room', 'topic', 'user', 'vote' )`);
@@ -257,8 +236,7 @@ END
 		await query('Create table legacy_imported', db, `CREATE TABLE "legacy_imported" (
 	"type" LEGACY_IMPORTED_TYPE NOT NULL,
 	"id" BIGINT NOT NULL,
-	"data" JSONB NOT NULL,
-	PRIMARY KEY ("type", "id")
+	"data" JSONB NOT NULL
 )`);
 
 		await query('Insert into legacy_imported', db, `INSERT INTO "legacy_imported" ("type", "id", "data")
@@ -275,35 +253,92 @@ SELECT (regexp_match(o."_key", '^_imported_(.*):'))[1]::LEGACY_IMPORTED_TYPE, (r
    AND o."type" = 'hash'`);
 	});
 
+	console.time('Constraints');
+
+	await Promise.all([
+		async function() {
+			await query('Add primary key to legacy_hash', pool, `ALTER TABLE "legacy_hash"
+	ADD PRIMARY KEY ("_key")`);
+
+			await query('Add foreign key to legacy_hash', pool, `ALTER TABLE "legacy_hash"
+	ADD CONSTRAINT "fk__legacy_hash__key"
+	FOREIGN KEY ("_key", "type")
+	REFERENCES "legacy_object"("_key", "type")
+	ON UPDATE CASCADE
+	ON DELETE CASCADE`);
+		}(),
+		async function() {
+			await query('Add primary key to legacy_zset', pool, `ALTER TABLE "legacy_zset"
+	ADD PRIMARY KEY ("_key", "value")`);
+
+			await query('Add foreign key to legacy_zset', pool, `ALTER TABLE "legacy_zset"
+	ADD CONSTRAINT "fk__legacy_zset__key"
+	FOREIGN KEY ("_key", "type")
+	REFERENCES "legacy_object"("_key", "type")
+	ON UPDATE CASCADE
+	ON DELETE CASCADE`);
+
+			await query('Create index on key__score', pool, `CREATE INDEX "idx__legacy_zset__key__score" ON "legacy_zset"("_key" ASC, "score" DESC)`);
+		}(),
+		async function() {
+			await query('Add primary key to legacy_set', pool, `ALTER TABLE "legacy_set"
+	ADD PRIMARY KEY ("_key", "member")`);
+
+			await query('Add foreign key to legacy_set', pool, `ALTER TABLE "legacy_set"
+	ADD CONSTRAINT "fk__legacy_set__key"
+	FOREIGN KEY ("_key", "type")
+	REFERENCES "legacy_object"("_key", "type")
+	ON UPDATE CASCADE
+	ON DELETE CASCADE`);
+		}(),
+		async function() {
+			await query('Add primary key to legacy_list', pool, `ALTER TABLE "legacy_list"
+	ADD PRIMARY KEY ("_key")`);
+
+			await query('Add foreign key to legacy_list', pool, `ALTER TABLE "legacy_list"
+	ADD CONSTRAINT "fk__legacy_list__key"
+	FOREIGN KEY ("_key", "type")
+	REFERENCES "legacy_object"("_key", "type")
+	ON UPDATE CASCADE
+	ON DELETE CASCADE`);
+		}(),
+		async function() {
+			await query('Add primary key to legacy_string', pool, `ALTER TABLE "legacy_string"
+	ADD PRIMARY KEY ("_key")`);
+
+			await query('Add foreign key to legacy_string', pool, `ALTER TABLE "legacy_string"
+	ADD CONSTRAINT "fk__legacy_string__key"
+	FOREIGN KEY ("_key", "type")
+	REFERENCES "legacy_object"("_key", "type")
+	ON UPDATE CASCADE
+	ON DELETE CASCADE`);
+		}(),
+		async function() {
+			await query('Add primary key to legacy_imported', pool, `ALTER TABLE "legacy_imported"
+	ADD PRIMARY KEY ("type", "id")`);
+		}()
+	]);
+
+	console.timeEnd('Constraints');
+
 	console.time('Cleanup');
 
 	await Promise.all([
 		query('Drop table objects', pool, `DROP TABLE "objects" CASCADE`),
-		query('Drop temporary index on legacy_objects', pool, `DROP INDEX "idx__legacy_object__type"`),
-		query('Create view legacy_object_live', pool, `CREATE VIEW "legacy_object_live" AS
-SELECT "_key", "type"
-  FROM "legacy_object"
- WHERE "expireAt" IS NULL
-    OR "expireAt" > CURRENT_TIMESTAMP`)
+		query('Drop temporary index on legacy_objects', pool, `DROP INDEX "idx__legacy_object__type"`)
 	]);
 
 	console.timeEnd('Cleanup');
 
-	var db = await pool.connect();
-
-	try {
-		await query('Alter tables cluster on', db, `ALTER TABLE "legacy_object" CLUSTER ON "legacy_object_pkey";
+	await query('Alter tables cluster on', pool, `ALTER TABLE "legacy_object" CLUSTER ON "legacy_object_pkey";
 ALTER TABLE "legacy_hash" CLUSTER ON "legacy_hash_pkey";
 ALTER TABLE "legacy_zset" CLUSTER ON "legacy_zset_pkey";
 ALTER TABLE "legacy_set" CLUSTER ON "legacy_set_pkey";
 ALTER TABLE "legacy_list" CLUSTER ON "legacy_list_pkey";
 ALTER TABLE "legacy_string" CLUSTER ON "legacy_string_pkey";
 ALTER TABLE "legacy_imported" CLUSTER ON "legacy_imported_pkey"`);
-		await db.query(`SELECT set_config('maintenance_work_mem', $1::TEXT, false)`, [memory]);
-		await query('Cluster all tables', db, `CLUSTER VERBOSE`);
-	} finally {
-		db.release();
-	}
+
+	await query('Cluster all tables', pool, `CLUSTER VERBOSE`);
 
 	console.time('Analyze');
 

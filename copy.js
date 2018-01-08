@@ -1,12 +1,15 @@
-const transaction = require('./transaction.js');
 const copyFrom = require('pg-copy-streams').from;
+const transformRow = require('./transform.js').row;
 
-async function copyDatabase(pool, input, connection) {
+async function copyDatabase(db, input, connection) {
 	var total = 0;
 	var copied = 0;
 	var skipped = 0;
-	await transaction('Copy objects', pool, async function(tx) {
-		var stream = tx.query(copyFrom(`COPY "objects" FROM STDIN`));
+
+	console.time('Copy objects');
+
+	try {
+		var stream = db.query(copyFrom(`COPY "objects" FROM STDIN`));
 
 		var promise = new Promise(function(resolve, reject) {
 			stream.on('error', reject);
@@ -52,7 +55,9 @@ async function copyDatabase(pool, input, connection) {
 		}
 
 		await promise;
-	});
+	} finally {
+		console.timeEnd('Copy objects');
+	}
 }
 
 function transformData(obj) {
@@ -110,39 +115,6 @@ function transformValue(obj) {
 	}
 
 	return obj;
-}
-
-function transformArray(array) {
-	if (array.length === 0) {
-		return '{}';
-	}
-
-	return '{"' + array.map(function(v) {
-		return String(v).replace(/[\\"]/g, function(x) {
-			return '\\' + x;
-		});
-	}).join('","') + '"}';
-}
-
-function transformRow(columns) {
-	return columns.map(function(col) {
-		if (col === null) {
-			return '\\N';
-		}
-
-		return String(col).replace(/[\\\n\r\t]/g, function(x) {
-			switch (x) {
-				case '\\':
-					return '\\\\';
-				case '\n':
-					return '\\n';
-				case '\r':
-					return '\\r';
-				case '\t':
-					return '\\t';
-			}
-		});
-	}).join('\t') + '\n';
 }
 
 module.exports = copyDatabase;
