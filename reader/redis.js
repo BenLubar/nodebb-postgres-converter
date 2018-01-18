@@ -98,7 +98,7 @@ async function eachSorted(client, key, each) {
 		for (var i = 0; i < result[1].length; i += 2) {
 			await each({
 				_key: key,
-				value: result[1][0],
+				value: result[1][i],
 				score: parseFloat(result[1][i + 1])
 			});
 		}
