@@ -69,7 +69,11 @@ SELECT i."data" || jsonb_build_object('_key', '_imported_' || i."type" || ':' ||
 		const reader = new Transform({
 			objectMode: true,
 			transform(chunk, encoding, callback) {
-				each(chunk.data).then(callback);
+				each(chunk.data).then(function () {
+					callback();
+				}).catch(function (err) {
+					callback(err);
+				});
 			}
 		});
 
