@@ -63,7 +63,7 @@ SELECT i."data" || jsonb_build_object('_key', '_imported_' || i."type" || ':' ||
 			}
 		}
 
-		await count(res.rows[0].c);
+		await count(parseInt(res.rows[0].c, 10));
 
 		const cursor = client.query(new Cursor(getAllQuery));
 		cursor.readAsync = promisify(cursor.read);
