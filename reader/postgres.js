@@ -1,8 +1,8 @@
 'use strict';
 
 const { Client } = require('pg');
-const QueryStream = require('pg-query-stream');
-const { Transform } = require('stream');
+const Cursor = require('pg-cursor');
+const { promisify } = require('util');
 
 module.exports = async function(connection, count, each) {
 	const client = new Client({
@@ -65,27 +65,16 @@ SELECT i."data" || jsonb_build_object('_key', '_imported_' || i."type" || ':' ||
 
 		await count(res.rows[0].c);
 
-		const stream = client.query(new QueryStream(getAllQuery));
-		const reader = new Transform({
-			objectMode: true,
-			transform(chunk, encoding, callback) {
-				each(chunk.data).then(function () {
-					callback();
-				}).catch(function (err) {
-					callback(err);
-				});
+		const cursor = client.query(new Cursor(getAllQuery));
+		cursor.readAsync = promisify(cursor.read);
+
+		var queue = await cursor.readAsync(1000);
+		while (queue.length) {
+			var next = cursor.readAsync(1000);
+			for (var row of queue) {
+				await each(row);
 			}
-		});
-
-		stream.pipe(reader);
-
-		try {
-			await new Promise(function(resolve, reject) {
-				reader.on('end', resolve);
-				reader.on('error', reject);
-			});
-		} finally {
-			stream.close();
+			queue = await next;
 		}
 	} finally {
 		await client.end();
