@@ -3,7 +3,7 @@
 const redis = require('redis');
 const { promisify } = require('util');
 
-for (var fn of ['dbsize', 'scan', 'type', 'get', 'lrange', 'smembers', 'hgetall', 'zscan', 'pttl']) {
+for (var fn of ['dbsize', 'scan', 'type', 'get', 'lrange', 'smembers', 'hgetall', 'zscan', 'pttl', 'zcard']) {
 	redis.RedisClient.prototype[fn + 'Async'] = promisify(redis.RedisClient.prototype[fn]);
 }
 
@@ -19,9 +19,29 @@ module.exports = async function(connection, count, realEach) {
 	};
 
 	try {
-		await count(parseInt(await client.dbsizeAsync(), 10));
+		var totalKeys = 0;
 
 		var cursor = '0';
+		do {
+			var result = await client.scanAsync(cursor, 'COUNT', '1000');
+			cursor = result[0];
+
+			totalKeys += result[1].length;
+
+			for (var key of result[1]) {
+				var type = await client.typeAsync(key);
+
+				if (type === 'string' && key.startsWith('sess:')) {
+					totalKeys--;
+				} else if (type === 'zset') {
+					totalKeys += await client.zcardAsync(key) - 1;
+				}
+			}
+		} while (cursor !== '0');
+
+		await count(totalKeys);
+
+		cursor = '0';
 		do {
 			var result = await client.scanAsync(cursor, 'COUNT', '1000');
 			cursor = result[0];
@@ -30,6 +50,10 @@ module.exports = async function(connection, count, realEach) {
 				var type = await client.typeAsync(key);
 				switch (type) {
 					case 'string':
+						if (key.startsWith('sess:')) {
+							continue;
+						}
+
 						await each({
 							_key: key,
 							value: await client.getAsync(key)

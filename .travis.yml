@@ -1,0 +1,52 @@
+language: node_js
+sudo: false
+dist: trusty
+node_js:
+  - lts/*
+cache:
+  directories:
+    - node_modules
+before_install:
+  - git clone --depth=1 -b postgres-no-sql https://github.com/BenLubar/NodeBB.git nodebb
+  - cp nodebb/install/package.json nodebb/package.json
+  - cd nodebb && npm install --production
+  - sh -c "if [ '$IN' = 'postgres' ]; then psql -c 'create database input;' -U postgres; fi"
+  - sh -c "if [ '$OUT' = 'postgres' ]; then psql -c 'create database output;' -U postgres; fi"
+  - cd nodebb && ./nodebb setup '{"url":"http://127.0.0.1:4567","secret":"abcdef","database":"'"$IN"'","mongo:host":"127.0.0.1","mongo:port":27017,"mongo:username":"","mongo:password":"","mongo:database":"input","redis:host":"127.0.0.1","redis:port":6379,"redis:password":"","redis:database":0,"postgres:host":"127.0.0.1","postgres:port":5432,"postgres:username":"postgres","postgres:database":"input","admin:username":"admin","admin:email":"test@example.org","admin:password":"abcdef","admin:password:confirm":"abcdef"}' && ./nodebb start
+script:
+  - nodejs bin/converter.js --type $IN --outputType $OUT --input $IN_CONN --output $OUT_CONN --sessionType $IN --sessionInput $IN_CONN
+matrix:
+  include:
+    - env: IN=redis OUT=redis IN_CONN="redis://127.0.0.1:6379/0" OUT_CONN="redis://127.0.0.1:6397/1"
+      services:
+        - redis-server
+    - env: IN=mongo OUT=mongo IN_CONN="mongodb://127.0.0.1:27017/input" OUT_CONN="mongodb://127.0.0.1:27017/output"
+      services:
+        - mongodb
+    - env: IN=postgres OUT=postgres IN_CONN="postgresql://127.0.0.1:5432/input" OUT_CONN="postgresql://127.0.0.1:5432/output"
+      services:
+        - postgresql
+    - env: IN=redis OUT=mongo IN_CONN="redis://127.0.0.1:6379/0" OUT_CONN="mongodb://127.0.0.1:27017/output"
+      services:
+        - redis-server
+        - mongodb
+    - env: IN=redis OUT=postgres IN_CONN="redis://127.0.0.1:6379/0" OUT_CONN="postgresql://127.0.0.1:5432/output"
+      services:
+        - redis-server
+        - postgresql
+    - env: IN=mongo OUT=redis IN_CONN="mongodb://127.0.0.1:27017/input" OUT_CONN="redis://127.0.0.1:6397/1"
+      services:
+        - mongodb
+        - redis-server
+    - env: IN=mongo OUT=postgres IN_CONN="mongodb://127.0.0.1:27017/input" OUT_CONN="postgresql://127.0.0.1:5432/output"
+      services:
+        - mongodb
+        - postgresql
+    - env: IN=postgres OUT=redis IN_CONN="postgresql://127.0.0.1:5432/input" OUT_CONN="redis://127.0.0.1:6397/1"
+      services:
+        - postgresql
+        - redis-server
+    - env: IN=postgres OUT=mongo IN_CONN="postgresql://127.0.0.1:5432/input" OUT_CONN="mongodb://127.0.0.1:27017/output"
+      services:
+        - postgresql
+        - mongodb

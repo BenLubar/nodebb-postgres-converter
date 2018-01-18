@@ -1,3 +1,5 @@
+'use strict';
+
 const copyFrom = require('pg-copy-streams').from;
 const transformRow = require('./transform.js').row;
 

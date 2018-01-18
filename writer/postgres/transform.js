@@ -1,3 +1,5 @@
+'use strict';
+
 module.exports.row = function transformRow(columns) {
 	return columns.map(function(col) {
 		if (col === null) {

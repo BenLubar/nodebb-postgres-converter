@@ -1,5 +1,7 @@
 #! /usr/bin/env node
 
+'use strict';
+
 const commandLineArgs = require('command-line-args');
 const commandLineUsage = require('command-line-usage');
 const consoleStamp = require('console-stamp');
@@ -31,9 +33,16 @@ const optionDefinitions = [
 		group: 'optional'
 	},
 	{
+		name: 'outputType',
+		alias: 'O',
+		description: 'output database type (mongo/redis/postgres) (default: postgres)',
+		defaultValue: 'postgres',
+		group: 'optional'
+	},
+	{
 		name: 'output',
 		alias: 'o',
-		description: 'output database connection URL (PostgreSQL)',
+		description: 'output database connection URL',
 		group: 'required'
 	},
 	{
@@ -78,7 +87,6 @@ try {
 }
 
 if (!options || !options.type || !options.input || !options.output || options.concurrency < 1 || options.concurrency !== Math.floor(options.concurrency) || (options.sessionType && !options.sessionInput) || (!options.sessionType && options.sessionInput)) {
-	console.log(options);
 	console.log(commandLineUsage(usage));
 	process.exit(1);
 	return;
@@ -92,6 +100,12 @@ if (!/^[a-z]+$/.test(options.type)) {
 
 if (options.sessionType && !/^[a-z]+$/.test(options.sessionType)) {
 	console.error('Invalid session database type.');
+	process.exit(1);
+	return;
+}
+
+if (!/^[a-z]+$/.test(options.outputType)) {
+	console.error('Invalid output database type.');
 	process.exit(1);
 	return;
 }
@@ -114,9 +128,18 @@ try {
 	return;
 }
 
+var writer;
+try {
+	writer = require('../writer/' + options.outputType + '.js');
+} catch (ex) {
+	console.error('Invalid output database type.');
+	process.exit(1);
+	return;
+}
+
 consoleStamp(console, {pattern: 'yyyy-mm-dd HH:MM:ss.l'});
 
-main(reader, options.input, options.output, options.concurrency, options.memory, sessionReader, options.sessionInput).catch(function(ex) {
+main(reader, options.input, writer, options.output, options.concurrency, options.memory, sessionReader, options.sessionInput).catch(function(ex) {
 	console.error(ex.stack);
 	process.exit(2);
 });

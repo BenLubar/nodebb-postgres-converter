@@ -1,3 +1,5 @@
+'use strict';
+
 async function transaction(label, pool, callback) {
 	const client = await pool.connect();
 	console.time(label);
