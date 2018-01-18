@@ -7,7 +7,7 @@ function waitInsert(client) {
 		if (!client.should_buffer) {
 			return resolve();
 		}
-		client.once('drain', resolve);
+		client.stream.once('drain', resolve);
 	});
 }
 
