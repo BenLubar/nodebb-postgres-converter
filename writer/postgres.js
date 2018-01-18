@@ -243,7 +243,7 @@ SELECT "_key", "type"
 )`);
 
 		await query('Insert into legacy_imported', db, `INSERT INTO "legacy_imported" ("type", "id", "data")
-SELECT (regexp_match(o."_key", '^_imported_(.*):'))[1]::LEGACY_IMPORTED_TYPE, (regexp_match(o."_key", ':(.*)$'))[1]::BIGINT, h."data"
+SELECT (regexp_matches(o."_key", '^_imported_(.*):'))[1]::LEGACY_IMPORTED_TYPE, (regexp_matches(o."_key", ':(.*)$'))[1]::BIGINT, h."data"
   FROM "legacy_object_live" o
  INNER JOIN "legacy_hash" h
          ON o."_key" = h."_key"
