@@ -12,11 +12,11 @@ async function copyDatabase(reader, input, output) {
 	try {
 		console.log('Counting objects...');
 
-		await reader(input, async function(count) {
-			total = count;
-			console.log('Attempting to copy ' + total + ' objects...');
-		}, async function(data) {
-			await output(async function (write) {
+		await output(async function (write) {
+			await reader(input, async function(count) {
+				total = count;
+				console.log('Attempting to copy ' + total + ' objects...');
+			}, async function(data) {
 				var values = cleanData(data);
 				if (values) {
 					await write(values);
