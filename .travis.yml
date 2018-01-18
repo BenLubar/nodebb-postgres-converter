@@ -20,7 +20,7 @@ script:
   - node bin/converter.js --type $IN --outputType $OUT --input $IN_CONN --output $OUT_CONN --sessionType $IN --sessionInput $IN_CONN
 matrix:
   include:
-    - env: IN=redis OUT=redis IN_CONN="redis://127.0.0.1:6379/0" OUT_CONN="redis://127.0.0.1:6397/1"
+    - env: IN=redis OUT=redis IN_CONN="redis://127.0.0.1:6379/0" OUT_CONN="redis://127.0.0.1:6379/1"
       services:
         - redis-server
     - env: IN=mongo OUT=mongo IN_CONN="mongodb://127.0.0.1:27017/input" OUT_CONN="mongodb://127.0.0.1:27017/output"
@@ -37,7 +37,7 @@ matrix:
       services:
         - redis-server
         - postgresql
-    - env: IN=mongo OUT=redis IN_CONN="mongodb://127.0.0.1:27017/input" OUT_CONN="redis://127.0.0.1:6397/1"
+    - env: IN=mongo OUT=redis IN_CONN="mongodb://127.0.0.1:27017/input" OUT_CONN="redis://127.0.0.1:6379/1"
       services:
         - mongodb
         - redis-server
@@ -45,7 +45,7 @@ matrix:
       services:
         - mongodb
         - postgresql
-    - env: IN=postgres OUT=redis IN_CONN="postgresql://127.0.0.1:5432/input" OUT_CONN="redis://127.0.0.1:6397/1"
+    - env: IN=postgres OUT=redis IN_CONN="postgresql://127.0.0.1:5432/input" OUT_CONN="redis://127.0.0.1:6379/1"
       services:
         - postgresql
         - redis-server
