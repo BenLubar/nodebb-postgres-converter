@@ -51,21 +51,25 @@ async function bulkInsert(client, each) {
 async function writer(output, concurrency, memory, callback) {
 	const client = redis.createClient(output);
 
-	await callback(async function (each) {
-		await bulkInsert(client, each);
-	}, async function (reader, input) {
-		await reader(input, async function (each) {
-			await bulkInsert(client, async function (insert) {
-				await each(async function (session) {
-					await insert({
-						_key: 'sess:' + session.sid,
-						data: session.sess,
-						expireAt: session.expire,
+	try {
+		await callback(async function (each) {
+			await bulkInsert(client, each);
+		}, async function (reader, input) {
+			await reader(input, async function (each) {
+				await bulkInsert(client, async function (insert) {
+					await each(async function (session) {
+						await insert({
+							_key: 'sess:' + session.sid,
+							data: session.sess,
+							expireAt: session.expire,
+						});
 					});
 				});
 			});
 		});
-	});
+	} finally {
+		client.quit();
+	}
 }
 
 module.exports = writer;
