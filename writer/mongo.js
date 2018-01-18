@@ -10,6 +10,10 @@ async function bulkInsert(collection, each) {
 			op = collection.initializeUnorderedBulkOp();
 		}
 
+		if (doc.hasOwnProperty('expireAt')) {
+			doc.expireAt = new Date(doc.expireAt);
+		}
+
 		op.insert(doc);
 
 		if (op.length >= 10000) {
@@ -46,6 +50,18 @@ async function writer(output, concurrency, memory, callback) {
 
 			await sessions.createIndex({expires: 1}, {expireAfterSeconds: 0});
 		});
+
+		await objects.createIndex({ _key: 1, score: -1 }, { background: true });
+		await objects.createIndex({ _key: 1, value: -1 }, { background: true, unique: true, sparse: true });
+		await objects.createIndex({ expireAt: 1 }, { expireAfterSeconds: 0, background: true });
+	], function (err) {
+		if (err) {
+			winston.error('Error creating index', err);
+			return callback(err);
+		}
+		winston.info('[database] Checking database indices done!');
+		callback();
+	});
 	} finally {
 		await db.close();
 	}
