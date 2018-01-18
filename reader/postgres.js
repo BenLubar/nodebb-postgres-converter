@@ -39,6 +39,7 @@ SELECT jsonb_build_object('members', to_jsonb(array_agg(s."member"))) || o."data
  INNER JOIN o
          ON o."_key" = s."_key"
 	AND o."type" = s."type"
+ GROUP BY o."data"
 UNION ALL
 SELECT jsonb_build_object('array', to_jsonb(l."array")) || o."data" "data"
   FROM "legacy_list" l
