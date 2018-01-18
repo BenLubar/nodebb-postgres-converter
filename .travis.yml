@@ -6,6 +6,8 @@ node_js:
 cache:
   directories:
     - node_modules
+addons:
+  postgresql: 9.5
 before_install:
   - sh -c "if [ '$IN' = 'postgres' ]; then psql -c 'create database input;' -U postgres; fi"
   - sh -c "if [ '$OUT' = 'postgres' ]; then psql -c 'create database output;' -U postgres; fi"
