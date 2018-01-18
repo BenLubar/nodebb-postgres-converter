@@ -11,8 +11,7 @@ module.exports = async function(connection, each) {
 	await client.connect();
 
 	try {
-		const stream = client.query(new Cursor(`SELECT "sid", "sess"::TEXT "sess", EXTRACT(EPOCH FROM "expire") * 1000 "expire" FROM "session"`));
-
+		const cursor = client.query(new Cursor(`SELECT "sid", "sess"::TEXT "sess", EXTRACT(EPOCH FROM "expire") * 1000 "expire" FROM "session"`));
 		cursor.readAsync = promisify(cursor.read);
 
 		var queue = await cursor.readAsync(1000);
