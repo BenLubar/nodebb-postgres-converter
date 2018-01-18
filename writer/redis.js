@@ -4,7 +4,7 @@ const redis = require('redis');
 
 function waitInsert(client) {
 	return new Promise(function (resolve) {
-		if (client.should_buffer) {
+		if (!client.should_buffer) {
 			return resolve();
 		}
 		client.once('drain', resolve);
