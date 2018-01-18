@@ -7,12 +7,13 @@ cache:
   directories:
     - node_modules
 before_install:
-  - git clone --depth=1 -b postgres-no-sql https://github.com/BenLubar/NodeBB.git nodebb
-  - cp nodebb/install/package.json nodebb/package.json
-  - cd nodebb && npm install --production
   - sh -c "if [ '$IN' = 'postgres' ]; then psql -c 'create database input;' -U postgres; fi"
   - sh -c "if [ '$OUT' = 'postgres' ]; then psql -c 'create database output;' -U postgres; fi"
-  - cd nodebb && ./nodebb setup '{"url":"http://127.0.0.1:4567","secret":"abcdef","database":"'"$IN"'","mongo:host":"127.0.0.1","mongo:port":27017,"mongo:username":"","mongo:password":"","mongo:database":"input","redis:host":"127.0.0.1","redis:port":6379,"redis:password":"","redis:database":0,"postgres:host":"127.0.0.1","postgres:port":5432,"postgres:username":"postgres","postgres:database":"input","admin:username":"admin","admin:email":"test@example.org","admin:password":"abcdef","admin:password:confirm":"abcdef"}' && ./nodebb start
+  - git clone --depth=1 -b postgres-no-sql https://github.com/BenLubar/NodeBB.git nodebb
+  - (cd nodebb && cp install/package.json package.json)
+  - (cd nodebb && npm install --production)
+  - (cd nodebb && ./nodebb setup '{"url":"http://127.0.0.1:4567","secret":"abcdef","database":"'"$IN"'","mongo:host":"127.0.0.1","mongo:port":27017,"mongo:username":"","mongo:password":"","mongo:database":"input","redis:host":"127.0.0.1","redis:port":6379,"redis:password":"","redis:database":0,"postgres:host":"127.0.0.1","postgres:port":5432,"postgres:username":"postgres","postgres:database":"input","admin:username":"admin","admin:email":"test@example.org","admin:password":"abcdef","admin:password:confirm":"abcdef"}')
+  - (cd nodebb && ./nodebb start)
 script:
   - nodejs bin/converter.js --type $IN --outputType $OUT --input $IN_CONN --output $OUT_CONN --sessionType $IN --sessionInput $IN_CONN
 matrix:
