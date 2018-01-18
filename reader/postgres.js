@@ -67,6 +67,7 @@ SELECT i."data" || jsonb_build_object('_key', '_imported_' || i."type" || ':' ||
 
 		const stream = client.query(new QueryStream(getAllQuery));
 		const reader = new Transform({
+			objectMode: true,
 			transform(chunk, encoding, callback) {
 				each(chunk.data).then(callback);
 			}
