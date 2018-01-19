@@ -86,13 +86,13 @@ try {
 	}
 }
 
-if (!options || !options.type || !options.input || !options.output || options.concurrency < 1 || options.concurrency !== Math.floor(options.concurrency) || (options.sessionType && !options.sessionInput) || (!options.sessionType && options.sessionInput)) {
+if (!options || (options.type && !options.input) || (!options.type && options.input) || !options.output || options.concurrency < 1 || options.concurrency !== Math.floor(options.concurrency) || (options.sessionType && !options.sessionInput) || (!options.sessionType && options.sessionInput) || (!options.type && !options.sessionType)) {
 	console.log(commandLineUsage(usage));
 	process.exit(1);
 	return;
 }
 
-if (!/^[a-z]+$/.test(options.type)) {
+if (options.type && !/^[a-z]+$/.test(options.type)) {
 	console.error('Invalid input database type.');
 	process.exit(1);
 	return;
@@ -112,7 +112,7 @@ if (!/^[a-z]+$/.test(options.outputType)) {
 
 var reader;
 try {
-	reader = require('../reader/' + options.type + '.js');
+	reader = options.type ? require('../reader/' + options.type + '.js') : null;
 } catch (ex) {
 	console.error('Invalid input database type.');
 	process.exit(1);
@@ -121,7 +121,7 @@ try {
 
 var sessionReader;
 try {
-	sessionReader = require('../session/' + options.sessionType + '.js');
+	sessionReader = options.sessionType require('../session/' + options.sessionType + '.js') : null;
 } catch (ex) {
 	console.error('Invalid session database type.');
 	process.exit(1);

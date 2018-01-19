@@ -44,7 +44,7 @@ async function copyDatabase(reader, input, output) {
 
 async function main(reader, input, writer, output, concurrency, memory, sessionReader, sessionInput) {
 	await writer(output, concurrency, memory, async function (copyData, copySessions) {
-		var data = copyDatabase(reader, input, copyData);
+		var data = input ? copyDatabase(reader, input, copyData) : Promise.resolve();
 		var sessions = sessionInput ? copySessions(sessionReader, sessionInput) : Promise.resolve();
 		await Promise.all([data, sessions]);
 	});

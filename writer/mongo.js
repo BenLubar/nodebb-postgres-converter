@@ -31,10 +31,14 @@ async function writer(output, concurrency, memory, callback) {
 	const db = await MongoClient.connect(output);
 
 	try {
-		const objects = await db.collection('objects');
-
 		await callback(async function (each) {
+			const objects = await db.collection('objects');
+
 			await bulkInsert(objects, each);
+
+			await objects.createIndex({ _key: 1, score: -1 }, { background: true });
+			await objects.createIndex({ _key: 1, value: -1 }, { background: true, unique: true, sparse: true });
+			await objects.createIndex({ expireAt: 1 }, { expireAfterSeconds: 0, background: true });
 		}, async function (reader, input) {
 			const sessions = await db.collection('sessions');
 
@@ -50,10 +54,6 @@ async function writer(output, concurrency, memory, callback) {
 
 			await sessions.createIndex({ expires: 1 }, { expireAfterSeconds: 0 });
 		});
-
-		await objects.createIndex({ _key: 1, score: -1 }, { background: true });
-		await objects.createIndex({ _key: 1, value: -1 }, { background: true, unique: true, sparse: true });
-		await objects.createIndex({ expireAt: 1 }, { expireAfterSeconds: 0, background: true });
 	} finally {
 		await db.close();
 	}
