@@ -50,7 +50,7 @@ async function writer(output, concurrency, memory, callback) {
 	});
 
 	try {
-		await callback(asybc function (each) {
+		await callback(async function (each) {
 			await transaction('Copy', pool, async function(db) {
 				await query('Create table objects', db, `CREATE TABLE "objects" (
 	"data" JSONB NOT NULL
