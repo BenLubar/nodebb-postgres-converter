@@ -12,38 +12,38 @@ const optionDefinitions = [
 		name: 'type',
 		alias: 't',
 		description: 'input database type (mongo/redis/postgres)',
-		group: 'required'
+		group: 'input'
 	},
 	{
 		name: 'input',
 		alias: 'i',
 		description: 'input database connection URL',
-		group: 'required'
+		group: 'input'
 	},
 	{
 		name: 'sessionType',
 		alias: 'T',
 		description: 'database containing sessions (mongo/redis/postgres)',
-		group: 'optional'
+		group: 'input'
 	},
 	{
 		name: 'sessionInput',
 		alias: 'I',
 		description: 'database connection URL for the database containing sessions',
-		group: 'optional'
+		group: 'input'
 	},
 	{
 		name: 'outputType',
 		alias: 'O',
 		description: 'output database type (mongo/redis/postgres) (default: postgres)',
 		defaultValue: 'postgres',
-		group: 'optional'
+		group: 'output'
 	},
 	{
 		name: 'output',
 		alias: 'o',
 		description: 'output database connection URL',
-		group: 'required'
+		group: 'output'
 	},
 	{
 		name: 'concurrency',
@@ -64,9 +64,14 @@ const optionDefinitions = [
 
 const usage = [
 	{
-		header: 'Required Parameters',
+		header: 'Source Database',
 		optionList: optionDefinitions,
-		group: ['required']
+		group: ['input']
+	},
+	{
+		header: 'Destination Database',
+		optionList: optionDefinitions,
+		group: ['output']
 	},
 	{
 		header: 'Additional Parameters',
