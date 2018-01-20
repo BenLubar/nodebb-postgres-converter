@@ -16,8 +16,8 @@ Instructions
 ============
 
 Download nodebb-postgres-converter, either by cloning this repository and
-running `npm install` or by running `npm install -g nodebb-postgres-converter`
-to install globally.
+running `npm install` or by installing globally with the command
+`npm install -g @ben_lubar/nodebb-postgres-converter`
 
 Make a backup of your NodeBB database and decide whether you'd prefer downtime
 or the loss of data more recent than your backup. In the future, there will be
