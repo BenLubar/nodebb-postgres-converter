@@ -121,7 +121,7 @@ try {
 
 var sessionReader;
 try {
-	sessionReader = options.sessionType require('../session/' + options.sessionType + '.js') : null;
+	sessionReader = options.sessionType ? require('../session/' + options.sessionType + '.js') : null;
 } catch (ex) {
 	console.error('Invalid session database type.');
 	process.exit(1);
