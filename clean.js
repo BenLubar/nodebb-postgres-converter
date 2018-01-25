@@ -13,6 +13,15 @@ module.exports.data = function (obj) {
 		return null;
 	}
 
+	// remove importer cache on live objects
+	if (!key.startsWith('_imported')) {
+		for (var k of Object.keys(obj)) {
+			if (k.startsWith('_imported')) {
+				delete obj[k];
+			}
+		}
+	}
+
 	return module.exports.value(obj);
 }
 
