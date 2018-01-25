@@ -7,12 +7,12 @@ async function copyDatabase(reader, input, output) {
 	var copied = 0;
 	var skipped = 0;
 
-	console.time('Copy objects');
+	await output(async function (write) {
+		console.time('Copy objects');
 
-	try {
-		console.log('Counting objects...');
+		try {
+			console.log('Counting objects...');
 
-		await output(async function (write) {
 			await reader(input, async function(count) {
 				total = count;
 				console.log('Attempting to copy ' + total + ' objects...');
@@ -28,18 +28,18 @@ async function copyDatabase(reader, input, output) {
 					console.log(('  ' + Math.floor(100 * (copied + skipped) / total)).substr(-3) + '% - ' + copied + ' objects copied (' + skipped + ' skipped)');
 				}
 			});
-		});
 
-		if ((copied + skipped) % 100000 !== 0) {
-			console.log('100% - ' + copied + ' objects copied (' + skipped + ' skipped)');
-		}
+			if ((copied + skipped) % 100000 !== 0) {
+				console.log('100% - ' + copied + ' objects copied (' + skipped + ' skipped)');
+			}
 
-		if (copied + skipped !== total) {
-			console.warn('There were ' + (copied + skipped) + ' objects, but ' + total + ' were expected.');
+			if (copied + skipped !== total) {
+				console.warn('There were ' + (copied + skipped) + ' objects, but ' + total + ' were expected.');
+			}
+		} finally {
+			console.timeEnd('Copy objects');
 		}
-	} finally {
-		console.timeEnd('Copy objects');
-	}
+	});
 }
 
 async function main(reader, input, writer, output, concurrency, memory, sessionReader, sessionInput) {
