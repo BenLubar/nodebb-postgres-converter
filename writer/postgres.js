@@ -169,9 +169,9 @@ END
 		CHECK ( "type" = 'string' )
 )`);
 
-			await query('Create type legacy_imported_type', db, `CREATE TYPE LEGACY_IMPORTED_TYPE AS ENUM ( 'bookmark', 'category', 'favourite', 'group', 'message', 'post', 'room', 'topic', 'user', 'vote' )`);
+			await query('Create type legacy_imported_type', pool, `CREATE TYPE LEGACY_IMPORTED_TYPE AS ENUM ( 'bookmark', 'category', 'favourite', 'group', 'message', 'post', 'room', 'topic', 'user', 'vote' )`);
 
-			await query('Create table legacy_imported', db, `CREATE TABLE "legacy_imported" (
+			await query('Create table legacy_imported', pool, `CREATE TABLE "legacy_imported" (
 	"type" LEGACY_IMPORTED_TYPE NOT NULL,
 	"id" BIGINT NOT NULL,
 	"data" JSONB NOT NULL
@@ -213,7 +213,7 @@ END
  INNER JOIN "objects" o
          ON l."_key" = o."data"->>'_key'
  WHERE l."type" = 'string'`),
-				query('Insert into legacy_imported', db, `INSERT INTO "legacy_imported" ("type", "id", "data")
+				query('Insert into legacy_imported', pool, `INSERT INTO "legacy_imported" ("type", "id", "data")
 SELECT (regexp_matches(o."data"->>'_key', '^_imported_(.*):'))[1]::LEGACY_IMPORTED_TYPE,
        (regexp_matches(o."data"->>'_key', ':(.*)$'))[1]::BIGINT,
        o."data" - '_key'
