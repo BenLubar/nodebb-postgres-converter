@@ -114,7 +114,8 @@ END::LEGACY_OBJECT_TYPE, CASE
 	ELSE NULL
 END
   FROM "objects"
- WHERE NOT ("data" ? 'score')`);
+ WHERE NOT ("data" ? 'score')
+   AND ("data"->>'_key') NOT LIKE '_imported_%:%'`);
 
 				await query('Add primary key to legacy_object', db, `ALTER TABLE "legacy_object"
 	ADD PRIMARY KEY ( "_key" )`);
@@ -168,6 +169,14 @@ END
 		CHECK ( "type" = 'string' )
 )`);
 
+			await query('Create type legacy_imported_type', db, `CREATE TYPE LEGACY_IMPORTED_TYPE AS ENUM ( 'bookmark', 'category', 'favourite', 'group', 'message', 'post', 'room', 'topic', 'user', 'vote' )`);
+
+			await query('Create table legacy_imported', db, `CREATE TABLE "legacy_imported" (
+	"type" LEGACY_IMPORTED_TYPE NOT NULL,
+	"id" BIGINT NOT NULL,
+	"data" JSONB NOT NULL
+)`);
+
 			await Promise.all([
 				query('Insert into legacy_hash', pool, `INSERT INTO "legacy_hash" ("_key", "data")
 SELECT l."_key", o."data" - '_key' - 'expireAt'
@@ -203,7 +212,13 @@ END
   FROM "legacy_object" l
  INNER JOIN "objects" o
          ON l."_key" = o."data"->>'_key'
- WHERE l."type" = 'string'`)
+ WHERE l."type" = 'string'`),
+				query('Insert into legacy_imported', db, `INSERT INTO "legacy_imported" ("type", "id", "data")
+SELECT (regexp_matches(o."data"->>'_key', '^_imported_(.*):'))[1]::LEGACY_IMPORTED_TYPE,
+       (regexp_matches(o."data"->>'_key', ':(.*)$'))[1]::BIGINT,
+       o."data" - '_key'
+  FROM "objects" o
+ WHERE (o."data"->>'_key') LIKE '_imported_%:%'`)
 			]);
 
 			console.timeEnd('Convert');
@@ -213,33 +228,6 @@ SELECT "_key", "type"
   FROM "legacy_object"
  WHERE "expireAt" IS NULL
     OR "expireAt" > CURRENT_TIMESTAMP`);
-
-			await transaction('Split imported data', pool, async function(db) {
-				await query('Create type legacy_imported_type', db, `CREATE TYPE LEGACY_IMPORTED_TYPE AS ENUM ( 'bookmark', 'category', 'favourite', 'group', 'message', 'post', 'room', 'topic', 'user', 'vote' )`);
-
-				await query('Create table legacy_imported', db, `CREATE TABLE "legacy_imported" (
-	"type" LEGACY_IMPORTED_TYPE NOT NULL,
-	"id" BIGINT NOT NULL,
-	"data" JSONB NOT NULL
-)`);
-
-				await query('Insert into legacy_imported', db, `INSERT INTO "legacy_imported" ("type", "id", "data")
-SELECT (regexp_matches(o."_key", '^_imported_(.*):'))[1]::LEGACY_IMPORTED_TYPE, (regexp_matches(o."_key", ':(.*)$'))[1]::BIGINT, h."data"
-  FROM "legacy_object_live" o
- INNER JOIN "legacy_hash" h
-         ON o."_key" = h."_key"
-        AND o."type" = h."type"
- WHERE o."_key" LIKE '_imported_%:%'`);
-
-				await query('Delete from legacy_object', db, `DELETE FROM "legacy_object" o
- USING "legacy_imported" i
- WHERE o."_key" = '_imported_' || i."type" || ':' || i."id"
-   AND o."type" = 'hash'`);
-
-				await query('Delete from legacy_hash', db, `DELETE FROM "legacy_hash" h
- USING "legacy_imported" i
- WHERE h."_key" = '_imported_' || i."type" || ':' || i."id"`);
-			});
 
 			console.time('Constraints');
 
@@ -336,7 +324,8 @@ ALTER TABLE "legacy_imported" CLUSTER ON "legacy_imported_pkey"`);
 				query('Analyze legacy_zset', pool, `ANALYZE VERBOSE "legacy_zset"`),
 				query('Analyze legacy_set', pool, `ANALYZE VERBOSE "legacy_set"`),
 				query('Analyze legacy_list', pool, `ANALYZE VERBOSE "legacy_list"`),
-				query('Analyze legacy_string', pool, `ANALYZE VERBOSE "legacy_string"`)
+				query('Analyze legacy_string', pool, `ANALYZE VERBOSE "legacy_string"`),
+				query('Analyze legacy_imported', pool, `ANALYZE VERBOSE "legacy_imported"`)
 			]);
 
 			console.timeEnd('Analyze');
