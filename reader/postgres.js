@@ -72,7 +72,7 @@ SELECT i."data" || jsonb_build_object('_key', '_imported_' || i."type" || ':' ||
 		while (queue.length) {
 			var next = cursor.readAsync(1000);
 			for (var row of queue) {
-				await each(row);
+				await each(row.data);
 			}
 			queue = await next;
 		}
