@@ -15,6 +15,9 @@ WITHOUT OIDS;
 
 CREATE UNLOGGED TABLE "classify"."unclassified_hash"
 PARTITION OF "classify"."unclassified" (
+	-- work around PostgreSQL query optimizer bug
+	"type" WITH OPTIONS CHECK ("type" = 'hash'),
+
 	"unique_index" WITH OPTIONS CHECK ("unique_index" IS NULL),
 	"unique_string" WITH OPTIONS NOT NULL,
 	"value_numeric" WITH OPTIONS CHECK ("value_numeric" IS NULL),
@@ -26,6 +29,9 @@ ALTER TABLE "classify"."unclassified_hash" CLUSTER ON "unclassified_hash_pkey";
 
 CREATE UNLOGGED TABLE "classify"."unclassified_zset"
 PARTITION OF "classify"."unclassified" (
+	-- work around PostgreSQL query optimizer bug
+	"type" WITH OPTIONS CHECK ("type" = 'zset'),
+
 	"unique_index" WITH OPTIONS CHECK ("unique_index" IS NULL),
 	"unique_string" WITH OPTIONS NOT NULL,
 	"value_numeric" WITH OPTIONS NOT NULL,
@@ -37,6 +43,9 @@ ALTER TABLE "classify"."unclassified_zset" CLUSTER ON "unclassified_zset_pkey";
 
 CREATE UNLOGGED TABLE "classify"."unclassified_set"
 PARTITION OF "classify"."unclassified" (
+	-- work around PostgreSQL query optimizer bug
+	"type" WITH OPTIONS CHECK ("type" = 'set'),
+
 	"unique_index" WITH OPTIONS CHECK ("unique_index" IS NULL),
 	"unique_string" WITH OPTIONS NOT NULL,
 	"value_numeric" WITH OPTIONS CHECK ("value_numeric" IS NULL),
@@ -48,6 +57,9 @@ ALTER TABLE "classify"."unclassified_set" CLUSTER ON "unclassified_set_pkey";
 
 CREATE UNLOGGED TABLE "classify"."unclassified_list"
 PARTITION OF "classify"."unclassified" (
+	-- work around PostgreSQL query optimizer bug
+	"type" WITH OPTIONS CHECK ("type" = 'list'),
+
 	"unique_index" WITH OPTIONS NOT NULL,
 	"unique_string" WITH OPTIONS CHECK ("unique_string" IS NULL),
 	"value_numeric" WITH OPTIONS CHECK ("value_numeric" IS NULL),
@@ -59,6 +71,9 @@ ALTER TABLE "classify"."unclassified_list" CLUSTER ON "unclassified_list_pkey";
 
 CREATE UNLOGGED TABLE "classify"."unclassified_string"
 PARTITION OF "classify"."unclassified" (
+	-- work around PostgreSQL query optimizer bug
+	"type" WITH OPTIONS CHECK ("type" = 'string'),
+
 	"unique_index" WITH OPTIONS CHECK ("unique_index" IS NULL),
 	"unique_string" WITH OPTIONS CHECK ("unique_string" IS NULL),
 	"value_numeric" WITH OPTIONS CHECK ("value_numeric" IS NULL),

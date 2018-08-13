@@ -30,3 +30,38 @@ DELETE FROM "classify"."unclassified" uc
    AND uc."type" = 'zset'
    AND uc."unique_string" = (EXTRACT(EPOCH FROM ap."hour") * 1000)::TEXT
    AND uc."value_numeric" = ap."count"::NUMERIC;
+
+DELETE FROM "classify"."unclassified" uc
+ USING "classify"."analytics_posts" ap
+ WHERE uc."_key" = 'analytics:posts'
+   AND uc."type" = 'zset'
+   AND uc."unique_string" = (EXTRACT(EPOCH FROM ap."hour") * 1000)::TEXT
+   AND uc."value_numeric" = ap."count"::NUMERIC;
+
+DELETE FROM "classify"."unclassified" uc
+ USING "classify"."analytics_posts_byCid" ap
+ WHERE uc."_key" = 'analytics:posts:byCid:' || ap."cid"
+   AND uc."type" = 'zset'
+   AND uc."unique_string" = (EXTRACT(EPOCH FROM ap."hour") * 1000)::TEXT
+   AND uc."value_numeric" = ap."count"::NUMERIC;
+
+DELETE FROM "classify"."unclassified" uc
+ USING "classify"."analytics_topics" at
+ WHERE uc."_key" = 'analytics:topics'
+   AND uc."type" = 'zset'
+   AND uc."unique_string" = (EXTRACT(EPOCH FROM at."hour") * 1000)::TEXT
+   AND uc."value_numeric" = at."count"::NUMERIC;
+
+DELETE FROM "classify"."unclassified" uc
+ USING "classify"."analytics_topics_byCid" at
+ WHERE uc."_key" = 'analytics:topics:byCid:' || at."cid"
+   AND uc."type" = 'zset'
+   AND uc."unique_string" = (EXTRACT(EPOCH FROM at."hour") * 1000)::TEXT
+   AND uc."value_numeric" = at."count"::NUMERIC;
+
+DELETE FROM "classify"."unclassified" uc
+ USING "classify"."analytics_uniquevisitors" av
+ WHERE uc."_key" = 'analytics:uniquevisitors'
+   AND uc."type" = 'zset'
+   AND uc."unique_string" = (EXTRACT(EPOCH FROM av."hour") * 1000)::TEXT
+   AND uc."value_numeric" = av."count"::NUMERIC;

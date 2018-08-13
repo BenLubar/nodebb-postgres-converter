@@ -7,6 +7,13 @@ DELETE FROM "classify"."unclassified" uc
 
 DELETE FROM "classify"."unclassified" uc
  USING "classify"."users" u
+ WHERE uc."_key" = 'username:sorted'
+   AND uc."type" = 'zset'
+   AND uc."unique_string" = u."username"
+   AND uc."value_numeric" = 0;
+
+DELETE FROM "classify"."unclassified" uc
+ USING "classify"."users" u
  WHERE uc."_key" = 'username:uid'
    AND uc."type" = 'zset'
    AND uc."unique_string" = u."username"
@@ -39,6 +46,13 @@ DELETE FROM "classify"."unclassified" uc
    AND uc."type" = 'zset'
    AND uc."unique_string" = u."email"
    AND uc."value_numeric" = u."uid"::NUMERIC;
+
+DELETE FROM "classify"."unclassified" uc
+ USING "classify"."users" u
+ WHERE uc."_key" = 'email:sorted'
+   AND uc."type" = 'zset'
+   AND uc."unique_string" = u."email"
+   AND uc."value_numeric" = 0;
 
 DELETE FROM "classify"."unclassified" uc
  USING "classify"."users" u
@@ -137,6 +151,13 @@ DELETE FROM "classify"."unclassified" uc
    AND uc."type" = 'hash'
    AND uc."unique_string" = 'moderationNote'
    AND uc."value_string" = u."moderationNote";
+
+DELETE FROM "classify"."unclassified" uc
+ USING "classify"."users" u
+ WHERE uc."_key" = 'fullname:uid'
+   AND uc."type" = 'zset'
+   AND uc."unique_string" = u."fullname"
+   AND uc."value_numeric" = u."uid"::NUMERIC;
 
 DELETE FROM "classify"."unclassified" uc
  USING "classify"."users" u

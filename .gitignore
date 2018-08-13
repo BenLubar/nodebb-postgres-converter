@@ -1,1 +1,3 @@
 Makefile
+brute_ips
+secret.go

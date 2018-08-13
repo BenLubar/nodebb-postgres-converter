@@ -2,7 +2,17 @@
 
 set -e
 
-rm -f Makefile
+rm -f Makefile secret.go brute_ips
+
+echo 'package main' > secret.go
+echo >> secret.go
+echo -n 'const secret = ' >> secret.go
+docker exec wtdwtf-nodebb node -p 'JSON.stringify(require("./config.json").secret)' >> secret.go
+
+go build -o brute_ips .
+docker cp brute_ips wtdwtf-nodebb-postgres:/tmp/brute_ips
+docker exec wtdwtf-nodebb-postgres chown postgres:postgres /tmp/brute_ips
+rm -f brute_ips secret.go
 
 last_prefix=
 sql_files=
