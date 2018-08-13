@@ -2,25 +2,27 @@
 
 set -e
 
-# clean up if we get interrupted
-trap 'trap - SIGINT EXIT && kill -INT 0' EXIT SIGINT SIGTERM SIGHUP
+rm -f Makefile
 
-start=0
-if [[ $# -eq 0 ]]; then
-	:
-elif [[ $# -eq 1 ]] && [[ "$1" =~ ^[0-9]{1,4}$ ]]; then
-	start=$1
-else
-	echo 'usage: ./run.bash [start-index]' >&2
-	exit 1
-fi
+last_prefix=
+sql_files=
 
-for i in $(seq -w $start 9999); do
-	if ! compgen -G "$i.*.sql" > /dev/null; then
-		break
+ls ????.*.sql | sort -r | while IFS=$'\n' read -r name; do
+	if [[ "$last_prefix" != "${name%%.*}" ]]; then
+		last_prefix="${name%%.*}"
+		if ! [[ -z "$sql_files" ]]; then
+			echo "$sql_files: $last_prefix" >> Makefile
+		fi
+		echo ".PHONY: $last_prefix" >> Makefile
+		sql_files=$(compgen -G "$last_prefix.*.sql")
+		sql_files=${sql_files//$'\n'/ }
+		sql_files=${sql_files//\.sql/.do}
+		echo "$last_prefix: $sql_files" >> Makefile
 	fi
-	for f in $i.*.sql; do
-		docker exec -iu postgres wtdwtf-nodebb-postgres psql -v ON_ERROR_STOP=1 nodebb < "$f" &
-	done
-	wait
 done
+
+echo '.PHONY: %.do' >> Makefile
+echo '%.do: %.sql' >> Makefile
+echo $'\t''docker exec -iu postgres wtdwtf-nodebb-postgres psql -v ON_ERROR_STOP=1 nodebb < $<' >> Makefile
+
+make "$@"

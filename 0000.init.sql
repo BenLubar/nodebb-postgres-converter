@@ -3,7 +3,7 @@ DROP SCHEMA IF EXISTS "classify" CASCADE;
 CREATE SCHEMA "classify";
 
 CREATE UNLOGGED TABLE "classify"."unclassified" (
-	"_key" TEXT NOT NULL COLLATE "C",
+	"_key" TEXT COLLATE "C" NOT NULL,
 	"type" LEGACY_OBJECT_TYPE NOT NULL,
 	"unique_index" INT,
 	"unique_string" TEXT COLLATE "C",
@@ -20,8 +20,7 @@ PARTITION OF "classify"."unclassified" (
 	"value_numeric" WITH OPTIONS CHECK ("value_numeric" IS NULL),
 	"value_string" WITH OPTIONS NOT NULL,
 	PRIMARY KEY ("_key", "unique_string")
-) FOR VALUES IN ('hash')
-WITHOUT OIDS;
+) FOR VALUES IN ('hash');
 
 ALTER TABLE "classify"."unclassified_hash" CLUSTER ON "unclassified_hash_pkey";
 
@@ -32,8 +31,7 @@ PARTITION OF "classify"."unclassified" (
 	"value_numeric" WITH OPTIONS NOT NULL,
 	"value_string" WITH OPTIONS CHECK ("value_string" IS NULL),
 	PRIMARY KEY ("_key", "unique_string")
-) FOR VALUES IN ('zset')
-WITHOUT OIDS;
+) FOR VALUES IN ('zset');
 
 ALTER TABLE "classify"."unclassified_zset" CLUSTER ON "unclassified_zset_pkey";
 
@@ -44,8 +42,7 @@ PARTITION OF "classify"."unclassified" (
 	"value_numeric" WITH OPTIONS CHECK ("value_numeric" IS NULL),
 	"value_string" WITH OPTIONS CHECK ("value_string" IS NULL),
 	PRIMARY KEY ("_key", "unique_string")
-) FOR VALUES IN ('set')
-WITHOUT OIDS;
+) FOR VALUES IN ('set');
 
 ALTER TABLE "classify"."unclassified_set" CLUSTER ON "unclassified_set_pkey";
 
@@ -56,8 +53,7 @@ PARTITION OF "classify"."unclassified" (
 	"value_numeric" WITH OPTIONS CHECK ("value_numeric" IS NULL),
 	"value_string" WITH OPTIONS NOT NULL,
 	PRIMARY KEY ("_key", "unique_index")
-) FOR VALUES IN ('list')
-WITHOUT OIDS;
+) FOR VALUES IN ('list');
 
 ALTER TABLE "classify"."unclassified_list" CLUSTER ON "unclassified_list_pkey";
 
@@ -68,7 +64,6 @@ PARTITION OF "classify"."unclassified" (
 	"value_numeric" WITH OPTIONS CHECK ("value_numeric" IS NULL),
 	"value_string" WITH OPTIONS NOT NULL,
 	PRIMARY KEY ("_key")
-) FOR VALUES IN ('string')
-WITHOUT OIDS;
+) FOR VALUES IN ('string');
 
 ALTER TABLE "classify"."unclassified_string" CLUSTER ON "unclassified_string_pkey";
