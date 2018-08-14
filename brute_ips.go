@@ -99,7 +99,7 @@ func brute(wg *sync.WaitGroup, found chan<- [4 + sha1.Size]byte, need func([sha1
 }
 
 func tryHash(found chan<- [4 + sha1.Size]byte, need func([sha1.Size]byte) bool, ip uint64) {
-	payload := make([]byte, 0, 15+len(secret))
+	payload := make([]byte, 0, sha1.Size*2+len(secret))
 	payload = strconv.AppendUint(payload, (ip>>24)&0xff, 10)
 	payload = append(payload, '.')
 	payload = strconv.AppendUint(payload, (ip>>16)&0xff, 10)
@@ -109,11 +109,39 @@ func tryHash(found chan<- [4 + sha1.Size]byte, need func([sha1.Size]byte) bool, 
 	payload = strconv.AppendUint(payload, ip&0xff, 10)
 	payload = append(payload, secret...)
 
-	hash := sha1.Sum(payload)
-	if need(hash) {
-		var foundPayload [4 + sha1.Size]byte
-		binary.BigEndian.PutUint32(foundPayload[:4], uint32(ip))
-		copy(foundPayload[4:], hash[:])
-		found <- foundPayload
+	checkHash := func(hash [sha1.Size]byte) {
+		if need(hash) {
+			var foundPayload [4 + sha1.Size]byte
+			binary.BigEndian.PutUint32(foundPayload[:4], uint32(ip))
+			copy(foundPayload[4:], hash[:])
+			found <- foundPayload
+		}
 	}
+
+	hash := sha1.Sum(payload)
+	checkHash(hash)
+
+	payload = payload[:sha1.Size*2]
+	hex.Encode(payload, hash[:])
+	payload = append(payload, secret...)
+	hash = sha1.Sum(payload)
+	checkHash(hash)
+
+	payload = append(payload[:0], "::ffff:"...)
+	payload = strconv.AppendUint(payload, (ip>>24)&0xff, 10)
+	payload = append(payload, '.')
+	payload = strconv.AppendUint(payload, (ip>>16)&0xff, 10)
+	payload = append(payload, '.')
+	payload = strconv.AppendUint(payload, (ip>>8)&0xff, 10)
+	payload = append(payload, '.')
+	payload = strconv.AppendUint(payload, ip&0xff, 10)
+	payload = append(payload, secret...)
+	hash = sha1.Sum(payload)
+	checkHash(hash)
+
+	payload = payload[:sha1.Size*2]
+	hex.Encode(payload, hash[:])
+	payload = append(payload, secret...)
+	hash = sha1.Sum(payload)
+	checkHash(hash)
 }

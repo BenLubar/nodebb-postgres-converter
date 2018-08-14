@@ -8,7 +8,7 @@ DELETE FROM "classify"."unclassified" uc
 
 DELETE FROM "classify"."unclassified" uc
  USING "classify"."ip_user" iu
- WHERE uc."_key" = 'uid:' || iu."uid" || ':ips'
+ WHERE uc."_key" = 'uid:' || iu."uid" || ':ip'
    AND uc."type" = 'zset'
    AND (uc."unique_string" = HOST(iu."ip")
     OR  uc."unique_string" = '::ffff:' || HOST(iu."ip"))

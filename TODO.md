@@ -40,18 +40,18 @@
 - [ ] `categories:cid`
 - [ ] `digest:day:uids`
 - [ ] `digest:week:uids`
-- [ ] `email:sorted`
-- [ ] `email:uid`
+- [X] `email:sorted`
+- [X] `email:uid`
 - [ ] `errors:404`
 - [ ] `events:time`
 - [ ] `flags:datetime`
 - [ ] `flags:hash`
-- [ ] `fullname:uid`
+- [X] `fullname:uid`
 - [ ] `groups:createtime`
 - [ ] `groups:visible:createtime`
 - [ ] `groups:visible:memberCount`
 - [ ] `groups:visible:name`
-- [ ] `ip:recent`
+- [X] `ip:recent`
 - [ ] `navigation:enabled`
 - [ ] `notifications`
 - [ ] `plugins:active`
@@ -71,8 +71,8 @@
 - [ ] `topics:unsolved`
 - [ ] `topics:views`
 - [ ] `topics:votes`
-- [ ] `username:sorted`
-- [ ] `username:uid`
+- [X] `username:sorted`
+- [X] `username:uid`
 - [ ] `users:banned:expire`
 - [ ] `users:banned`
 - [ ] `users:flags`
@@ -81,7 +81,7 @@
 - [ ] `users:online`
 - [ ] `users:postcount`
 - [ ] `users:reputation`
-- [ ] `userslug:uid`
+- [X] `userslug:uid`
 - [ ] `/banned:[0-9]+:reasons/`
 - [ ] `/chat:room:[0-9]+:uids/`
 - [ ] `/cid:[0-9]+:children/`
@@ -108,7 +108,7 @@
 - [ ] `/following:[0-9]+/`
 - [ ] `/group:%:member:pids/`
 - [ ] `/group:%:members/`
-- [ ] `/ip:[0-9]+.[0-9]+.[0-9]+.[0-9]+:uid/`
+- [X] `/ip:[0-9]+.[0-9]+.[0-9]+.[0-9]+:uid/`
 - [ ] `/pid:[0-9]+:flag:uid:reason/`
 - [ ] `/pid:[0-9]+:flag:uids/`
 - [ ] `/pid:[0-9]+:replies/`
@@ -130,7 +130,7 @@
 - [ ] `/uid:[0-9]+:followed_tids/`
 - [ ] `/uid:[0-9]+:ignored_tids/`
 - [ ] `/uid:[0-9]+:ignored:cids/`
-- [ ] `/uid:[0-9]+:ip/`
+- [X] `/uid:[0-9]+:ip/`
 - [ ] `/uid:[0-9]+:moderation:notes/`
 - [ ] `/uid:[0-9]+:notifications:read/`
 - [ ] `/uid:[0-9]+:notifications:unread/`
