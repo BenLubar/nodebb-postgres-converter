@@ -17,7 +17,7 @@ rm -f brute_ips secret.go
 last_prefix=
 sql_files=
 
-ls ????.*.sql | sort -r | while IFS=$'\n' read -r name; do
+ls -- ????.*.sql | sort -r | while IFS=$'\n' read -r name; do
 	if [[ "$last_prefix" != "${name%%.*}" ]]; then
 		last_prefix="${name%%.*}"
 		if ! [[ -z "$sql_files" ]]; then
