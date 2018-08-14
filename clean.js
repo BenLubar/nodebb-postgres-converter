@@ -1,5 +1,7 @@
 'use strict';
 
+/* eslint-disable no-control-regex */
+
 module.exports.data = function (obj) {
 	delete obj._id;
 	if (!obj.hasOwnProperty('_key')) {
