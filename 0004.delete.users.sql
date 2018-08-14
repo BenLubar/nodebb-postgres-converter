@@ -84,10 +84,24 @@ DELETE FROM "classify"."unclassified" uc
 
 DELETE FROM "classify"."unclassified" uc
  USING "classify"."users" u
+ WHERE uc."_key" = 'users:joindate'
+   AND uc."type" = 'zset'
+   AND uc."unique_string" = u."uid"::TEXT
+   AND uc."value_numeric" = COALESCE(EXTRACT(EPOCH FROM u."joindate") * 1000, 0)::NUMERIC;
+
+DELETE FROM "classify"."unclassified" uc
+ USING "classify"."users" u
  WHERE uc."_key" = 'user:' || u."uid"
    AND uc."type" = 'hash'
    AND uc."unique_string" = 'joindate'
    AND uc."value_string" = COALESCE(EXTRACT(EPOCH FROM u."joindate") * 1000, 0)::TEXT;
+
+DELETE FROM "classify"."unclassified" uc
+ USING "classify"."users" u
+ WHERE uc."_key" = 'users:online'
+   AND uc."type" = 'zset'
+   AND uc."unique_string" = u."uid"::TEXT
+   AND uc."value_numeric" = COALESCE(EXTRACT(EPOCH FROM u."lastonline") * 1000, 0)::NUMERIC;
 
 DELETE FROM "classify"."unclassified" uc
  USING "classify"."users" u
@@ -130,6 +144,20 @@ DELETE FROM "classify"."unclassified" uc
    AND uc."type" = 'hash'
    AND uc."unique_string" = 'gdpr_consent'
    AND uc."value_string" = CASE WHEN u."gdpr_consent" THEN '1' ELSE '0' END;
+
+DELETE FROM "classify"."unclassified" uc
+ USING "classify"."users" u
+ WHERE uc."_key" = 'users:reputation'
+   AND uc."type" = 'zset'
+   AND uc."unique_string" = u."uid"::TEXT
+   AND uc."value_numeric" = u."reputation"::NUMERIC;
+
+DELETE FROM "classify"."unclassified" uc
+ USING "classify"."users" u
+ WHERE uc."_key" = 'user:' || u."uid"
+   AND uc."type" = 'hash'
+   AND uc."unique_string" = 'reputation'
+   AND uc."value_string" = u."reputation"::TEXT;
 
 DELETE FROM "classify"."unclassified" uc
  USING "classify"."users" u

@@ -1,43 +1,43 @@
 # hash
 
 - [X] `config`
-- [ ] `fbid:uid`
-- [ ] `githubid:uid`
 - [ ] `global`
-- [ ] `gplusid:uid`
 - [ ] `groupslug:groupname`
 - [X] `ip-blacklist-rules`
 - [ ] `lastrestart`
-- [ ] `nodebb-plugin-dbsearch`
-- [ ] `twid:uid`
 - [ ] `widgets:global`
-- [ ] `writeToken:uid`
 - [ ] `/category:[0-9]+/`
 - [ ] `/chat:room:[0-9]+/`
 - [ ] `/confirm:[0-9a-f-]+/`
 - [ ] `/diff:[0-9]+.[0-9]+/`
 - [ ] `/event:[0-9]+/`
 - [ ] `/flag:[0-9]+/`
-- [ ] `/group:%/`
+- [ ] `/group:[^:]+/`
+- [ ] `/group:cid:[0-9]+:privileges:(groups:)?(chat|find|moderate|posts:(delete|downvote|edit|history|view_deleted|upvote)|read|search:(content|tags|users)|signature|topics:(create|delete|read|reply|tag)|upload:post:(image|file))/`
 - [ ] `/message:[0-9]+/`
 - [ ] `/notifications:%/`
-- [ ] `/pid:[0-9]+:postRevisions/`
 - [ ] `/post:[0-9]+/`
 - [ ] `/post:queue:reply-[0-9]+/`
 - [ ] `/registration:queue:name:[^:]+/`
 - [ ] `/rewards:id:[0-9]+:rewards/`
 - [ ] `/rewards:id:[0-9]+/`
-- [ ] `/settings:[^:]+/`
-- [ ] `/tdwtf-post-cache:[0-9]+/`
+- [X] `/settings:[^:]+/`
 - [ ] `/topic:[0-9]+/`
 - [ ] `/uid:[0-9]+:sessionUUID:sessionId/`
 - [ ] `/user:[0-9]+:settings/`
-- [ ] `/user:[0-9]+/`
+- [X] `/user:[0-9]+/`
 - [ ] `/widgets:[^:]+.tpl/`
 
 # zset
 
-- [ ] `categories:cid`
+- [X] `analytics:errors:404`
+- [X] `analytics:errors:503`
+- [X] `analytics:flags`
+- [X] `analytics:pageviews`
+- [X] `analytics:pageviews:month`
+- [X] `analytics:posts`
+- [X] `analytics:topics`
+- [X] `analytics:uniquevisitors`
 - [ ] `digest:day:uids`
 - [ ] `digest:week:uids`
 - [X] `email:sorted`
@@ -63,12 +63,9 @@
 - [ ] `registration:queue`
 - [ ] `schemaLog`
 - [ ] `tags:topic:count`
-- [ ] `tdwtf-upstreams:started`
 - [ ] `topics:posts`
 - [ ] `topics:recent`
-- [ ] `topics:solved`
 - [ ] `topics:tid`
-- [ ] `topics:unsolved`
 - [ ] `topics:views`
 - [ ] `topics:votes`
 - [X] `username:sorted`
@@ -76,12 +73,16 @@
 - [ ] `users:banned:expire`
 - [ ] `users:banned`
 - [ ] `users:flags`
-- [ ] `users:joindate`
+- [X] `users:joindate`
 - [ ] `users:notvalidated`
-- [ ] `users:online`
+- [X] `users:online`
 - [ ] `users:postcount`
-- [ ] `users:reputation`
+- [X] `users:reputation`
 - [X] `userslug:uid`
+- [X] `/analytics:pageviews:byCid:[0-9]+/`
+- [X] `/analytics:posts:byCid:[0-9]+/`
+- [X] `/analytics:topics:byCid:[0-9]+/`
+- [ ] `categories:cid`
 - [ ] `/banned:[0-9]+:reasons/`
 - [ ] `/chat:room:[0-9]+:uids/`
 - [ ] `/cid:[0-9]+:children/`
@@ -106,13 +107,13 @@
 - [ ] `/flags:byType:(post|user)/`
 - [ ] `/followers:[0-9]+/`
 - [ ] `/following:[0-9]+/`
-- [ ] `/group:%:member:pids/`
-- [ ] `/group:%:members/`
-- [X] `/ip:[0-9]+.[0-9]+.[0-9]+.[0-9]+:uid/`
+- [ ] `/group:[^:]+:member:pids/`
+- [ ] `/group:[^:]+:members/`
+- [ ] `/group:cid:[0-9]+:privileges:(groups:)?(chat|find|moderate|posts:(delete|downvote|edit|history|view_deleted|upvote)|read|search:(content|tags|users)|signature|topics:(create|delete|read|reply|tag)|upload:post:(image|file)):members/`
+- [X] `/ip:(::ffff:)?[0-9]+.[0-9]+.[0-9]+.[0-9]+:uid/`
 - [ ] `/pid:[0-9]+:flag:uid:reason/`
 - [ ] `/pid:[0-9]+:flag:uids/`
 - [ ] `/pid:[0-9]+:replies/`
-- [ ] `/pid:[0-9]+:revisions/`
 - [ ] `/post:[0-9]+:uploads/`
 - [ ] `/tag:%:topics/`
 - [ ] `/tid:[0-9]+:bookmarks/`
@@ -149,14 +150,13 @@
 
 # set
 
-- [ ] `condition:essentials/user.postcount:rewards`
-- [ ] `condition:essentials/user.reputation:rewards`
 - [ ] `conditions:active`
 - [ ] `rewards:list`
 - [ ] `/cid:[0-9]+:read_by_uid/`
-- [ ] `/group:%:invited/`
-- [ ] `/group:%:owners/`
-- [ ] `/group:%:pending/`
+- [ ] `/condition:[^:]+:rewards/`
+- [ ] `/group:[^:]+:invited/`
+- [ ] `/group:[^:]+:owners/`
+- [ ] `/group:[^:]+:pending/`
 - [ ] `/ignored:[0-9]+/`
 - [ ] `/ignored:by:[0-9]+/`
 - [ ] `/ignored:chat:[0-9]+/`
@@ -168,3 +168,34 @@
 - [ ] `/topic:[0-9]+:tags/`
 - [ ] `/uid:[0-9]+:flagged_by/`
 - [ ] `/uid:[0-9]+:tokens/`
+
+# list
+
+- [ ] `/post:[0-9]+:diffs/`
+
+# string
+
+- [X] `schemaDate`
+
+# tdwtf-specific
+
+## hash (tdwtf)
+
+- [ ] `/pid:[0-9]+:postRevisions/`
+- [ ] `/tdwtf-post-cache:[0-9]+/`
+
+## zset (tdwtf)
+
+- [X] `_imported:_bookmarks`
+- [X] `_imported:_categories`
+- [X] `_imported:_favourites`
+- [X] `_imported:_messages`
+- [X] `_imported:_posts`
+- [X] `_imported:_rooms`
+- [X] `_imported:_topics`
+- [X] `_imported:_users`
+- [X] `_imported:_votes`
+- [X] `_telligent:_categories`
+- [X] `_telligent:_users`
+- [ ] `tdwtf-upstreams:started`
+- [ ] `/pid:[0-9]+:revisions/` (deprecated)

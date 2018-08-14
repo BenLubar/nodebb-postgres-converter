@@ -34,7 +34,6 @@ SELECT bih."ip",
  WHERE uc."_key" = 'ip:recent'
    AND uc."type" = 'zset';
 
-
 -- Delete is included in this step instead of step 4 because it requires access to the temporary data.
 DELETE FROM "classify"."unclassified" uc
  USING "classify"."ip_recent" ir

@@ -7,6 +7,8 @@ CREATE UNLOGGED TABLE "classify"."users" (
 	"email:confirmed" BOOLEAN NOT NULL DEFAULT FALSE,
 	"password" TEXT COLLATE "C",
 	"passwordExpiry" TIMESTAMPTZ,
+
+	-- metadata
 	"joindate" TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
 	"lastonline" TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
 	"lastposttime" TIMESTAMPTZ,
@@ -14,6 +16,7 @@ CREATE UNLOGGED TABLE "classify"."users" (
 	"rss_token" UUID,
 	"acceptTos" BOOLEAN NOT NULL DEFAULT FALSE,
 	"gdpr_consent" BOOLEAN NOT NULL DEFAULT FALSE,
+	"reputation" BIGINT NOT NULL DEFAULT 0,
 
 	-- moderation
 	"banned" BOOLEAN NOT NULL DEFAULT FALSE,
@@ -32,6 +35,9 @@ WITHOUT OIDS;
 CREATE UNIQUE INDEX ON "classify"."users"("username");
 CREATE UNIQUE INDEX ON "classify"."users"("userslug");
 CREATE UNIQUE INDEX ON "classify"."users"("email");
+CREATE INDEX ON "classify"."users"("joindate");
+CREATE INDEX ON "classify"."users"("lastonline");
+CREATE INDEX ON "classify"."users"("reputation");
 
 ALTER TABLE "classify"."users" CLUSTER ON "users_pkey";
 
@@ -57,6 +63,7 @@ SELECT uid,
        "classify"."get_hash_string"(key, 'rss_token')::UUID,
        COALESCE("classify"."get_hash_boolean"(key, 'acceptTos'), FALSE),
        COALESCE("classify"."get_hash_boolean"(key, 'gdpr_consent'), FALSE),
+       COALESCE("classify"."get_hash_string"(key, 'reputation'), '0')::BIGINT,
        COALESCE("classify"."get_hash_boolean"(key, 'banned'), FALSE),
        "classify"."get_hash_timestamp"(key, 'banned:expire'),
        COALESCE("classify"."get_hash_string"(key, 'moderationNote'), ''),
