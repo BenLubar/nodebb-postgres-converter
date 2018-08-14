@@ -1,12 +1,12 @@
 # hash
 
-- [ ] `config`
+- [X] `config`
 - [ ] `fbid:uid`
 - [ ] `githubid:uid`
 - [ ] `global`
 - [ ] `gplusid:uid`
 - [ ] `groupslug:groupname`
-- [ ] `ip-blacklist-rules`
+- [X] `ip-blacklist-rules`
 - [ ] `lastrestart`
 - [ ] `nodebb-plugin-dbsearch`
 - [ ] `twid:uid`
