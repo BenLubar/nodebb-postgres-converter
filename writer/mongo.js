@@ -28,7 +28,8 @@ async function bulkInsert(collection, each) {
 }
 
 async function writer(output, concurrency, memory, callback) {
-	const db = await MongoClient.connect(output);
+	const client = await MongoClient.connect(output);
+	const db = client.db();
 
 	try {
 		await callback(async function (each) {
@@ -55,7 +56,7 @@ async function writer(output, concurrency, memory, callback) {
 			await sessions.createIndex({ expires: 1 }, { expireAfterSeconds: 0 });
 		});
 	} finally {
-		await db.close();
+		await client.close();
 	}
 };
 
