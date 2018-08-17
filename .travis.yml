@@ -8,6 +8,9 @@ cache:
     - node_modules
 addons:
   postgresql: 9.5
+branches:
+  only:
+    - master
 before_install:
   - sh -ec "if [ '$IN' = 'postgres' ]; then psql -c 'create database input;' -U postgres; fi"
   - sh -ec "if [ '$OUT' = 'postgres' ]; then psql -c 'create database output;' -U postgres; fi"
