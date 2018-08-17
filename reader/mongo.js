@@ -3,7 +3,8 @@
 const { MongoClient } = require('mongodb');
 
 module.exports = async function(connection, count, each) {
-	const db = await MongoClient.connect(connection);
+	const client = await MongoClient.connect(connection);
+	const db = client.db();
 
 	try {
 		const objects = db.collection('objects');
@@ -17,6 +18,6 @@ module.exports = async function(connection, count, each) {
 			await each(data);
 		}
 	} finally {
-		await db.close();
+		await client.close();
 	}
 };
