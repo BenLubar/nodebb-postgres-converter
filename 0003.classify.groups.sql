@@ -72,7 +72,7 @@ CREATE TYPE "classify".GROUP_MEMBER_TYPE AS ENUM (
 CREATE UNLOGGED TABLE "classify"."group_members" (
 	"gid" BIGINT NOT NULL,
 	"uid" BIGINT NOT NULL,
-	"type" GROUP_MEMBER_TYPE NOT NULL,
+	"type" "classify".GROUP_MEMBER_TYPE NOT NULL,
 	"joined_at" TIMESTAMPTZ CHECK("joined_at" IS NOT NULL OR "type" NOT IN ('member', 'owner')),
 
 	PRIMARY KEY ("gid", "uid")

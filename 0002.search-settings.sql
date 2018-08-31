@@ -4,6 +4,11 @@ CREATE UNLOGGED TABLE "classify"."search_settings" (
 	"topic_limit" BIGINT NOT NULL
 ) WITHOUT OIDS;
 
+CREATE OR REPLACE FUNCTION "classify"."nodebb_default_search_language"() RETURNS REGCONFIG AS $$
+	SELECT "default_language"
+	  FROM "classify"."search_settings";
+$$ LANGUAGE SQL STABLE STRICT PARALLEL SAFE;
+
 -- only allow one row.
 CREATE UNIQUE INDEX ON "classify"."search_settings"((1));
 

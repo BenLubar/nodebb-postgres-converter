@@ -24,7 +24,7 @@ CREATE UNLOGGED TABLE "classify"."topics" (
 	"deletedTimestamp" TIMESTAMPTZ,
 
 	"title_tsvector" TSVECTOR NOT NULL,
-	"search_language" REGCONFIG NOT NULL DEFAULT (SELECT "default_language" FROM "classify"."search_settings")
+	"search_language" REGCONFIG NOT NULL DEFAULT "classify"."nodebb_default_search_language"()
 ) WITHOUT OIDS;
 
 CREATE INDEX ON "classify"."topics"("cid", "pinned");
@@ -51,12 +51,12 @@ WITH tids AS (
 INSERT INTO "classify"."topics"
 SELECT tid,
        "classify"."get_hash_string"(key, 'cid')::BIGINT,
-       NULLIF("classify"."get_hash_string"(key, 'oldCid'), '')::BIGINT,
-       NULLIF(NULLIF("classify"."get_hash_string"(key, 'uid'), '0'), '')::BIGINT,
+       NULLIF("classify"."get_hash_string"(key, 'oldCid'), '0')::BIGINT,
+       NULLIF("classify"."get_hash_string"(key, 'uid'), '0')::BIGINT,
        "classify"."get_hash_string"(key, 'slug'),
        "classify"."get_hash_string"(key, 'title'),
        "classify"."get_hash_timestamp"(key, 'timestamp'),
-       NULLIF("classify"."get_hash_string"(key, 'thumb'), ''),
+       "classify"."get_hash_string"(key, 'thumb'),
        "classify"."get_hash_string"(key, 'mainPid')::BIGINT,
        "classify"."get_hash_string"(key, 'teaserPid')::BIGINT,
        "classify"."get_hash_string"(key, 'postcount')::BIGINT,
@@ -67,10 +67,10 @@ SELECT tid,
        COALESCE("classify"."get_hash_boolean"(key, 'locked'), FALSE),
        COALESCE("classify"."get_hash_boolean"(key, 'pinned'), FALSE),
        COALESCE("classify"."get_hash_boolean"(key, 'deleted'), FALSE),
-       NULLIF(NULLIF("classify"."get_hash_string"(key, 'deleterUid'), '0'), '')::BIGINT,
+       NULLIF("classify"."get_hash_string"(key, 'deleterUid'), '0')::BIGINT,
        "classify"."get_hash_timestamp"(key, 'deletedTimestamp'),
        NULL,
-       (SELECT "default_language" FROM "classify"."search_settings")
+       "classify"."nodebb_default_search_language"()
   FROM tids;
 
 SELECT setval('classify.topics_tid_seq', "classify"."get_hash_string"('global', 'nextTid')::BIGINT);

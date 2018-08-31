@@ -12,44 +12,21 @@ import (
 	"net"
 	"os"
 	"runtime"
-	"sort"
-	"strconv"
 	"sync"
 )
 
 func main() {
 	hashes := readHashes("/tmp/ip-hashes")
 
-	w, hashes, closeCache := prepareCache("/tmp/ip-hashes-cache", hashes)
+	w, closeCache := prepareCache("/tmp/ip-hashes-cache", hashes)
 	defer closeCache()
 	if len(hashes) == 0 {
 		return
 	}
 
-	sort.Slice(hashes, func(i, j int) bool {
-		return bytes.Compare(hashes[i][:], hashes[j][:]) < 0
-	})
-
 	need := func(hash [sha1.Size]byte) bool {
-		// inlined sort.Search
-
-		// Define f(-1) == false and f(n) == true.
-		// Invariant: f(i-1) == false, f(j) == true.
-		i, j := 0, len(hashes)
-		for i < j {
-			h := int(uint(i+j) >> 1) // avoid overflow when computing h
-			// i ≤ h < j
-			switch cmp := bytes.Compare(hashes[h][:], hash[:]); {
-			case cmp == 0:
-				return true
-			case cmp < 0:
-				i = h + 1 // preserves f(i-1) == false
-			default:
-				j = h // preserves f(j) == true
-			}
-		}
-		// i == j, f(i-1) == false, and f(j) (= f(i)) == true  =>  answer is i.
-		return i < len(hashes) && hashes[i] == hash
+		_, ok := hashes[hash]
+		return ok
 	}
 
 	workers := runtime.GOMAXPROCS(0)
@@ -72,7 +49,7 @@ func main() {
 	}
 }
 
-func readHashes(name string) (hashes [][sha1.Size]byte) {
+func readHashes(name string) map[[sha1.Size]byte]struct{} {
 	f, err := os.Open(name)
 	if err != nil {
 		panic(err)
@@ -83,6 +60,8 @@ func readHashes(name string) (hashes [][sha1.Size]byte) {
 		}
 	}()
 
+	hashes := make(map[[sha1.Size]byte]struct{})
+
 	s := bufio.NewScanner(f)
 	for s.Scan() {
 		var hash [sha1.Size]byte
@@ -91,73 +70,50 @@ func readHashes(name string) (hashes [][sha1.Size]byte) {
 		} else if n != sha1.Size {
 			panic("short read")
 		}
-		hashes = append(hashes, hash)
+		hashes[hash] = struct{}{}
 	}
 
 	if err := s.Err(); err != nil {
 		panic(err)
 	}
 
-	return
+	return hashes
 }
 
 func brute(wg *sync.WaitGroup, found chan<- [4 + sha1.Size]byte, need func([sha1.Size]byte) bool, offset, stride uint64) {
 	defer wg.Done()
 
+	var ipBytes [4]uint8
+
 	for ip := offset; ip < 1<<32; ip += stride {
-		tryHash(found, need, ip)
+		binary.BigEndian.PutUint32(ipBytes[:], uint32(ip))
+		sendHash(found, need, net.IP(ipBytes[:]).String(), ipBytes)
 	}
 }
 
-func tryHash(found chan<- [4 + sha1.Size]byte, need func([sha1.Size]byte) bool, ip uint64) {
-	payload := make([]byte, 0, sha1.Size*2+len(secret))
-	payload = strconv.AppendUint(payload, (ip>>24)&0xff, 10)
-	payload = append(payload, '.')
-	payload = strconv.AppendUint(payload, (ip>>16)&0xff, 10)
-	payload = append(payload, '.')
-	payload = strconv.AppendUint(payload, (ip>>8)&0xff, 10)
-	payload = append(payload, '.')
-	payload = strconv.AppendUint(payload, ip&0xff, 10)
-	payload = append(payload, secret...)
-
-	checkHash := func(hash [sha1.Size]byte) {
+func sendHash(found chan<- [4 + sha1.Size]byte, need func([sha1.Size]byte) bool, ip string, ipBytes [4]byte) {
+	send := func(hash [sha1.Size]byte) {
 		if need(hash) {
 			var foundPayload [4 + sha1.Size]byte
-			binary.BigEndian.PutUint32(foundPayload[:4], uint32(ip))
+			copy(foundPayload[:4], ipBytes[:])
 			copy(foundPayload[4:], hash[:])
 			found <- foundPayload
 		}
 	}
 
-	hash := sha1.Sum(payload)
-	checkHash(hash)
-
-	payload = payload[:sha1.Size*2]
-	hex.Encode(payload, hash[:])
-	payload = append(payload, secret...)
-	hash = sha1.Sum(payload)
-	checkHash(hash)
-
-	payload = append(payload[:0], "::ffff:"...)
-	payload = strconv.AppendUint(payload, (ip>>24)&0xff, 10)
-	payload = append(payload, '.')
-	payload = strconv.AppendUint(payload, (ip>>16)&0xff, 10)
-	payload = append(payload, '.')
-	payload = strconv.AppendUint(payload, (ip>>8)&0xff, 10)
-	payload = append(payload, '.')
-	payload = strconv.AppendUint(payload, ip&0xff, 10)
-	payload = append(payload, secret...)
-	hash = sha1.Sum(payload)
-	checkHash(hash)
-
-	payload = payload[:sha1.Size*2]
-	hex.Encode(payload, hash[:])
-	payload = append(payload, secret...)
-	hash = sha1.Sum(payload)
-	checkHash(hash)
+	tryHash(ip, 2, send)
+	tryHash("::ffff:"+ip, 2, send)
 }
 
-func prepareCache(name string, hashes [][sha1.Size]byte) (io.Writer, [][sha1.Size]byte, func()) {
+func tryHash(payload string, depth int, send func([sha1.Size]byte)) {
+	for i := 0; i < depth; i++ {
+		hash := sha1.Sum([]byte(payload + secret))
+		send(hash)
+		payload = hex.EncodeToString(hash[:])
+	}
+}
+
+func prepareCache(name string, hashes map[[sha1.Size]byte]struct{}) (io.Writer, func()) {
 	b, err := ioutil.ReadFile(name)
 	if os.IsNotExist(err) {
 		b, err = nil, nil
@@ -173,18 +129,36 @@ func prepareCache(name string, hashes [][sha1.Size]byte) (io.Writer, [][sha1.Siz
 
 	w := io.MultiWriter(f, os.Stdout)
 
-	notFound := make(map[[sha1.Size]byte]struct{}, len(hashes))
-	for _, h := range hashes {
-		notFound[h] = struct{}{}
+	type result struct {
+		ip    string
+		hash  [sha1.Size]byte
+		cache bool
 	}
 
-	found := make(chan [4 + sha1.Size]byte, 100)
+	found := make(chan result, 100)
 	var wg sync.WaitGroup
-	wg.Add(1)
-	go func() {
-		wg.Wait()
-		close(found)
-	}()
+
+	bad := func(payloads []string, depth int) {
+		wg.Add(len(payloads))
+		for _, s := range payloads {
+			payload := s
+			go func() {
+				tryHash(payload, depth, func(hash [sha1.Size]byte) {
+					found <- result{
+						ip:    payload,
+						hash:  hash,
+						cache: false,
+					}
+				})
+
+				wg.Done()
+			}()
+		}
+	}
+
+	bad(rubbish[:], 2)
+	bad(ipv6[:], 2)
+	bad(triple[:], 3)
 
 	lines := bytes.SplitAfter(b, []byte{'\n'})
 	for _, line := range lines {
@@ -203,6 +177,8 @@ func prepareCache(name string, hashes [][sha1.Size]byte) (io.Writer, [][sha1.Siz
 		if len(ip) != 4 {
 			continue
 		}
+		var ipBytes [4]byte
+		copy(ipBytes[:], ip)
 
 		var hash [sha1.Size]byte
 		hashText := line[tabIndex+1 : len(line)-1]
@@ -211,40 +187,38 @@ func prepareCache(name string, hashes [][sha1.Size]byte) (io.Writer, [][sha1.Siz
 			continue
 		}
 
-		index := sort.Search(len(hashes), func(i int) bool {
-			return bytes.Compare(hashes[i][:], hash[:]) >= 0
-		})
-		if index >= len(hashes) || hashes[index] != hash {
-			continue
-		}
-
 		wg.Add(1)
+		payload := ip.String()
 		go func() {
-			tryHash(found, func(b [sha1.Size]byte) bool {
-				return true
-			}, uint64(ip[0])<<24|uint64(ip[1])<<16|uint64(ip[2])<<8|uint64(ip[3]))
+			tryHash(payload, 2, func(hash [sha1.Size]byte) {
+				found <- result{
+					ip:    payload,
+					hash:  hash,
+					cache: true,
+				}
+			})
 
 			wg.Done()
 		}()
 	}
-	wg.Done()
 
-	for ip := range found {
-		var hash [sha1.Size]byte
-		copy(hash[:], ip[4:])
+	go func() {
+		wg.Wait()
+		close(found)
+	}()
 
-		if _, ok := notFound[hash]; ok {
-			fmt.Fprintf(w, "%d.%d.%d.%d\t%x\n", ip[0], ip[1], ip[2], ip[3], hash)
-			delete(notFound, hash)
+	for r := range found {
+		if _, ok := hashes[r.hash]; ok {
+			out := w
+			if !r.cache {
+				out = os.Stdout
+			}
+			fmt.Fprintf(out, "%s\t%x\n", r.ip, r.hash)
+			delete(hashes, r.hash)
 		}
 	}
 
-	hashes = make([][sha1.Size]byte, 0, len(notFound))
-	for h := range notFound {
-		hashes = append(hashes, h)
-	}
-
-	return w, hashes, func() {
+	return w, func() {
 		if err := f.Close(); err != nil {
 			panic(err)
 		}
