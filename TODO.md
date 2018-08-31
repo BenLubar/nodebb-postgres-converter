@@ -42,7 +42,7 @@
 - [ ] `digest:week:uids`
 - [X] `email:sorted`
 - [X] `email:uid`
-- [ ] `errors:404`
+- [X] `errors:404`
 - [ ] `events:time`
 - [ ] `flags:datetime`
 - [ ] `flags:hash`
