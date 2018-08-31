@@ -75,6 +75,3 @@ SELECT uid,
   FROM uids;
 
 SELECT setval('classify.users_uid_seq', "classify"."get_hash_string"('global', 'nextUid')::BIGINT);
-
-CLUSTER VERBOSE "classify"."users";
-ANALYZE VERBOSE "classify"."users";
