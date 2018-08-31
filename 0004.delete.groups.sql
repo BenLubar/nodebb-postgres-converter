@@ -149,7 +149,7 @@ DELETE FROM "classify"."unclassified" uc
    AND uc."value_numeric" = 0
    AND NOT g."hidden";
 
-DELETE FROM "classify"."unclassified"
+DELETE FROM "classify"."unclassified" uc
  USING "classify"."group_members" gm
  INNER JOIN "classify"."groups" g
          ON g."gid" = gm."gid"
@@ -159,7 +159,7 @@ DELETE FROM "classify"."unclassified"
    AND uc."value_numeric" = (EXTRACT(EPOCH FROM gm."joined_at") * 1000)::NUMERIC
    AND gm."type" IN ('member', 'owner');
 
-DELETE FROM "classify"."unclassified"
+DELETE FROM "classify"."unclassified" uc
  USING "classify"."group_members" gm
  INNER JOIN "classify"."groups" g
          ON g."gid" = gm."gid"
@@ -168,7 +168,7 @@ DELETE FROM "classify"."unclassified"
    AND uc."unique_string" = gm."uid"::TEXT
    AND gm."type" = 'owner';
 
-DELETE FROM "classify"."unclassified"
+DELETE FROM "classify"."unclassified" uc
  USING "classify"."group_members" gm
  INNER JOIN "classify"."groups" g
          ON g."gid" = gm."gid"
@@ -177,7 +177,7 @@ DELETE FROM "classify"."unclassified"
    AND uc."unique_string" = gm."uid"::TEXT
    AND gm."type" = 'invited';
 
-DELETE FROM "classify"."unclassified"
+DELETE FROM "classify"."unclassified" uc
  USING "classify"."group_members" gm
  INNER JOIN "classify"."groups" g
          ON g."gid" = gm."gid"
