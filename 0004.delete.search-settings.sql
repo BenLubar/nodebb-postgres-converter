@@ -1,4 +1,4 @@
-DELETE FROM "unclassified" uc
+DELETE FROM "classify"."unclassified" uc
  WHERE uc."_key" = 'nodebb-plugin-dbsearch'
    AND uc."type" = 'hash'
    AND uc."unique_string" IN (

@@ -143,7 +143,7 @@ DELETE FROM "classify"."unclassified" uc
  WHERE uc."_key" = 'topics:tid'
    AND uc."type" = 'zset'
    AND uc."unique_string" = t."tid"::TEXT
-   AND uc."value_numeric" = EXTRACT(EPOCH FROM t."timestamp") * 1000)::NUMERIC;
+   AND uc."value_numeric" = (EXTRACT(EPOCH FROM t."timestamp") * 1000)::NUMERIC;
 
 DELETE FROM "classify"."unclassified" uc
  USING "classify"."topics" t
@@ -157,7 +157,7 @@ DELETE FROM "classify"."unclassified" uc
  WHERE uc."_key" = 'topics:recent'
    AND uc."type" = 'zset'
    AND uc."unique_string" = t."tid"::TEXT
-   AND uc."value_numeric" = EXTRACT(EPOCH FROM t."lastposttime") * 1000)::NUMERIC;
+   AND uc."value_numeric" = (EXTRACT(EPOCH FROM t."lastposttime") * 1000)::NUMERIC;
 
 DELETE FROM "classify"."unclassified" uc
  USING "classify"."topics" t
@@ -178,4 +178,4 @@ DELETE FROM "classify"."unclassified" uc
  WHERE uc."_key" = 'uid:' || t."uid" || ':topics'
    AND uc."type" = 'zset'
    AND uc."unique_string" = t."tid"::TEXT
-   AND uc."value_numeric" = EXTRACT(EPOCH FROM t."timestamp") * 1000)::NUMERIC;
+   AND uc."value_numeric" = (EXTRACT(EPOCH FROM t."timestamp") * 1000)::NUMERIC;
