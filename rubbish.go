@@ -272,9 +272,3 @@ var ipv6 = [...]string{
 	"2a02:c7d:8434:a700:d1f5:bb07:ea3:7c7d",
 	"2a02:c7f:8c0b:5400:8d4:2684:5b16:ad31",
 }
-
-// IP addresses that were hashed *three* times in the WTDWTF dataset.
-var triple = [...]string{
-	"172.17.0.1",
-	"172.18.0.1",
-}

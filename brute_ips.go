@@ -130,24 +130,26 @@ func prepareCache(name string, hashes map[[sha1.Size]byte]struct{}) (io.Writer, 
 	w := io.MultiWriter(f, os.Stdout)
 
 	type result struct {
-		ip    string
-		hash  [sha1.Size]byte
-		cache bool
+		payload string
+		hash    [sha1.Size]byte
+		isIP    bool
+		cache   bool
 	}
 
 	found := make(chan result, 100)
 	var wg sync.WaitGroup
 
-	bad := func(payloads []string, depth int) {
+	bad := func(payloads []string, depth int, isIP bool) {
 		wg.Add(len(payloads))
 		for _, s := range payloads {
 			payload := s
 			go func() {
 				tryHash(payload, depth, func(hash [sha1.Size]byte) {
 					found <- result{
-						ip:    payload,
-						hash:  hash,
-						cache: false,
+						payload: payload,
+						hash:    hash,
+						isIP:    isIP,
+						cache:   false,
 					}
 				})
 
@@ -156,9 +158,8 @@ func prepareCache(name string, hashes map[[sha1.Size]byte]struct{}) (io.Writer, 
 		}
 	}
 
-	bad(rubbish[:], 2)
-	bad(ipv6[:], 2)
-	bad(triple[:], 3)
+	bad(rubbish[:], 2, false)
+	bad(ipv6[:], 2, true)
 
 	lines := bytes.SplitAfter(b, []byte{'\n'})
 	for _, line := range lines {
@@ -192,9 +193,10 @@ func prepareCache(name string, hashes map[[sha1.Size]byte]struct{}) (io.Writer, 
 		go func() {
 			tryHash(payload, 2, func(hash [sha1.Size]byte) {
 				found <- result{
-					ip:    payload,
-					hash:  hash,
-					cache: true,
+					payload: payload,
+					hash:    hash,
+					isIP:    true,
+					cache:   true,
 				}
 			})
 
@@ -209,11 +211,13 @@ func prepareCache(name string, hashes map[[sha1.Size]byte]struct{}) (io.Writer, 
 
 	for r := range found {
 		if _, ok := hashes[r.hash]; ok {
-			out := w
-			if !r.cache {
-				out = os.Stdout
+			if r.isIP {
+				out := w
+				if !r.cache {
+					out = os.Stdout
+				}
+				fmt.Fprintf(out, "%s\t%x\n", r.payload, r.hash)
 			}
-			fmt.Fprintf(out, "%s\t%x\n", r.ip, r.hash)
 			delete(hashes, r.hash)
 		}
 	}

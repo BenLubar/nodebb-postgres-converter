@@ -33,9 +33,12 @@ SELECT bih."ip",
          ON uc."unique_string" = bih."hash"
  WHERE uc."_key" = 'ip:recent'
    AND uc."type" = 'zset'
+   AND bih."ip" <> '0.0.0.0'
  GROUP BY bih."ip";
 
 -- Delete is included in this step instead of step 4 because it requires access to the temporary data.
+
+-- Merged entries use the latest timestamp.
 DELETE FROM "classify"."unclassified" uc
  USING "classify"."ip_recent" ir
  INNER JOIN "broken_ip_hashes" bih
@@ -43,4 +46,15 @@ DELETE FROM "classify"."unclassified" uc
  WHERE uc."_key" = 'ip:recent'
    AND uc."type" = 'zset'
    AND uc."unique_string" = bih."hash"
-   AND uc."value_numeric" = (EXTRACT(EPOCH FROM ir."last_seen") * 1000)::NUMERIC;
+   AND uc."value_numeric" <= (EXTRACT(EPOCH FROM ir."last_seen") * 1000)::NUMERIC;
+
+-- Delete bad hashes without checking timestamps.
+DELETE FROM "classify"."unclassified" uc
+ USING "broken_ip_hashes" bih
+ WHERE uc."_key" = 'ip:recent'
+   AND uc."type" = 'zset'
+   AND uc."unique_string" = bih."hash"
+   AND bih."ip" = '0.0.0.0';
+
+-- Drop temporary table.
+DROP TABLE "broken_ip_hashes";
