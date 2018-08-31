@@ -35,4 +35,4 @@ echo '.PHONY: %.do' >> Makefile
 echo '%.do: %.sql' >> Makefile
 echo $'\t''docker exec -iu postgres wtdwtf-nodebb-postgres psql -v ON_ERROR_STOP=1 nodebb < $<' >> Makefile
 
-make "$@"
+make "$@" || echo 'FAILED!'

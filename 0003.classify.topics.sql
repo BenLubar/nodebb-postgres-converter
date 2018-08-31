@@ -39,7 +39,7 @@ CREATE INDEX ON "classify"."topics" USING GIN ("title_tsvector");
 ALTER TABLE "classify"."topics" CLUSTER ON "topics_pkey";
 
 CREATE TRIGGER "topics_search_update" BEFORE INSERT OR UPDATE OF "title", "search_language" ON "classify"."topics"
-   FOR EACH ROW EXECUTE PROCEDURE TSVECTOR_UPDATE_TRIGGER_COLUMN("search_language", "search_language", "title");
+   FOR EACH ROW EXECUTE PROCEDURE TSVECTOR_UPDATE_TRIGGER_COLUMN("title_tsvector", "search_language", "title");
 
 WITH tids AS (
 	SELECT u."unique_string"::BIGINT "tid",
@@ -58,12 +58,12 @@ SELECT tid,
        "classify"."get_hash_timestamp"(key, 'timestamp'),
        "classify"."get_hash_string"(key, 'thumb'),
        "classify"."get_hash_string"(key, 'mainPid')::BIGINT,
-       "classify"."get_hash_string"(key, 'teaserPid')::BIGINT,
+       COALESCE("classify"."get_hash_string"(key, 'teaserPid')::BIGINT, "classify"."get_hash_string"(key, 'mainPid')::BIGINT),
        "classify"."get_hash_string"(key, 'postcount')::BIGINT,
-       "classify"."get_hash_timestamp"(key, 'lastposttime'),
-       "classify"."get_hash_string"(key, 'upvotes')::BIGINT,
-       "classify"."get_hash_string"(key, 'downvotes')::BIGINT,
-       "classify"."get_hash_string"(key, 'viewcount')::BIGINT,
+       COALESCE("classify"."get_hash_timestamp"(key, 'lastposttime'), "classify"."get_hash_timestamp"(key, 'timestamp')),
+       COALESCE("classify"."get_hash_string"(key, 'upvotes')::BIGINT, 0),
+       COALESCE("classify"."get_hash_string"(key, 'downvotes')::BIGINT, 0),
+       COALESCE("classify"."get_hash_string"(key, 'viewcount')::BIGINT, 0),
        COALESCE("classify"."get_hash_boolean"(key, 'locked'), FALSE),
        COALESCE("classify"."get_hash_boolean"(key, 'pinned'), FALSE),
        COALESCE("classify"."get_hash_boolean"(key, 'deleted'), FALSE),

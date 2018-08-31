@@ -191,14 +191,16 @@ func prepareCache(name string, hashes map[[sha1.Size]byte]struct{}) (io.Writer, 
 		wg.Add(1)
 		payload := ip.String()
 		go func() {
-			tryHash(payload, 2, func(hash [sha1.Size]byte) {
+			foundIP := func(hash [sha1.Size]byte) {
 				found <- result{
 					payload: payload,
 					hash:    hash,
 					isIP:    true,
 					cache:   true,
 				}
-			})
+			}
+			tryHash(payload, 2, foundIP)
+			tryHash("::ffff:"+payload, 2, foundIP)
 
 			wg.Done()
 		}()

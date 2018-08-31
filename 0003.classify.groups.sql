@@ -86,7 +86,7 @@ ALTER TABLE "classify"."group_members" CLUSTER ON "group_members_pkey";
 INSERT INTO "classify"."group_members"
 SELECT g."gid",
        u."unique_string"::BIGINT,
-       CASE WHEN o."unique_string" IS NULL THEN 'member' ELSE 'owner' END,
+       CASE WHEN o."unique_string" IS NULL THEN 'member' ELSE 'owner' END::"classify".GROUP_MEMBER_TYPE,
        TO_TIMESTAMP(u."value_numeric" / 1000)
   FROM "classify"."groups" g
  INNER JOIN "classify"."unclassified" u
@@ -95,22 +95,19 @@ SELECT g."gid",
   LEFT JOIN "classify"."unclassified" o
          ON o."_key" = 'group:' || g."name" || ':owners'
         AND o."type" = 'set'
-        AND o."unique_string" = u."unique_string"
-UNION ALL
+        AND o."unique_string" = u."unique_string";
+
+INSERT INTO "classify"."group_members"
 SELECT g."gid",
        u."unique_string"::BIGINT,
-       'invited',
+       t."type",
        NULL
   FROM "classify"."groups" g
+ CROSS JOIN (VALUES ('invited'::"classify".GROUP_MEMBER_TYPE), ('pending'::"classify".GROUP_MEMBER_TYPE)) t("type")
  INNER JOIN "classify"."unclassified" u
-         ON u."_key" = 'group:' || g."name" || ':invited'
+         ON u."_key" = 'group:' || g."name" || ':' || t."type"
         AND u."type" = 'set'
-UNION ALL
-SELECT g."gid",
-       u."unique_string"::BIGINT,
-       'pending',
-       NULL
-  FROM "classify"."groups" g
- INNER JOIN "classify"."unclassified" u
-         ON u."_key" = 'group:' || g."name" || ':pending'
-        AND u."type" = 'set';
+  LEFT JOIN "classify"."group_members" gm
+         ON gm."gid" = g."gid"
+        AND gm."uid" = u."unique_string"::BIGINT
+ WHERE gm."type" IS NULL;
