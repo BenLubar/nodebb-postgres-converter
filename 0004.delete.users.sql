@@ -222,9 +222,3 @@ DELETE FROM "classify"."unclassified" uc
    AND uc."unique_string" = 'birthday'
    AND ((u."birthday" IS NULL AND uc."value_string" = '')
     OR u."birthday" = "classify"."get_hash_date"('user:' || u."uid", 'birthday'));
-
-DELETE FROM "classify"."unclassified" uc
- WHERE uc."_key" = 'globsl'
-   AND uc."type" = 'hash'
-   AND uc."unique_string" = 'nextUid'
-   AND uc."value_string" = currval('classify.users_uid_seq')::TEXT;

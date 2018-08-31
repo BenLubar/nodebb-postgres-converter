@@ -172,16 +172,6 @@ DELETE FROM "classify"."unclassified" uc
  USING "classify"."group_members" gm
  INNER JOIN "classify"."groups" g
          ON g."gid" = gm."gid"
- WHERE uc."_key" = 'group:' || g."name" || ':invited'
+ WHERE uc."_key" IN ('group:' || g."name" || ':invited', 'group:' || g."name" || ':pending')
    AND uc."type" = 'set'
-   AND uc."unique_string" = gm."uid"::TEXT
-   AND gm."type" = 'invited';
-
-DELETE FROM "classify"."unclassified" uc
- USING "classify"."group_members" gm
- INNER JOIN "classify"."groups" g
-         ON g."gid" = gm."gid"
- WHERE uc."_key" = 'group:' || g."name" || ':pending'
-   AND uc."type" = 'set'
-   AND uc."unique_string" = gm."uid"::TEXT
-   AND gm."type" = 'pending';
+   AND uc."unique_string" = gm."uid"::TEXT;
