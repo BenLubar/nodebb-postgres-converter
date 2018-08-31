@@ -5,6 +5,7 @@
 - [X] `groupslug:groupname`
 - [X] `ip-blacklist-rules`
 - [ ] `lastrestart`
+- [X] `nodebb-plugin-dbsearch`
 - [ ] `widgets:global`
 - [ ] `/category:[0-9]+/`
 - [ ] `/chat:room:[0-9]+/`
@@ -22,7 +23,7 @@
 - [ ] `/rewards:id:[0-9]+:rewards/`
 - [ ] `/rewards:id:[0-9]+/`
 - [X] `/settings:[^:]+/`
-- [ ] `/topic:[0-9]+/`
+- [X] `/topic:[0-9]+/`
 - [ ] `/uid:[0-9]+:sessionUUID:sessionId/`
 - [ ] `/user:[0-9]+:settings/`
 - [X] `/user:[0-9]+/`
@@ -63,11 +64,11 @@
 - [ ] `registration:queue`
 - [ ] `schemaLog`
 - [ ] `tags:topic:count`
-- [ ] `topics:posts`
-- [ ] `topics:recent`
-- [ ] `topics:tid`
-- [ ] `topics:views`
-- [ ] `topics:votes`
+- [X] `topics:posts`
+- [X] `topics:recent`
+- [X] `topics:tid`
+- [X] `topics:views`
+- [X] `topics:votes`
 - [X] `username:sorted`
 - [X] `username:uid`
 - [ ] `users:banned:expire`
@@ -141,7 +142,7 @@
 - [ ] `/uid:[0-9]+:sessions/`
 - [ ] `/uid:[0-9]+:tids_read/`
 - [ ] `/uid:[0-9]+:tids_unread/`
-- [ ] `/uid:[0-9]+:topics/`
+- [X] `/uid:[0-9]+:topics/`
 - [ ] `/uid:[0-9]+:uploads/`
 - [ ] `/uid:[0-9]+:upvote/`
 - [ ] `/upload:[0-9]+:pids/`
