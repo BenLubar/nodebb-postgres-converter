@@ -69,7 +69,7 @@ SELECT tid,
        COALESCE("classify"."get_hash_boolean"(key, 'deleted'), FALSE),
        NULLIF("classify"."get_hash_string"(key, 'deleterUid'), '0')::BIGINT,
        "classify"."get_hash_timestamp"(key, 'deletedTimestamp'),
-       NULL,
+       ''::TSVECTOR,
        "classify"."nodebb_default_search_language"()
   FROM tids;
 
