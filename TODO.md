@@ -2,7 +2,7 @@
 
 - [X] `config`
 - [ ] `global`
-- [ ] `groupslug:groupname`
+- [X] `groupslug:groupname`
 - [X] `ip-blacklist-rules`
 - [ ] `lastrestart`
 - [ ] `widgets:global`
@@ -12,7 +12,7 @@
 - [ ] `/diff:[0-9]+.[0-9]+/`
 - [ ] `/event:[0-9]+/`
 - [ ] `/flag:[0-9]+/`
-- [ ] `/group:[^:]+/`
+- [X] `/group:[^:]+/`
 - [ ] `/group:cid:[0-9]+:privileges:(groups:)?(chat|find|moderate|posts:(delete|downvote|edit|history|view_deleted|upvote)|read|search:(content|tags|users)|signature|topics:(create|delete|read|reply|tag)|upload:post:(image|file))/`
 - [ ] `/message:[0-9]+/`
 - [ ] `/notifications:%/`
@@ -47,10 +47,10 @@
 - [ ] `flags:datetime`
 - [ ] `flags:hash`
 - [X] `fullname:uid`
-- [ ] `groups:createtime`
-- [ ] `groups:visible:createtime`
-- [ ] `groups:visible:memberCount`
-- [ ] `groups:visible:name`
+- [X] `groups:createtime`
+- [X] `groups:visible:createtime`
+- [X] `groups:visible:memberCount`
+- [X] `groups:visible:name`
 - [X] `ip:recent`
 - [ ] `navigation:enabled`
 - [ ] `notifications`
@@ -108,7 +108,7 @@
 - [ ] `/followers:[0-9]+/`
 - [ ] `/following:[0-9]+/`
 - [ ] `/group:[^:]+:member:pids/`
-- [ ] `/group:[^:]+:members/`
+- [X] `/group:[^:]+:members/`
 - [ ] `/group:cid:[0-9]+:privileges:(groups:)?(chat|find|moderate|posts:(delete|downvote|edit|history|view_deleted|upvote)|read|search:(content|tags|users)|signature|topics:(create|delete|read|reply|tag)|upload:post:(image|file)):members/`
 - [X] `/ip:(::ffff:)?[0-9]+.[0-9]+.[0-9]+.[0-9]+:uid/`
 - [ ] `/pid:[0-9]+:flag:uid:reason/`
@@ -154,9 +154,9 @@
 - [ ] `rewards:list`
 - [ ] `/cid:[0-9]+:read_by_uid/`
 - [ ] `/condition:[^:]+:rewards/`
-- [ ] `/group:[^:]+:invited/`
-- [ ] `/group:[^:]+:owners/`
-- [ ] `/group:[^:]+:pending/`
+- [X] `/group:[^:]+:invited/`
+- [X] `/group:[^:]+:owners/`
+- [X] `/group:[^:]+:pending/`
 - [ ] `/ignored:[0-9]+/`
 - [ ] `/ignored:by:[0-9]+/`
 - [ ] `/ignored:chat:[0-9]+/`
