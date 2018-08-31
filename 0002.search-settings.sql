@@ -1,5 +1,5 @@
 CREATE UNLOGGED TABLE "classify"."search_settings" (
-	"default_language" REGCLASS NOT NULL,
+	"default_language" REGCONFIG NOT NULL,
 	"post_limit" BIGINT NOT NULL,
 	"topic_limit" BIGINT NOT NULL
 ) WITHOUT OIDS;
