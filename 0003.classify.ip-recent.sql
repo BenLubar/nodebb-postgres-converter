@@ -27,12 +27,13 @@ ALTER TABLE "classify"."ip_recent" CLUSTER ON "ip_recent_pkey";
 
 INSERT INTO "classify"."ip_recent"
 SELECT bih."ip",
-       TO_TIMESTAMP(uc."value_numeric" / 1000)
+       MAX(TO_TIMESTAMP(uc."value_numeric" / 1000))
   FROM "classify"."unclassified" uc
  INNER JOIN "broken_ip_hashes" bih
          ON uc."unique_string" = bih."hash"
  WHERE uc."_key" = 'ip:recent'
-   AND uc."type" = 'zset';
+   AND uc."type" = 'zset'
+ GROUP BY bih."ip";
 
 -- Delete is included in this step instead of step 4 because it requires access to the temporary data.
 DELETE FROM "classify"."unclassified" uc

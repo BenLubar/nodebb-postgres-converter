@@ -7,6 +7,9 @@ import (
 	"encoding/binary"
 	"encoding/hex"
 	"fmt"
+	"io"
+	"io/ioutil"
+	"net"
 	"os"
 	"runtime"
 	"sort"
@@ -41,6 +44,12 @@ func main() {
 		return i < len(hashes) && hashes[i] == hash
 	}
 
+	w, hashes, closeCache := prepareCache("/tmp/ip-hashes-cache", hashes)
+	defer closeCache()
+	if len(hashes) == 0 {
+		return
+	}
+
 	workers := runtime.GOMAXPROCS(0)
 	var wg sync.WaitGroup
 	wg.Add(workers)
@@ -57,7 +66,7 @@ func main() {
 	for f := range found {
 		ip := f[:4]
 		hash := f[4:]
-		fmt.Printf("%d.%d.%d.%d\t%x\n", ip[0], ip[1], ip[2], ip[3], hash)
+		fmt.Fprintf(w, "%d.%d.%d.%d\t%x\n", ip[0], ip[1], ip[2], ip[3], hash)
 	}
 }
 
@@ -144,4 +153,69 @@ func tryHash(found chan<- [4 + sha1.Size]byte, need func([sha1.Size]byte) bool, 
 	payload = append(payload, secret...)
 	hash = sha1.Sum(payload)
 	checkHash(hash)
+}
+
+func prepareCache(name string, hashes [][sha1.Size]byte) (io.Writer, [][sha1.Size]byte, func()) {
+	b, err := ioutil.ReadFile(name)
+	if os.IsNotExist(err) {
+		b, err = nil, nil
+	}
+	if err != nil {
+		panic(err)
+	}
+
+	f, err := os.Create(name)
+	if err != nil {
+		panic(err)
+	}
+
+	w := io.MultiWriter(f, os.Stdout)
+
+	lines := bytes.SplitAfter(b, []byte{'\n'})
+	for _, line := range lines {
+		if len(line) < 9+2*sha1.Size {
+			// Can't possibly be an IPv4, a tab, a hex SHA1, and a newline.
+			continue
+		}
+
+		tabIndex := len(line) - 1 - 2*sha1.Size - 1
+		if line[tabIndex] != '\t' || line[len(line)-1] != '\n' {
+			continue
+		}
+
+		ipText := line[:tabIndex]
+		ip := net.ParseIP(string(ipText)).To4()
+		if len(ip) != 4 {
+			continue
+		}
+
+		var hash [sha1.Size]byte
+		hashText := line[tabIndex+1 : len(line)-1]
+		_, err = hex.Decode(hash[:], hashText)
+		if err != nil {
+			continue
+		}
+
+		index := sort.Search(len(hashes), func(i int) bool {
+			return bytes.Compare(hashes[i][:], hash[:]) >= 0
+		})
+		if index >= len(hashes) || hashes[index] != hash {
+			continue
+		}
+
+		found := make(chan [4 + sha1.Size]byte, 4)
+		tryHash(found, func(b [sha1.Size]byte) bool { return b == hash }, uint64(ip[0])<<24|uint64(ip[1])<<16|uint64(ip[2])<<8|uint64(ip[3]))
+		select {
+		case <-found:
+			fmt.Fprintf(w, "%d.%d.%d.%d\t%x\n", ip[0], ip[1], ip[2], ip[3], hash)
+			hashes = append(hashes[:index], hashes[index+1:]...)
+		default:
+		}
+	}
+
+	return w, hashes, func() {
+		if err := f.Close(); err != nil {
+			panic(err)
+		}
+	}
 }
