@@ -28,7 +28,7 @@ SELECT CASE (SELECT "value_string"
        WHEN 'sv' THEN 'pg_catalog.swedish'
        WHEN 'tr' THEN 'pg_catalog.turkish'
        ELSE 'pg_catalog.english'
-       END,
+       END::REGCONFIG,
        COALESCE((SELECT "value_string"
                    FROM "classify"."unclassified"
                   WHERE "_key" = 'nodebb-plugin-dbsearch'
