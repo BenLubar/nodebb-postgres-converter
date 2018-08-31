@@ -19,9 +19,17 @@ import (
 
 func main() {
 	hashes := readHashes("/tmp/ip-hashes")
+
+	w, hashes, closeCache := prepareCache("/tmp/ip-hashes-cache", hashes)
+	defer closeCache()
+	if len(hashes) == 0 {
+		return
+	}
+
 	sort.Slice(hashes, func(i, j int) bool {
 		return bytes.Compare(hashes[i][:], hashes[j][:]) < 0
 	})
+
 	need := func(hash [sha1.Size]byte) bool {
 		// inlined sort.Search
 
@@ -42,12 +50,6 @@ func main() {
 		}
 		// i == j, f(i-1) == false, and f(j) (= f(i)) == true  =>  answer is i.
 		return i < len(hashes) && hashes[i] == hash
-	}
-
-	w, hashes, closeCache := prepareCache("/tmp/ip-hashes-cache", hashes)
-	defer closeCache()
-	if len(hashes) == 0 {
-		return
 	}
 
 	workers := runtime.GOMAXPROCS(0)
@@ -171,6 +173,19 @@ func prepareCache(name string, hashes [][sha1.Size]byte) (io.Writer, [][sha1.Siz
 
 	w := io.MultiWriter(f, os.Stdout)
 
+	notFound := make(map[[sha1.Size]byte]struct{}, len(hashes))
+	for _, h := range hashes {
+		notFound[h] = struct{}{}
+	}
+
+	found := make(chan [4 + sha1.Size]byte, 100)
+	var wg sync.WaitGroup
+	wg.Add(1)
+	go func() {
+		wg.Wait()
+		close(found)
+	}()
+
 	lines := bytes.SplitAfter(b, []byte{'\n'})
 	for _, line := range lines {
 		if len(line) < 9+2*sha1.Size {
@@ -203,14 +218,30 @@ func prepareCache(name string, hashes [][sha1.Size]byte) (io.Writer, [][sha1.Siz
 			continue
 		}
 
-		found := make(chan [4 + sha1.Size]byte, 4)
-		tryHash(found, func(b [sha1.Size]byte) bool { return b == hash }, uint64(ip[0])<<24|uint64(ip[1])<<16|uint64(ip[2])<<8|uint64(ip[3]))
-		select {
-		case <-found:
+		wg.Add(1)
+		go func() {
+			tryHash(found, func(b [sha1.Size]byte) bool {
+				return true
+			}, uint64(ip[0])<<24|uint64(ip[1])<<16|uint64(ip[2])<<8|uint64(ip[3]))
+
+			wg.Done()
+		}()
+	}
+	wg.Done()
+
+	for ip := range found {
+		var hash [sha1.Size]byte
+		copy(hash[:], ip[4:])
+
+		if _, ok := notFound[hash]; ok {
 			fmt.Fprintf(w, "%d.%d.%d.%d\t%x\n", ip[0], ip[1], ip[2], ip[3], hash)
-			hashes = append(hashes[:index], hashes[index+1:]...)
-		default:
+			delete(notFound, hash)
 		}
+	}
+
+	hashes = make([][sha1.Size]byte, 0, len(notFound))
+	for h := range notFound {
+		hashes = append(hashes, h)
 	}
 
 	return w, hashes, func() {
