@@ -23,7 +23,8 @@ PARTITION OF "classify"."unclassified" (
 	"value_numeric" WITH OPTIONS CHECK ("value_numeric" IS NULL),
 	"value_string" WITH OPTIONS NOT NULL,
 	PRIMARY KEY ("_key", "unique_string")
-) FOR VALUES IN ('hash');
+) FOR VALUES IN ('hash')
+WITH (AUTOVACUUM_ENABLED = FALSE, TOAST.AUTOVACUUM_ENABLED = FALSE);
 
 ALTER TABLE "classify"."unclassified_hash" CLUSTER ON "unclassified_hash_pkey";
 
@@ -37,7 +38,8 @@ PARTITION OF "classify"."unclassified" (
 	"value_numeric" WITH OPTIONS NOT NULL,
 	"value_string" WITH OPTIONS CHECK ("value_string" IS NULL),
 	PRIMARY KEY ("_key", "unique_string")
-) FOR VALUES IN ('zset');
+) FOR VALUES IN ('zset')
+WITH (AUTOVACUUM_ENABLED = FALSE, TOAST.AUTOVACUUM_ENABLED = FALSE);
 
 ALTER TABLE "classify"."unclassified_zset" CLUSTER ON "unclassified_zset_pkey";
 
@@ -51,7 +53,8 @@ PARTITION OF "classify"."unclassified" (
 	"value_numeric" WITH OPTIONS CHECK ("value_numeric" IS NULL),
 	"value_string" WITH OPTIONS CHECK ("value_string" IS NULL),
 	PRIMARY KEY ("_key", "unique_string")
-) FOR VALUES IN ('set');
+) FOR VALUES IN ('set')
+WITH (AUTOVACUUM_ENABLED = FALSE, TOAST.AUTOVACUUM_ENABLED = FALSE);
 
 ALTER TABLE "classify"."unclassified_set" CLUSTER ON "unclassified_set_pkey";
 
@@ -65,7 +68,8 @@ PARTITION OF "classify"."unclassified" (
 	"value_numeric" WITH OPTIONS CHECK ("value_numeric" IS NULL),
 	"value_string" WITH OPTIONS NOT NULL,
 	PRIMARY KEY ("_key", "unique_index")
-) FOR VALUES IN ('list');
+) FOR VALUES IN ('list')
+WITH (AUTOVACUUM_ENABLED = FALSE, TOAST.AUTOVACUUM_ENABLED = FALSE);
 
 ALTER TABLE "classify"."unclassified_list" CLUSTER ON "unclassified_list_pkey";
 
@@ -79,6 +83,7 @@ PARTITION OF "classify"."unclassified" (
 	"value_numeric" WITH OPTIONS CHECK ("value_numeric" IS NULL),
 	"value_string" WITH OPTIONS NOT NULL,
 	PRIMARY KEY ("_key")
-) FOR VALUES IN ('string');
+) FOR VALUES IN ('string')
+WITH (AUTOVACUUM_ENABLED = FALSE, TOAST.AUTOVACUUM_ENABLED = FALSE);
 
 ALTER TABLE "classify"."unclassified_string" CLUSTER ON "unclassified_string_pkey";
