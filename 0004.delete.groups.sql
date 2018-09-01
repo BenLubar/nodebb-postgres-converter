@@ -12,7 +12,6 @@ DELETE FROM "classify"."unclassified" uc
    AND uc."unique_string" = 'slug'
    AND uc."value_string" = g."slug";
 
-
 DELETE FROM "classify"."unclassified" uc
  USING "classify"."groups" g
  WHERE uc."_key" = 'group:' || g."name"
@@ -81,35 +80,34 @@ DELETE FROM "classify"."unclassified" uc
  WHERE uc."_key" = 'group:' || g."name"
    AND uc."type" = 'hash'
    AND uc."unique_string" = 'userTitle'
-   AND uc."value_string" = g."userTitle";
+   AND uc."value_string" = COALESCE(g."userTitle", '');
 
 DELETE FROM "classify"."unclassified" uc
  USING "classify"."groups" g
  WHERE uc."_key" = 'group:' || g."name"
    AND uc."type" = 'hash'
    AND uc."unique_string" = 'labelColor'
-   AND uc."value_string" = g."labelColor";
+   AND uc."value_string" = COALESCE(g."labelColor", '');
 
 DELETE FROM "classify"."unclassified" uc
  USING "classify"."groups" g
  WHERE uc."_key" = 'group:' || g."name"
    AND uc."type" = 'hash'
    AND uc."unique_string" = 'icon'
-   AND uc."value_string" = g."icon";
+   AND uc."value_string" = COALESCE(g."icon", '');
 
 DELETE FROM "classify"."unclassified" uc
  USING "classify"."groups" g
  WHERE uc."_key" = 'group:' || g."name"
    AND uc."type" = 'hash'
    AND uc."unique_string" = 'cover:thumb:url'
-   AND uc."value_string" = g."cover:thumb:url";
+   AND uc."value_string" = COALESCE(g."cover:thumb:url", '');
 
 DELETE FROM "classify"."unclassified" uc
  USING "classify"."groups" g
  WHERE uc."_key" = 'group:' || g."name"
    AND uc."type" = 'hash'
-   AND uc."unique_string" = 'cover:position'
-   AND uc."value_string" = g."cover:position";
+   AND uc."unique_string" = 'cover:position';
 
 DELETE FROM "classify"."unclassified" uc
  USING "classify"."groups" g

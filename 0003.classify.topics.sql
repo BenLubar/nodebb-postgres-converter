@@ -50,27 +50,29 @@ WITH tids AS (
 )
 INSERT INTO "classify"."topics"
 SELECT tid,
-       "classify"."get_hash_string"(key, 'cid')::BIGINT,
-       NULLIF("classify"."get_hash_string"(key, 'oldCid'), '0')::BIGINT,
-       NULLIF("classify"."get_hash_string"(key, 'uid'), '0')::BIGINT,
+       "classify"."get_hash_int"(key, 'cid'),
+       "classify"."get_hash_int"(key, 'oldCid'),
+       "classify"."get_hash_int"(key, 'uid'),
        "classify"."get_hash_string"(key, 'slug'),
        "classify"."get_hash_string"(key, 'title'),
        "classify"."get_hash_timestamp"(key, 'timestamp'),
        "classify"."get_hash_string"(key, 'thumb'),
-       "classify"."get_hash_string"(key, 'mainPid')::BIGINT,
-       COALESCE("classify"."get_hash_string"(key, 'teaserPid')::BIGINT, "classify"."get_hash_string"(key, 'mainPid')::BIGINT),
-       "classify"."get_hash_string"(key, 'postcount')::BIGINT,
+       "classify"."get_hash_int"(key, 'mainPid'),
+       COALESCE("classify"."get_hash_int"(key, 'teaserPid'), "classify"."get_hash_int"(key, 'mainPid')),
+       "classify"."get_hash_int"(key, 'postcount'),
        COALESCE("classify"."get_hash_timestamp"(key, 'lastposttime'), "classify"."get_hash_timestamp"(key, 'timestamp')),
-       COALESCE("classify"."get_hash_string"(key, 'upvotes')::BIGINT, 0),
-       COALESCE("classify"."get_hash_string"(key, 'downvotes')::BIGINT, 0),
-       COALESCE("classify"."get_hash_string"(key, 'viewcount')::BIGINT, 0),
+       COALESCE("classify"."get_hash_int"(key, 'upvotes'), 0),
+       COALESCE("classify"."get_hash_int"(key, 'downvotes'), 0),
+       COALESCE("classify"."get_hash_int"(key, 'viewcount'), 0),
        COALESCE("classify"."get_hash_boolean"(key, 'locked'), FALSE),
        COALESCE("classify"."get_hash_boolean"(key, 'pinned'), FALSE),
        COALESCE("classify"."get_hash_boolean"(key, 'deleted'), FALSE),
-       NULLIF("classify"."get_hash_string"(key, 'deleterUid'), '0')::BIGINT,
+       "classify"."get_hash_int"(key, 'deleterUid'),
        "classify"."get_hash_timestamp"(key, 'deletedTimestamp'),
        ''::TSVECTOR,
        "classify"."nodebb_default_search_language"()
-  FROM tids;
+  FROM tids
+       -- somehow, some topics with no posts are in the WTDWTF database.
+ WHERE "classify"."get_hash_int"(key, 'mainPid') IS NOT NULL;
 
-SELECT setval('classify.topics_tid_seq', "classify"."get_hash_string"('global', 'nextTid')::BIGINT);
+SELECT setval('classify.topics_tid_seq', "classify"."get_hash_int"('global', 'nextTid'));

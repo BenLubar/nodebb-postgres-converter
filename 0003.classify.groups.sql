@@ -18,7 +18,7 @@ CREATE UNLOGGED TABLE "classify"."groups" (
 	"icon" TEXT COLLATE "C",
 
 	"cover:thumb:url" TEXT COLLATE "C",
-	"cover:position" TEXT COLLATE "C"
+	"cover:position" "classify".COVER_POSITION NOT NULL
 ) WITHOUT OIDS;
 
 CREATE UNIQUE INDEX ON "classify"."groups"("name");
@@ -45,7 +45,7 @@ SELECT gid,
        "classify"."get_hash_string"(key, 'slug'),
        "classify"."get_hash_timestamp"(key, 'createtime'),
        COALESCE("classify"."get_hash_string"(key, 'description'), ''),
-       COALESCE("classify"."get_hash_string"(key, 'memberCount')::BIGINT, 0),
+       COALESCE("classify"."get_hash_int"(key, 'memberCount'), 0),
 
        COALESCE("classify"."get_hash_boolean"(key, 'private'), FALSE),
        COALESCE("classify"."get_hash_boolean"(key, 'system'), FALSE),
@@ -59,7 +59,7 @@ SELECT gid,
        "classify"."get_hash_string"(key, 'icon'),
 
        "classify"."get_hash_string"(key, 'cover:thumb:url'),
-       "classify"."get_hash_string"(key, 'cover:position')
+       "classify"."get_hash_position"(key, 'cover:position')
   FROM gids;
 
 CREATE TYPE "classify".GROUP_MEMBER_TYPE AS ENUM (

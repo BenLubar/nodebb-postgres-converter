@@ -59,7 +59,7 @@ DELETE FROM "classify"."unclassified" uc
  WHERE uc."_key" = 'user:' || u."uid"
    AND uc."type" = 'hash'
    AND uc."unique_string" = 'email'
-   AND uc."value_string" = u."email";
+   AND uc."value_string" = COALESCE(u."email", '');
 
 DELETE FROM "classify"."unclassified" uc
  USING "classify"."users" u
@@ -192,7 +192,7 @@ DELETE FROM "classify"."unclassified" uc
  WHERE uc."_key" = 'user:' || u."uid"
    AND uc."type" = 'hash'
    AND uc."unique_string" = 'fullname'
-   AND uc."value_string" = u."fullname";
+   AND uc."value_string" = COALESCE(u."fullname", '');
 
 DELETE FROM "classify"."unclassified" uc
  USING "classify"."users" u
@@ -222,3 +222,117 @@ DELETE FROM "classify"."unclassified" uc
    AND uc."unique_string" = 'birthday'
    AND ((u."birthday" IS NULL AND uc."value_string" = '')
     OR u."birthday" = "classify"."get_hash_date"('user:' || u."uid", 'birthday'));
+
+DELETE FROM "classify"."unclassified" uc
+ USING "classify"."users" u
+ WHERE uc."_key" = 'user:' || u."uid"
+   AND uc."type" = 'hash'
+   AND uc."unique_string" = 'showemail'
+   AND uc."value_string" = CASE WHEN u."showemail" THEN '1' ELSE '0' END;
+
+DELETE FROM "classify"."unclassified" uc
+ USING "classify"."users" u
+ WHERE uc."_key" = 'user:' || u."uid"
+   AND uc."type" = 'hash'
+   AND uc."unique_string" = 'status'
+   AND uc."value_string" = u."status"::TEXT;
+
+DELETE FROM "classify"."unclassified" uc
+ USING "classify"."users" u
+ WHERE uc."_key" = 'user:' || u."uid"
+   AND uc."type" = 'hash'
+   AND uc."unique_string" = 'signature'
+   AND uc."value_string" = u."signature";
+
+DELETE FROM "classify"."unclassified" uc
+ USING "classify"."users" u
+ WHERE uc."_key" = 'user:' || u."uid"
+   AND uc."type" = 'hash'
+   AND uc."unique_string" = 'picture'
+   AND uc."value_string" = COALESCE(u."picture", '');
+
+DELETE FROM "classify"."unclassified" uc
+ USING "classify"."users" u
+ WHERE uc."_key" = 'user:' || u."uid"
+   AND uc."type" = 'hash'
+   AND uc."unique_string" = 'uploadedpicture'
+   AND uc."value_string" = COALESCE(u."uploadedpicture", '');
+
+DELETE FROM "classify"."unclassified" uc
+ USING "classify"."users" u
+ WHERE uc."_key" = 'user:' || u."uid"
+   AND uc."type" = 'hash'
+   AND uc."unique_string" = 'cover:url'
+   AND uc."value_string" = COALESCE(u."cover:url", '');
+
+DELETE FROM "classify"."unclassified" uc
+ USING "classify"."users" u
+ WHERE uc."_key" = 'user:' || u."uid"
+   AND uc."type" = 'hash'
+   AND uc."unique_string" = 'cover:position';
+
+DELETE FROM "classify"."unclassified" uc
+ USING "classify"."users" u
+ WHERE uc."_key" = 'user:' || u."uid"
+   AND uc."type" = 'hash'
+   AND uc."unique_string" = 'groupTitle'
+   AND uc."value_string" = COALESCE(u."groupTitle", '');
+
+DELETE FROM "classify"."unclassified" uc
+ USING "classify"."users" u
+ WHERE uc."_key" = 'user:' || u."uid"
+   AND uc."type" = 'hash'
+   AND uc."unique_string" = 'profileviews'
+   AND uc."value_string" = u."profileviews"::TEXT;
+
+DELETE FROM "classify"."unclassified" uc
+ USING "classify"."users" u
+ WHERE uc."_key" = 'user:' || u."uid"
+   AND uc."type" = 'hash'
+   AND uc."unique_string" = 'blocksCount'
+   AND uc."value_string" = u."blocksCount"::TEXT;
+
+DELETE FROM "classify"."unclassified" uc
+ USING "classify"."users" u
+ WHERE uc."_key" = 'user:' || u."uid"
+   AND uc."type" = 'hash'
+   AND uc."unique_string" = 'postcount'
+   AND uc."value_string" = u."postcount"::TEXT;
+
+DELETE FROM "classify"."unclassified" uc
+ USING "classify"."users" u
+ WHERE uc."_key" = 'user:' || u."uid"
+   AND uc."type" = 'hash'
+   AND uc."unique_string" = 'topiccount'
+   AND uc."value_string" = u."topiccount"::TEXT;
+
+DELETE FROM "classify"."unclassified" uc
+ USING "classify"."users" u
+ WHERE uc."_key" = 'user:' || u."uid"
+   AND uc."type" = 'hash'
+   AND uc."unique_string" = 'flags'
+   AND uc."value_string" = u."flags"::TEXT;
+
+DELETE FROM "classify"."unclassified" uc
+ USING "classify"."users" u
+ WHERE uc."_key" = 'user:' || u."uid"
+   AND uc."type" = 'hash'
+   AND uc."unique_string" = 'followerCount'
+   AND uc."value_string" = u."followerCount"::TEXT;
+
+DELETE FROM "classify"."unclassified" uc
+ USING "classify"."users" u
+ WHERE uc."_key" = 'user:' || u."uid"
+   AND uc."type" = 'hash'
+   AND uc."unique_string" = 'followingCount'
+   AND uc."value_string" = u."followingCount"::TEXT;
+
+-- Delete rubbish
+DELETE FROM "classify"."unclassified" uc
+ WHERE uc."_key" IN ('user:-1', 'user:0', 'user:undefined')
+   AND uc."type" = 'hash';
+
+DELETE FROM "classify"."unclassified" uc
+ USING "classify"."groups" g
+ WHERE uc."_key" = 'user:' || g."name"
+   AND uc."type" = 'hash';

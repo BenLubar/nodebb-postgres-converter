@@ -1,3 +1,10 @@
+CREATE TYPE "classify".USER_ONLINE_STATUS AS ENUM (
+	'offline',
+	'online',
+	'away',
+	'dnd'
+);
+
 CREATE UNLOGGED TABLE "classify"."users" (
 	-- account
 	"uid" BIGSERIAL NOT NULL PRIMARY KEY,
@@ -28,7 +35,24 @@ CREATE UNLOGGED TABLE "classify"."users" (
 	"website" TEXT COLLATE "C" NOT NULL DEFAULT '',
 	"aboutme" TEXT COLLATE "C" NOT NULL DEFAULT '',
 	"location" TEXT COLLATE "C" NOT NULL DEFAULT '',
-	"birthday" DATE
+	"birthday" DATE,
+	"showemail" BOOLEAN NOT NULL DEFAULT FALSE,
+	"status" "classify".USER_ONLINE_STATUS NOT NULL DEFAULT 'online',
+	"signature" TEXT COLLATE "C" NOT NULL DEFAULT '',
+	"picture" TEXT COLLATE "C",
+	"uploadedpicture" TEXT COLLATE "C",
+	"cover:url" TEXT COLLATE "C",
+	"cover:position" "classify".COVER_POSITION NOT NULL,
+	"groupTitle" TEXT COLLATE "C",
+
+	-- counters/caches
+	"profileviews" BIGINT NOT NULL DEFAULT 0,
+	"blocksCount" BIGINT NOT NULL DEFAULT 0,
+	"postcount" BIGINT NOT NULL DEFAULT 0,
+	"topiccount" BIGINT NOT NULL DEFAULT 0,
+	"flags" BIGINT NOT NULL DEFAULT 0,
+	"followerCount" BIGINT NOT NULL DEFAULT 0,
+	"followingCount" BIGINT NOT NULL DEFAULT 0
 )
 WITHOUT OIDS;
 
@@ -37,6 +61,7 @@ CREATE UNIQUE INDEX ON "classify"."users"("userslug");
 CREATE UNIQUE INDEX ON "classify"."users"("email");
 CREATE INDEX ON "classify"."users"("joindate");
 CREATE INDEX ON "classify"."users"("lastonline");
+CREATE INDEX ON "classify"."users"("status", "lastonline");
 CREATE INDEX ON "classify"."users"("reputation");
 
 ALTER TABLE "classify"."users" CLUSTER ON "users_pkey";
@@ -71,7 +96,22 @@ SELECT uid,
        COALESCE("classify"."get_hash_string"(key, 'website'), ''),
        COALESCE("classify"."get_hash_string"(key, 'aboutme'), ''),
        COALESCE("classify"."get_hash_string"(key, 'location'), ''),
-       "classify"."get_hash_date"(key, 'birthday')
+       "classify"."get_hash_date"(key, 'birthday'),
+       COALESCE("classify"."get_hash_boolean"(key, 'showemail'), FALSE),
+       COALESCE("classify"."get_hash_string"(key, 'status'), 'online')::"classify".USER_ONLINE_STATUS,
+       COALESCE("classify"."get_hash_string"(key, 'signature'), ''),
+       "classify"."get_hash_string"(key, 'picture'),
+       "classify"."get_hash_string"(key, 'uploadedpicture'),
+       "classify"."get_hash_string"(key, 'cover:url'),
+       "classify"."get_hash_position"(key, 'cover:position'),
+       "classify"."get_hash_string"(key, 'groupTitle'),
+       COALESCE("classify"."get_hash_int"(key, 'profileviews'), 0),
+       COALESCE("classify"."get_hash_int"(key, 'blocksCount'), 0),
+       COALESCE("classify"."get_hash_int"(key, 'postcount'), 0),
+       COALESCE("classify"."get_hash_int"(key, 'topiccount'), 0),
+       COALESCE("classify"."get_hash_int"(key, 'flags'), 0),
+       COALESCE("classify"."get_hash_int"(key, 'followerCount'), 0),
+       COALESCE("classify"."get_hash_int"(key, 'followingCount'), 0)
   FROM uids;
 
 SELECT setval('classify.users_uid_seq', "classify"."get_hash_string"('global', 'nextUid')::BIGINT);
