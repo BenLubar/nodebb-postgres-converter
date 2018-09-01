@@ -113,6 +113,13 @@ func tryHash(payload string, depth int, send func([sha1.Size]byte)) {
 	}
 }
 
+// Invalid IP addresses from the WTDWTF dataset.
+var rubbish = [...]string{
+	"",
+	"999.999.999.999",
+	"unknown",
+}
+
 func prepareCache(name string, hashes map[[sha1.Size]byte]struct{}) (io.Writer, func()) {
 	b, err := ioutil.ReadFile(name)
 	if os.IsNotExist(err) {
@@ -159,7 +166,6 @@ func prepareCache(name string, hashes map[[sha1.Size]byte]struct{}) (io.Writer, 
 	}
 
 	bad(rubbish[:], 2, false)
-	bad(ipv6[:], 2, true)
 
 	lines := bytes.SplitAfter(b, []byte{'\n'})
 	for _, line := range lines {

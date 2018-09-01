@@ -1,14 +1,35 @@
-COPY (
-	SELECT "unique_string"
-	  FROM "classify"."unclassified"
-	 WHERE "_key" = 'ip:recent'
-	   AND "type" = 'zset'
-) TO '/tmp/ip-hashes';
-
 CREATE TEMPORARY TABLE "broken_ip_hashes" (
 	"ip" INET NOT NULL,
 	"hash" TEXT COLLATE "C" NOT NULL PRIMARY KEY
 ) WITHOUT OIDS;
+
+DO $$
+BEGIN
+
+IF EXISTS(SELECT 1
+            FROM INFORMATION_SCHEMA.TABLES
+           WHERE table_schema = 'public'
+             AND table_name = 'wtdwtf_real_ip') THEN
+
+INSERT INTO "broken_ip_hashes"
+SELECT "ip", ENCODE("hash", 'hex')
+  FROM "public"."wtdwtf_real_ip";
+
+END IF;
+
+END;
+$$ LANGUAGE plpgsql;
+
+COPY (
+	SELECT "unique_string"
+	  FROM "classify"."unclassified"
+	  LEFT JOIN "broken_ip_hashes"
+	         ON "hash" = "unique_string"
+	 WHERE "_key" = 'ip:recent'
+	   AND "type" = 'zset'
+	   AND "hash" IS NULL
+) TO '/tmp/ip-hashes';
+
 
 COPY "broken_ip_hashes"
 FROM PROGRAM '/tmp/brute_ips';
