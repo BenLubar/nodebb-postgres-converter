@@ -39,6 +39,7 @@
 - [X] `analytics:posts`
 - [X] `analytics:topics`
 - [X] `analytics:uniquevisitors`
+- [ ] `categories:cid`
 - [ ] `digest:day:uids`
 - [ ] `digest:week:uids`
 - [X] `email:sorted`
@@ -83,7 +84,6 @@
 - [X] `/analytics:pageviews:byCid:[0-9]+/`
 - [X] `/analytics:posts:byCid:[0-9]+/`
 - [X] `/analytics:topics:byCid:[0-9]+/`
-- [ ] `categories:cid`
 - [ ] `/banned:[0-9]+:reasons/`
 - [ ] `/chat:room:[0-9]+:uids/`
 - [ ] `/cid:[0-9]+:children/`

@@ -2,6 +2,12 @@
 
 set -e
 
+if [[ "$#" -eq 0 ]]; then
+	echo './run.bash requires MAKE(1) parameters.'
+	echo 'Run "./run.bash -j1" for generic "make".'
+	exit 2
+fi
+
 rm -f Makefile secret.go brute_ips
 
 echo 'package main' > secret.go
