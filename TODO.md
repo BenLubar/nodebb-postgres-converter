@@ -1,11 +1,15 @@
 # hash
 
 - [X] `config`
+- [X] `fbid:uid`
+- [X] `githubid:uid`
 - [ ] `global`
+- [X] `gplusid:uid`
 - [X] `groupslug:groupname`
 - [X] `ip-blacklist-rules`
 - [ ] `lastrestart`
 - [X] `nodebb-plugin-dbsearch`
+- [X] `twid:uid`
 - [ ] `widgets:global`
 - [ ] `/category:[0-9]+/`
 - [ ] `/chat:room:[0-9]+/`
