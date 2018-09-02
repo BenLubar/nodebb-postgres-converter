@@ -1,4 +1,4 @@
-CREATE UNLOGGED TABLE "classify"."user_sso" (
+CREATE TABLE "classify"."user_sso" (
 	"uid" BIGINT NOT NULL,
 	"plugin" TEXT COLLATE "C" NOT NULL,
 	"externalID" TEXT COLLATE "C" NOT NULL,

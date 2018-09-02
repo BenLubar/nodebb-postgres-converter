@@ -1,4 +1,4 @@
-CREATE UNLOGGED TABLE "classify"."analytics_errors" (
+CREATE TABLE "classify"."analytics_errors" (
 	"http_status" INT NOT NULL,
 	"hour" TIMESTAMPTZ NOT NULL CHECK ("hour" = DATE_TRUNC('hour', "hour")),
 	"count" BIGINT NOT NULL DEFAULT 0
@@ -6,7 +6,7 @@ CREATE UNLOGGED TABLE "classify"."analytics_errors" (
 PARTITION BY LIST ("http_status")
 WITHOUT OIDS;
 
-CREATE UNLOGGED TABLE "classify"."analytics_errors_404"
+CREATE TABLE "classify"."analytics_errors_404"
 PARTITION OF "classify"."analytics_errors" (
 	PRIMARY KEY ("hour")
 )
@@ -15,7 +15,7 @@ WITHOUT OIDS;
 
 ALTER TABLE "classify"."analytics_errors_404" CLUSTER ON "analytics_errors_404_pkey";
 
-CREATE UNLOGGED TABLE "classify"."analytics_errors_503"
+CREATE TABLE "classify"."analytics_errors_503"
 PARTITION OF "classify"."analytics_errors" (
 	PRIMARY KEY ("hour")
 )

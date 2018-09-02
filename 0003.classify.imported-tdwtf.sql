@@ -1,4 +1,4 @@
-CREATE UNLOGGED TABLE "classify"."imported_categories" (
+CREATE TABLE "classify"."imported_categories" (
 	"cid" BIGINT NOT NULL PRIMARY KEY,
 	"telligent_id" BIGINT,
 	"discourse_id" BIGINT NOT NULL
@@ -30,7 +30,7 @@ SELECT discourse."cid",
   LEFT OUTER JOIN telligent
                ON discourse."discourse_id" = telligent."discourse_id";
 
-CREATE UNLOGGED TABLE "classify"."imported_messages" (
+CREATE TABLE "classify"."imported_messages" (
 	"mid" BIGINT NOT NULL PRIMARY KEY,
 	"discourse_id" BIGINT NOT NULL
 ) WITHOUT OIDS;
@@ -46,7 +46,7 @@ SELECT "value_numeric"::BIGINT,
  WHERE "_key" = '_imported:_messages'
    AND "type" = 'zset';
 
-CREATE UNLOGGED TABLE "classify"."imported_posts" (
+CREATE TABLE "classify"."imported_posts" (
 	"pid" BIGINT NOT NULL PRIMARY KEY,
 	"telligent_id" BIGINT,
 	"discourse_id" BIGINT,
@@ -82,7 +82,7 @@ SELECT COALESCE(telligent."pid", discourse."pid"),
   FULL OUTER JOIN discourse
                ON telligent."pid" = discourse."pid";
 
-CREATE UNLOGGED TABLE "classify"."imported_rooms" (
+CREATE TABLE "classify"."imported_rooms" (
 	"roomId" BIGINT NOT NULL PRIMARY KEY,
 	"discourse_id" BIGINT NOT NULL
 ) WITHOUT OIDS;
@@ -98,7 +98,7 @@ SELECT "value_numeric"::BIGINT,
  WHERE "_key" = '_imported:_rooms'
    AND "type" = 'zset';
 
-CREATE UNLOGGED TABLE "classify"."imported_topics" (
+CREATE TABLE "classify"."imported_topics" (
 	"tid" BIGINT NOT NULL PRIMARY KEY,
 	"telligent_id" BIGINT,
 	"discourse_id" BIGINT,
@@ -134,7 +134,7 @@ SELECT COALESCE(telligent."tid", discourse."tid"),
   FULL OUTER JOIN discourse
                ON telligent."tid" = discourse."tid";
 
-CREATE UNLOGGED TABLE "classify"."imported_users" (
+CREATE TABLE "classify"."imported_users" (
 	"uid" BIGINT NOT NULL PRIMARY KEY,
 	"telligent_id" BIGINT,
 	"discourse_id" BIGINT NOT NULL

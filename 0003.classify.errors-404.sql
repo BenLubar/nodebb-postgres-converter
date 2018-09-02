@@ -1,4 +1,4 @@
-CREATE UNLOGGED TABLE "classify"."errors_404" (
+CREATE TABLE "classify"."errors_404" (
 	"path" TEXT COLLATE "C" NOT NULL PRIMARY KEY,
 	"count" BIGINT NOT NULL DEFAULT 0
 ) WITHOUT OIDS;

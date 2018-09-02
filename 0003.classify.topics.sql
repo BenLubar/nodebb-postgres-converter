@@ -1,4 +1,4 @@
-CREATE UNLOGGED TABLE "classify"."topics" (
+CREATE TABLE "classify"."topics" (
 	"tid" BIGSERIAL NOT NULL PRIMARY KEY,
 	"cid" BIGINT NOT NULL,
 	"oldCid" BIGINT,

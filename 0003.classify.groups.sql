@@ -1,4 +1,4 @@
-CREATE UNLOGGED TABLE "classify"."groups" (
+CREATE TABLE "classify"."groups" (
 	"gid" BIGSERIAL NOT NULL PRIMARY KEY,
 	"name" TEXT COLLATE "C" NOT NULL,
 	"slug" TEXT COLLATE "C" NOT NULL,
@@ -69,7 +69,7 @@ CREATE TYPE "classify".GROUP_MEMBER_TYPE AS ENUM (
 	'pending'
 );
 
-CREATE UNLOGGED TABLE "classify"."group_members" (
+CREATE TABLE "classify"."group_members" (
 	"gid" BIGINT NOT NULL,
 	"uid" BIGINT NOT NULL,
 	"type" "classify".GROUP_MEMBER_TYPE NOT NULL,

@@ -1,4 +1,4 @@
-CREATE UNLOGGED TABLE "classify"."analytics_pageviews_byCid" (
+CREATE TABLE "classify"."analytics_pageviews_byCid" (
 	"cid" BIGINT NOT NULL,
 	"hour" TIMESTAMPTZ NOT NULL CHECK ("hour" = DATE_TRUNC('hour', "hour")),
 	"count" BIGINT NOT NULL DEFAULT 0,

@@ -37,7 +37,7 @@ FROM PROGRAM '/tmp/brute_ips';
 COPY (SELECT 1)
 TO PROGRAM 'rm -f /tmp/ip-hashes /tmp/brute_ips';
 
-CREATE UNLOGGED TABLE "classify"."ip_recent" (
+CREATE TABLE "classify"."ip_recent" (
 	"ip" INET NOT NULL PRIMARY KEY,
 	"last_seen" TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP
 ) WITHOUT OIDS;

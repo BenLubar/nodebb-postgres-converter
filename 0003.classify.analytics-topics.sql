@@ -1,4 +1,4 @@
-CREATE UNLOGGED TABLE "classify"."analytics_topics" (
+CREATE TABLE "classify"."analytics_topics" (
 	"hour" TIMESTAMPTZ NOT NULL PRIMARY KEY CHECK ("hour" = DATE_TRUNC('hour', "hour")),
 	"count" BIGINT NOT NULL DEFAULT 0
 ) WITHOUT OIDS;

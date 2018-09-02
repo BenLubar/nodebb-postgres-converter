@@ -1,4 +1,4 @@
-CREATE UNLOGGED TABLE "classify"."schemaDate" (
+CREATE TABLE "classify"."schemaDate" (
 	"schemaDate" TEXT COLLATE "C" NOT NULL
 )
 WITHOUT OIDS;

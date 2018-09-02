@@ -1,4 +1,4 @@
-CREATE UNLOGGED TABLE "classify"."search_settings" (
+CREATE TABLE "classify"."search_settings" (
 	"default_language" REGCONFIG NOT NULL,
 	"post_limit" BIGINT NOT NULL,
 	"topic_limit" BIGINT NOT NULL
@@ -10,7 +10,7 @@ CREATE OR REPLACE FUNCTION "classify"."nodebb_default_search_language"() RETURNS
 $$ LANGUAGE SQL STABLE STRICT PARALLEL SAFE;
 
 -- only allow one row.
-CREATE UNIQUE INDEX ON "classify"."search_settings"((1));
+CREATE UNIQUE INDEX ON "classify"."search_settings"((TRUE));
 
 INSERT INTO "classify"."search_settings"
 SELECT CASE (SELECT "value_string"

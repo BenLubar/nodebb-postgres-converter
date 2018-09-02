@@ -5,7 +5,7 @@ CREATE TYPE "classify".USER_ONLINE_STATUS AS ENUM (
 	'dnd'
 );
 
-CREATE UNLOGGED TABLE "classify"."users" (
+CREATE TABLE "classify"."users" (
 	-- account
 	"uid" BIGSERIAL NOT NULL PRIMARY KEY,
 	"username" TEXT COLLATE "C" NOT NULL,

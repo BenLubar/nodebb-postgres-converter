@@ -1,4 +1,4 @@
-CREATE UNLOGGED TABLE "classify"."config" (
+CREATE TABLE "classify"."config" (
 	"plugin" TEXT COLLATE "C" NOT NULL,
 	"key" TEXT COLLATE "C" NOT NULL,
 	"value" TEXT COLLATE "C" NOT NULL,

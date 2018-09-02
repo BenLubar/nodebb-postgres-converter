@@ -1,4 +1,4 @@
-CREATE UNLOGGED TABLE "classify"."ip_user" (
+CREATE TABLE "classify"."ip_user" (
 	"uid" BIGINT NOT NULL,
 	"ip" INET NOT NULL,
 	"last_seen" TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
