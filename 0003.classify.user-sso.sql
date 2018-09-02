@@ -1,7 +1,7 @@
 CREATE UNLOGGED TABLE "classify"."user_sso" (
 	"uid" BIGINT NOT NULL,
 	"plugin" TEXT COLLATE "C" NOT NULL,
-	"externalID" BIGINT NOT NULL,
+	"externalID" TEXT COLLATE "C" NOT NULL,
 	"plugin_data" TEXT COLLATE "C",
 
 	PRIMARY KEY ("plugin", "externalID")
@@ -11,38 +11,35 @@ CREATE INDEX ON "classify"."user_sso"("uid");
 
 ALTER TABLE "classify"."user_sso" CLUSTER ON "user_sso_pkey";
 
-WITH uids AS (
-	SELECT "value_numeric"::BIGINT "uid",
-	       'user:' || "value_numeric" "key"
-	  FROM "classify"."unclassified"
-	 WHERE "_key" = 'username:uid'
-	   AND "type" = 'zset'
-)
 INSERT INTO "classify"."user_sso"
-SELECT "uid",
+SELECT "value_string"::BIGINT,
        'nodebb-plugin-sso-facebook',
-       "classify"."get_hash_int"("key", 'fbid'),
-       "classify"."get_hash_string"("key", 'fbaccesstoken')
-  FROM uids
- WHERE "classify"."get_hash_int"("key", 'fbid') IS NOT NULL
+       "unique_string",
+       "classify"."get_hash_string"('user:' || "value_string", 'fbaccesstoken')
+  FROM "classify"."unclassified"
+ WHERE "_key" = 'fbid:uid'
+   AND "type" = 'hash'
 UNION ALL
-SELECT "uid",
+SELECT "value_string"::BIGINT,
        'nodebb-plugin-sso-github',
-       "classify"."get_hash_int"("key", 'githubid'),
+       "unique_string",
        NULL
-  FROM uids
- WHERE "classify"."get_hash_int"("key", 'githubid') IS NOT NULL
+  FROM "classify"."unclassified"
+ WHERE "_key" = 'githubid:uid'
+   AND "type" = 'hash'
 UNION ALL
-SELECT "uid",
+SELECT "value_string"::BIGINT,
        'nodebb-plugin-sso-google',
-       "classify"."get_hash_int"("key", 'gplusid'),
+       "unique_string",
        NULL
-  FROM uids
- WHERE "classify"."get_hash_int"("key", 'gplusid') IS NOT NULL
+  FROM "classify"."unclassified"
+ WHERE "_key" = 'gplusid:uid'
+   AND "type" = 'hash'
 UNION ALL
-SELECT "uid",
+SELECT "value_string"::BIGINT,
        'nodebb-plugin-sso-twitter',
-       "classify"."get_hash_int"("key", 'twid'),
+       "unique_string",
        NULL
-  FROM uids
- WHERE "classify"."get_hash_int"("key", 'twid') IS NOT NULL;
+  FROM "classify"."unclassified"
+ WHERE "_key" = 'twid:uid'
+   AND "type" = 'hash';
