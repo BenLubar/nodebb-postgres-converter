@@ -11,7 +11,7 @@
 - [X] `nodebb-plugin-dbsearch`
 - [X] `twid:uid`
 - [ ] `widgets:global`
-- [ ] `/category:[0-9]+/`
+- [X] `/category:[0-9]+/`
 - [ ] `/chat:room:[0-9]+/`
 - [ ] `/confirm:[0-9a-f-]+/`
 - [ ] `/diff:[0-9]+.[0-9]+/`
@@ -43,7 +43,7 @@
 - [X] `analytics:posts`
 - [X] `analytics:topics`
 - [X] `analytics:uniquevisitors`
-- [ ] `categories:cid`
+- [X] `categories:cid`
 - [ ] `digest:day:uids`
 - [ ] `digest:week:uids`
 - [X] `email:sorted`
@@ -149,7 +149,7 @@
 - [X] `/uid:[0-9]+:topics/`
 - [ ] `/uid:[0-9]+:uploads/`
 - [ ] `/uid:[0-9]+:upvote/`
-- [ ] `/upload:[0-9]+:pids/`
+- [ ] `/upload:[0-9a-f]+:pids/`
 - [ ] `/user:[0-9]+:emails/`
 - [ ] `/user:[0-9]+:usernames/`
 
