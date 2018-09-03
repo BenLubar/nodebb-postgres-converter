@@ -131,7 +131,7 @@
 - [ ] `/uid:[0-9]+:chat:room:[0-9]+:mids/`
 - [ ] `/uid:[0-9]+:chat:rooms:unread/`
 - [ ] `/uid:[0-9]+:chat:rooms/`
-- [ ] `/uid:[0-9]+:downvote/`
+- [X] `/uid:[0-9]+:downvote/`
 - [ ] `/uid:[0-9]+:flag:pids/`
 - [ ] `/uid:[0-9]+:followed_tids/`
 - [ ] `/uid:[0-9]+:ignored_tids/`
@@ -148,7 +148,7 @@
 - [ ] `/uid:[0-9]+:tids_unread/`
 - [X] `/uid:[0-9]+:topics/`
 - [ ] `/uid:[0-9]+:uploads/`
-- [ ] `/uid:[0-9]+:upvote/`
+- [X] `/uid:[0-9]+:upvote/`
 - [ ] `/upload:[0-9a-f]+:pids/`
 - [ ] `/user:[0-9]+:emails/`
 - [ ] `/user:[0-9]+:usernames/`
@@ -165,8 +165,8 @@
 - [ ] `/ignored:[0-9]+/`
 - [ ] `/ignored:by:[0-9]+/`
 - [ ] `/ignored:chat:[0-9]+/`
-- [ ] `/pid:[0-9]+:downvote/`
-- [ ] `/pid:[0-9]+:upvote/`
+- [X] `/pid:[0-9]+:downvote/`
+- [X] `/pid:[0-9]+:upvote/`
 - [ ] `/pid:[0-9]+:users_bookmarked/`
 - [ ] `/tid:[0-9]+:followers/`
 - [ ] `/tid:[0-9]+:ignorers/`
