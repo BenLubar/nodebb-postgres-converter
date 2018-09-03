@@ -24,6 +24,8 @@ DELETE FROM "classify"."unclassified" uc
            'userCount',
 
            -- converted to sequences
+           'nextCid',
+           'nextPid',
            'nextTid',
            'nextUid'
        );

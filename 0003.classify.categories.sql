@@ -60,3 +60,5 @@ SELECT cid,
        COALESCE("classify"."get_hash_int"("key", 'topic_count'), 0),
        COALESCE("classify"."get_hash_int"("key", 'timesClicked'), 0)
   FROM cids;
+
+SELECT setval('classify.categories_cid_seq', "classify"."get_hash_string"('global', 'nextCid')::BIGINT);

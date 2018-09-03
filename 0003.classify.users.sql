@@ -63,6 +63,7 @@ CREATE INDEX ON "classify"."users"("joindate");
 CREATE INDEX ON "classify"."users"("lastonline");
 CREATE INDEX ON "classify"."users"("status", "lastonline");
 CREATE INDEX ON "classify"."users"("reputation");
+CREATE INDEX ON "classify"."users"("postcount");
 
 ALTER TABLE "classify"."users" CLUSTER ON "users_pkey";
 
