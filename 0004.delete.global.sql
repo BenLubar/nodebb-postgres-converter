@@ -25,6 +25,7 @@ DELETE FROM "classify"."unclassified" uc
 
            -- converted to sequences
            'nextCid',
+           'nextEid',
            'nextPid',
            'nextTid',
            'nextUid'

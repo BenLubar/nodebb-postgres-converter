@@ -15,7 +15,7 @@
 - [ ] `/chat:room:[0-9]+/`
 - [ ] `/confirm:[0-9a-f-]+/`
 - [ ] `/diff:[0-9]+.[0-9]+/`
-- [ ] `/event:[0-9]+/`
+- [X] `/event:[0-9]+/`
 - [ ] `/flag:[0-9]+/`
 - [X] `/group:[^:]+/`
 - [ ] `/group:cid:[0-9]+:privileges:(groups:)?(chat|find|moderate|posts:(delete|downvote|edit|history|view_deleted|upvote)|read|search:(content|tags|users)|signature|topics:(create|delete|read|reply|tag)|upload:post:(image|file))/`
@@ -49,7 +49,7 @@
 - [X] `email:sorted`
 - [X] `email:uid`
 - [X] `errors:404`
-- [ ] `events:time`
+- [X] `events:time`
 - [ ] `flags:datetime`
 - [ ] `flags:hash`
 - [X] `fullname:uid`
