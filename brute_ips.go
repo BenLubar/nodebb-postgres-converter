@@ -17,6 +17,9 @@ import (
 
 func main() {
 	hashes := readHashes("/tmp/ip-hashes")
+	if len(hashes) == 0 {
+		return
+	}
 
 	w, closeCache := prepareCache("/tmp/ip-hashes-cache", hashes)
 	defer closeCache()
