@@ -1,7 +1,8 @@
 CREATE TEMPORARY TABLE "broken_ip_hashes" (
 	"ip" INET NOT NULL,
 	"hash" TEXT COLLATE "C" NOT NULL PRIMARY KEY
-) WITHOUT OIDS;
+) WITHOUT OIDS
+ON COMMIT DROP;
 
 DO $$
 BEGIN
@@ -38,13 +39,9 @@ COPY (SELECT 1)
 TO PROGRAM 'rm -f /tmp/ip-hashes /tmp/brute_ips';
 
 CREATE TABLE "classify"."ip_recent" (
-	"ip" INET NOT NULL PRIMARY KEY,
+	"ip" INET NOT NULL,
 	"last_seen" TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP
 ) WITHOUT OIDS;
-
-CREATE INDEX ON "classify"."ip_recent"("last_seen" DESC);
-
-ALTER TABLE "classify"."ip_recent" CLUSTER ON "ip_recent_pkey";
 
 INSERT INTO "classify"."ip_recent"
 SELECT bih."ip",
@@ -56,6 +53,11 @@ SELECT bih."ip",
    AND uc."type" = 'zset'
    AND bih."ip" <> '0.0.0.0'
  GROUP BY bih."ip";
+
+ALTER TABLE "classify"."ip_recent"
+	ADD PRIMARY KEY ("ip"),
+	CLUSTER ON "ip_recent_pkey";
+CREATE INDEX ON "classify"."ip_recent"("last_seen" DESC);
 
 -- Delete is included in this step instead of step 4 because it requires access to the temporary data.
 
@@ -76,6 +78,3 @@ DELETE FROM "classify"."unclassified" uc
    AND uc."type" = 'zset'
    AND uc."unique_string" = bih."hash"
    AND bih."ip" = '0.0.0.0';
-
--- Drop temporary table.
-DROP TABLE "broken_ip_hashes";
