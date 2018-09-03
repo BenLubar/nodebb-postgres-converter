@@ -61,4 +61,6 @@ SELECT cid,
        COALESCE("classify"."get_hash_int"("key", 'timesClicked'), 0)
   FROM cids;
 
+\o /dev/null
 SELECT setval('classify.categories_cid_seq', "classify"."get_hash_string"('global', 'nextCid')::BIGINT);
+\o

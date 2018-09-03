@@ -13,12 +13,13 @@ rm -f Makefile secret.go brute_ips
 echo 'package main' > secret.go
 echo >> secret.go
 echo -n 'const secret = ' >> secret.go
-docker exec wtdwtf-nodebb node -p 'JSON.stringify(require("./config.json").secret)' >> secret.go
+docker cp wtdwtf-nodebb:/usr/src/app/docker/config.json .
+node -p 'JSON.stringify(require("./config.json").secret)' >> secret.go
 
 go build -o brute_ips .
 docker cp brute_ips wtdwtf-nodebb-postgres:/tmp/brute_ips
 docker exec wtdwtf-nodebb-postgres chown postgres:postgres /tmp/brute_ips
-rm -f brute_ips secret.go
+rm -f brute_ips secret.go config.json
 
 last_prefix=
 sql_files=
@@ -37,8 +38,11 @@ ls -- ????.*.sql | sort -r | while IFS=$'\n' read -r name; do
 	fi
 done
 
+postgres_ip=$(docker inspect -f '{{.NetworkSettings.Networks.wtdwtf.IPAddress}}' wtdwtf-nodebb-postgres)
+
 echo '.PHONY: %.do' >> Makefile
 echo '%.do: %.sql' >> Makefile
-echo $'\t''docker exec -iu postgres wtdwtf-nodebb-postgres psql -v ON_ERROR_STOP=1 nodebb < $<' >> Makefile
+echo $'\t'"@echo Running $<..." >> Makefile
+echo $'\t'"@env PGOPTIONS='-c client_min_messages=WARNING' psql -q -h $postgres_ip"' -U postgres -v ON_ERROR_STOP=1 nodebb -1 -b -f $<' >> Makefile
 
 make "$@" || echo 'FAILED!'

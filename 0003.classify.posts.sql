@@ -66,4 +66,6 @@ SELECT pid,
        "classify"."nodebb_default_search_language"()
   FROM pids;
 
+\o /dev/null
 SELECT setval('classify.posts_pid_seq', "classify"."get_hash_string"('global', 'nextPid')::BIGINT);
+\o

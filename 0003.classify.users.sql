@@ -115,4 +115,6 @@ SELECT uid,
        COALESCE("classify"."get_hash_int"(key, 'followingCount'), 0)
   FROM uids;
 
+\o /dev/null
 SELECT setval('classify.users_uid_seq', "classify"."get_hash_string"('global', 'nextUid')::BIGINT);
+\o

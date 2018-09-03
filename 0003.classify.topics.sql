@@ -75,4 +75,6 @@ SELECT tid,
        -- somehow, some topics with no posts are in the WTDWTF database.
  WHERE "classify"."get_hash_int"(key, 'mainPid') IS NOT NULL;
 
+\o /dev/null
 SELECT setval('classify.topics_tid_seq', "classify"."get_hash_int"('global', 'nextTid'));
+\o
