@@ -7,22 +7,14 @@ PARTITION BY LIST ("http_status")
 WITHOUT OIDS;
 
 CREATE TABLE "classify"."analytics_errors_404"
-PARTITION OF "classify"."analytics_errors" (
-	PRIMARY KEY ("hour")
-)
+PARTITION OF "classify"."analytics_errors"
 FOR VALUES IN (404)
 WITHOUT OIDS;
 
-ALTER TABLE "classify"."analytics_errors_404" CLUSTER ON "analytics_errors_404_pkey";
-
 CREATE TABLE "classify"."analytics_errors_503"
-PARTITION OF "classify"."analytics_errors" (
-	PRIMARY KEY ("hour")
-)
+PARTITION OF "classify"."analytics_errors"
 FOR VALUES IN (503)
 WITHOUT OIDS;
-
-ALTER TABLE "classify"."analytics_errors_503" CLUSTER ON "analytics_errors_503_pkey";
 
 INSERT INTO "classify"."analytics_errors"
 SELECT SUBSTRING("_key" FROM LENGTH('analytics:errors:') + 1)::INT,
@@ -31,3 +23,11 @@ SELECT SUBSTRING("_key" FROM LENGTH('analytics:errors:') + 1)::INT,
   FROM "classify"."unclassified"
  WHERE "_key" LIKE 'analytics:errors:%'
    AND "type" = 'zset';
+
+ALTER TABLE "classify"."analytics_errors_404"
+	ADD PRIMARY KEY ("hour"),
+	CLUSTER ON "analytics_errors_404_pkey";
+
+ALTER TABLE "classify"."analytics_errors_503"
+	ADD PRIMARY KEY ("hour"),
+	CLUSTER ON "analytics_errors_503_pkey";

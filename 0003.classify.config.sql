@@ -1,12 +1,8 @@
 CREATE TABLE "classify"."config" (
 	"plugin" TEXT COLLATE "C" NOT NULL,
 	"key" TEXT COLLATE "C" NOT NULL,
-	"value" TEXT COLLATE "C" NOT NULL,
-
-	PRIMARY KEY ("plugin", "key")
+	"value" TEXT COLLATE "C" NOT NULL
 ) WITHOUT OIDS;
-
-ALTER TABLE "classify"."config" CLUSTER ON "config_pkey";
 
 INSERT INTO "classify"."config"
 SELECT '', "unique_string", "value_string"
@@ -24,3 +20,7 @@ SELECT SUBSTRING("_key" FROM LENGTH('settings:') + 1), "unique_string", "value_s
   FROM "classify"."unclassified"
  WHERE "_key" LIKE 'settings:%'
    AND "type" = 'hash';
+
+ALTER TABLE "classify"."config"
+	ADD PRIMARY KEY ("plugin", "key"),
+	CLUSTER ON "config_pkey";

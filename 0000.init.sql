@@ -21,12 +21,9 @@ PARTITION OF "classify"."unclassified" (
 	"unique_index" WITH OPTIONS CHECK ("unique_index" IS NULL),
 	"unique_string" WITH OPTIONS NOT NULL,
 	"value_numeric" WITH OPTIONS CHECK ("value_numeric" IS NULL),
-	"value_string" WITH OPTIONS NOT NULL,
-	PRIMARY KEY ("_key", "unique_string")
+	"value_string" WITH OPTIONS NOT NULL
 ) FOR VALUES IN ('hash')
 WITH (AUTOVACUUM_ENABLED = FALSE, TOAST.AUTOVACUUM_ENABLED = FALSE);
-
-ALTER TABLE "classify"."unclassified_hash" CLUSTER ON "unclassified_hash_pkey";
 
 CREATE UNLOGGED TABLE "classify"."unclassified_zset"
 PARTITION OF "classify"."unclassified" (
@@ -36,12 +33,9 @@ PARTITION OF "classify"."unclassified" (
 	"unique_index" WITH OPTIONS CHECK ("unique_index" IS NULL),
 	"unique_string" WITH OPTIONS NOT NULL,
 	"value_numeric" WITH OPTIONS NOT NULL,
-	"value_string" WITH OPTIONS CHECK ("value_string" IS NULL),
-	PRIMARY KEY ("_key", "unique_string")
+	"value_string" WITH OPTIONS CHECK ("value_string" IS NULL)
 ) FOR VALUES IN ('zset')
 WITH (AUTOVACUUM_ENABLED = FALSE, TOAST.AUTOVACUUM_ENABLED = FALSE);
-
-ALTER TABLE "classify"."unclassified_zset" CLUSTER ON "unclassified_zset_pkey";
 
 CREATE UNLOGGED TABLE "classify"."unclassified_set"
 PARTITION OF "classify"."unclassified" (
@@ -51,12 +45,9 @@ PARTITION OF "classify"."unclassified" (
 	"unique_index" WITH OPTIONS CHECK ("unique_index" IS NULL),
 	"unique_string" WITH OPTIONS NOT NULL,
 	"value_numeric" WITH OPTIONS CHECK ("value_numeric" IS NULL),
-	"value_string" WITH OPTIONS CHECK ("value_string" IS NULL),
-	PRIMARY KEY ("_key", "unique_string")
+	"value_string" WITH OPTIONS CHECK ("value_string" IS NULL)
 ) FOR VALUES IN ('set')
 WITH (AUTOVACUUM_ENABLED = FALSE, TOAST.AUTOVACUUM_ENABLED = FALSE);
-
-ALTER TABLE "classify"."unclassified_set" CLUSTER ON "unclassified_set_pkey";
 
 CREATE UNLOGGED TABLE "classify"."unclassified_list"
 PARTITION OF "classify"."unclassified" (
@@ -66,12 +57,9 @@ PARTITION OF "classify"."unclassified" (
 	"unique_index" WITH OPTIONS NOT NULL,
 	"unique_string" WITH OPTIONS CHECK ("unique_string" IS NULL),
 	"value_numeric" WITH OPTIONS CHECK ("value_numeric" IS NULL),
-	"value_string" WITH OPTIONS NOT NULL,
-	PRIMARY KEY ("_key", "unique_index")
+	"value_string" WITH OPTIONS NOT NULL
 ) FOR VALUES IN ('list')
 WITH (AUTOVACUUM_ENABLED = FALSE, TOAST.AUTOVACUUM_ENABLED = FALSE);
-
-ALTER TABLE "classify"."unclassified_list" CLUSTER ON "unclassified_list_pkey";
 
 CREATE UNLOGGED TABLE "classify"."unclassified_string"
 PARTITION OF "classify"."unclassified" (
@@ -81,9 +69,6 @@ PARTITION OF "classify"."unclassified" (
 	"unique_index" WITH OPTIONS CHECK ("unique_index" IS NULL),
 	"unique_string" WITH OPTIONS CHECK ("unique_string" IS NULL),
 	"value_numeric" WITH OPTIONS CHECK ("value_numeric" IS NULL),
-	"value_string" WITH OPTIONS NOT NULL,
-	PRIMARY KEY ("_key")
+	"value_string" WITH OPTIONS NOT NULL
 ) FOR VALUES IN ('string')
 WITH (AUTOVACUUM_ENABLED = FALSE, TOAST.AUTOVACUUM_ENABLED = FALSE);
-
-ALTER TABLE "classify"."unclassified_string" CLUSTER ON "unclassified_string_pkey";

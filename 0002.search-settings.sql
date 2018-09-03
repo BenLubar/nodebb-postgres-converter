@@ -9,9 +9,6 @@ CREATE OR REPLACE FUNCTION "classify"."nodebb_default_search_language"() RETURNS
 	  FROM "classify"."search_settings";
 $$ LANGUAGE SQL STABLE STRICT PARALLEL SAFE;
 
--- only allow one row.
-CREATE UNIQUE INDEX ON "classify"."search_settings"((TRUE));
-
 INSERT INTO "classify"."search_settings"
 SELECT CASE (SELECT "value_string"
                FROM "classify"."unclassified"
@@ -44,3 +41,6 @@ SELECT CASE (SELECT "value_string"
                   WHERE "_key" = 'nodebb-plugin-dbsearch'
                     AND "type" = 'hash'
                     AND "unique_string" = 'topicLimit'), '500')::BIGINT;
+
+-- only allow one row.
+CREATE UNIQUE INDEX ON "classify"."search_settings"((TRUE));

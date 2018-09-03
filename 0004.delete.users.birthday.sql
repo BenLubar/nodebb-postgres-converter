@@ -4,4 +4,4 @@ DELETE FROM "classify"."unclassified" uc
    AND uc."type" = 'hash'
    AND uc."unique_string" = 'birthday'
    AND ((u."birthday" IS NULL AND uc."value_string" = '')
-    OR u."birthday" = "classify"."get_hash_date"('user:' || u."uid", 'birthday'));
+    OR  u."birthday" = "classify"."try_parse_date"(uc."value_string"));
