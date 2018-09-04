@@ -21,22 +21,7 @@ docker cp brute_ips wtdwtf-nodebb-postgres:/tmp/brute_ips
 docker exec wtdwtf-nodebb-postgres chown postgres:postgres /tmp/brute_ips
 rm -f brute_ips secret.go config.json
 
-last_prefix=
-sql_files=
-
-ls -- ????.*.sql | sort -r | while IFS=$'\n' read -r name; do
-	if [[ "$last_prefix" != "${name%%.*}" ]]; then
-		last_prefix="${name%%.*}"
-		if ! [[ -z "$sql_files" ]]; then
-			echo "$sql_files: $last_prefix" >> Makefile
-		fi
-		echo ".PHONY: $last_prefix" >> Makefile
-		sql_files=$(compgen -G "$last_prefix.*.sql")
-		sql_files=${sql_files//$'\n'/ }
-		sql_files=${sql_files//\.sql/.do}
-		echo "$last_prefix: $sql_files" >> Makefile
-	fi
-done
+go run generate_makefile.go > Makefile
 
 postgres_ip=$(docker inspect -f '{{.NetworkSettings.Networks.wtdwtf.IPAddress}}' wtdwtf-nodebb-postgres)
 
