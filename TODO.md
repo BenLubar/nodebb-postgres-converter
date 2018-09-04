@@ -110,8 +110,8 @@
 - [ ] `/flags:byState:(open|resolved|rejected|wip)/`
 - [ ] `/flags:byTargetUid:[0-9]+/`
 - [ ] `/flags:byType:(post|user)/`
-- [ ] `/followers:[0-9]+/`
-- [ ] `/following:[0-9]+/`
+- [X] `/followers:[0-9]+/`
+- [X] `/following:[0-9]+/`
 - [X] `/group:[^:]+:member:pids/`
 - [X] `/group:[^:]+:members/`
 - [ ] `/group:cid:[0-9]+:privileges:(groups:)?(chat|find|moderate|posts:(delete|downvote|edit|history|view_deleted|upvote)|read|search:(content|tags|users)|signature|topics:(create|delete|read|reply|tag)|upload:post:(image|file)):members/`
