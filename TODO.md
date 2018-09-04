@@ -90,17 +90,17 @@
 - [X] `/analytics:topics:byCid:[0-9]+/`
 - [X] `/banned:[0-9]+:reasons/`
 - [ ] `/chat:room:[0-9]+:uids/`
-- [ ] `/cid:[0-9]+:children/`
+- [X] `/cid:[0-9]+:children/`
 - [ ] `/cid:[0-9]+:ignorers/`
-- [ ] `/cid:[0-9]+:pids/`
+- [X] `/cid:[0-9]+:pids/`
 - [ ] `/cid:[0-9]+:recent_tids/`
 - [ ] `/cid:[0-9]+:subscribed:uids/`
-- [ ] `/cid:[0-9]+:tids:lastposttime/`
+- [X] `/cid:[0-9]+:tids:lastposttime/`
 - [ ] `/cid:[0-9]+:tids:pinned/`
-- [ ] `/cid:[0-9]+:tids:posts/`
-- [ ] `/cid:[0-9]+:tids:votes/`
-- [ ] `/cid:[0-9]+:tids/`
-- [ ] `/cid:[0-9]+:uid:[0-9]+:tids/`
+- [X] `/cid:[0-9]+:tids:posts/`
+- [X] `/cid:[0-9]+:tids:votes/`
+- [X] `/cid:[0-9]+:tids/`
+- [X] `/cid:[0-9]+:uid:[0-9]+:tids/`
 - [ ] `/flag:[0-9]+:history/`
 - [ ] `/flag:[0-9]+:notes/`
 - [ ] `/flags:byAssignee:(undefined|[0-9]*)/`
@@ -112,13 +112,13 @@
 - [ ] `/flags:byType:(post|user)/`
 - [ ] `/followers:[0-9]+/`
 - [ ] `/following:[0-9]+/`
-- [ ] `/group:[^:]+:member:pids/`
+- [X] `/group:[^:]+:member:pids/`
 - [X] `/group:[^:]+:members/`
 - [ ] `/group:cid:[0-9]+:privileges:(groups:)?(chat|find|moderate|posts:(delete|downvote|edit|history|view_deleted|upvote)|read|search:(content|tags|users)|signature|topics:(create|delete|read|reply|tag)|upload:post:(image|file)):members/`
 - [X] `/ip:(::ffff:)?[0-9]+.[0-9]+.[0-9]+.[0-9]+:uid/`
 - [ ] `/pid:[0-9]+:flag:uid:reason/`
 - [ ] `/pid:[0-9]+:flag:uids/`
-- [ ] `/pid:[0-9]+:replies/`
+- [X] `/pid:[0-9]+:replies/`
 - [ ] `/post:[0-9]+:uploads/`
 - [ ] `/tag:%:topics/`
 - [ ] `/tid:[0-9]+:bookmarks/`
