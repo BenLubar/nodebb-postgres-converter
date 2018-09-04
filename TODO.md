@@ -20,7 +20,7 @@
 - [X] `/group:[^:]+/`
 - [ ] `/group:cid:[0-9]+:privileges:(groups:)?(chat|find|moderate|posts:(delete|downvote|edit|history|view_deleted|upvote)|read|search:(content|tags|users)|signature|topics:(create|delete|read|reply|tag)|upload:post:(image|file))/`
 - [ ] `/message:[0-9]+/`
-- [ ] `/notifications:%/`
+- [X] `/notifications:%/`
 - [X] `/post:[0-9]+/`
 - [ ] `/post:queue:reply-[0-9]+/`
 - [ ] `/registration:queue:name:[^:]+/`
@@ -59,7 +59,7 @@
 - [X] `groups:visible:name`
 - [X] `ip:recent`
 - [ ] `navigation:enabled`
-- [ ] `notifications`
+- [X] `notifications`
 - [ ] `plugins:active`
 - [ ] `post:queue`
 - [ ] `posts:flagged`
@@ -138,8 +138,8 @@
 - [ ] `/uid:[0-9]+:ignored:cids/`
 - [X] `/uid:[0-9]+:ip/`
 - [ ] `/uid:[0-9]+:moderation:notes/`
-- [ ] `/uid:[0-9]+:notifications:read/`
-- [ ] `/uid:[0-9]+:notifications:unread/`
+- [X] `/uid:[0-9]+:notifications:read/`
+- [X] `/uid:[0-9]+:notifications:unread/`
 - [X] `/uid:[0-9]+:posts:votes/`
 - [X] `/uid:[0-9]+:posts/`
 - [ ] `/uid:[0-9]+:rewards/`
