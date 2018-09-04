@@ -150,8 +150,8 @@
 - [ ] `/uid:[0-9]+:uploads/`
 - [X] `/uid:[0-9]+:upvote/`
 - [ ] `/upload:[0-9a-f]+:pids/`
-- [ ] `/user:[0-9]+:emails/`
-- [ ] `/user:[0-9]+:usernames/`
+- [X] `/user:[0-9]+:emails/`
+- [X] `/user:[0-9]+:usernames/`
 
 # set
 
