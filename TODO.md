@@ -76,8 +76,8 @@
 - [X] `topics:votes`
 - [X] `username:sorted`
 - [X] `username:uid`
-- [ ] `users:banned:expire`
-- [ ] `users:banned`
+- [X] `users:banned:expire`
+- [X] `users:banned`
 - [ ] `users:flags`
 - [X] `users:joindate`
 - [ ] `users:notvalidated`
@@ -88,7 +88,7 @@
 - [X] `/analytics:pageviews:byCid:[0-9]+/`
 - [X] `/analytics:posts:byCid:[0-9]+/`
 - [X] `/analytics:topics:byCid:[0-9]+/`
-- [ ] `/banned:[0-9]+:reasons/`
+- [X] `/banned:[0-9]+:reasons/`
 - [ ] `/chat:room:[0-9]+:uids/`
 - [ ] `/cid:[0-9]+:children/`
 - [ ] `/cid:[0-9]+:ignorers/`
@@ -125,7 +125,7 @@
 - [X] `/tid:[0-9]+:posters/`
 - [X] `/tid:[0-9]+:posts:votes/`
 - [X] `/tid:[0-9]+:posts/`
-- [ ] `/uid:[0-9]+:bans/`
+- [X] `/uid:[0-9]+:bans/`
 - [ ] `/uid:[0-9]+:blocked_uids/`
 - [ ] `/uid:[0-9]+:bookmarks/`
 - [ ] `/uid:[0-9]+:chat:room:[0-9]+:mids/`
