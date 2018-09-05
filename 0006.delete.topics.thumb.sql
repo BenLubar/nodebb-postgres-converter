@@ -3,4 +3,4 @@ DELETE FROM "classify"."unclassified" uc
  WHERE uc."_key" = 'topic:' || t."tid"
    AND uc."type" = 'hash'
    AND uc."unique_string" = 'thumb'
-   AND uc."value_string" = t."thumb";
+   AND uc."value_string" = COALESCE(t."thumb", '');

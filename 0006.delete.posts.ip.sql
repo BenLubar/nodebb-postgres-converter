@@ -3,5 +3,5 @@ DELETE FROM "classify"."unclassified" uc
  WHERE uc."_key" = 'post:' || p."pid"
    AND uc."type" = 'hash'
    AND uc."unique_string" = 'ip'
-   AND (uc."value_string" = COALESCE(p."ip"::TEXT, '')
-    OR  uc."value_string" LIKE p."ip"::TEXT || ', %');
+   AND (uc."value_string" = COALESCE(HOST(p."ip"), '')
+    OR  uc."value_string" LIKE HOST(p."ip") || ', %');
