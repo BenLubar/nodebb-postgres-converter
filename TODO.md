@@ -28,7 +28,7 @@
 - [ ] `/rewards:id:[0-9]+/`
 - [X] `/settings:[^:]+/`
 - [X] `/topic:[0-9]+/`
-- [ ] `/uid:[0-9]+:sessionUUID:sessionId/`
+- [X] `/uid:[0-9]+:sessionUUID:sessionId/`
 - [ ] `/user:[0-9]+:settings/`
 - [X] `/user:[0-9]+/`
 - [ ] `/widgets:[^:]+.tpl/`
@@ -143,7 +143,7 @@
 - [X] `/uid:[0-9]+:posts:votes/`
 - [X] `/uid:[0-9]+:posts/`
 - [ ] `/uid:[0-9]+:rewards/`
-- [ ] `/uid:[0-9]+:sessions/`
+- [X] `/uid:[0-9]+:sessions/`
 - [ ] `/uid:[0-9]+:tids_read/`
 - [ ] `/uid:[0-9]+:tids_unread/`
 - [X] `/uid:[0-9]+:topics/`
