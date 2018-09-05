@@ -17,6 +17,7 @@ CREATE TABLE "classify"."groups" (
 	"gid" BIGSERIAL NOT NULL,
 	"name" TEXT COLLATE "C" NOT NULL,
 	"slug" TEXT COLLATE "C" NOT NULL,
+	"ownerUid" BIGINT,
 	"createtime" TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
 	"description" TEXT COLLATE "C" NOT NULL DEFAULT '',
 	"memberCount" BIGINT NOT NULL DEFAULT 0,
@@ -40,6 +41,7 @@ INSERT INTO "classify"."groups"
 SELECT NEXTVAL('classify.groups_gid_seq'::REGCLASS),
        name."unique_string",
        slug."value",
+       ownerUid."value"::BIGINT,
        TO_TIMESTAMP(createtime."value"::NUMERIC / 1000),
        COALESCE(description."value", ''),
        COALESCE(NULLIF(memberCount."value", ''), '0')::BIGINT,
@@ -58,6 +60,9 @@ SELECT NEXTVAL('classify.groups_gid_seq'::REGCLASS),
   LEFT JOIN "group_data" slug
          ON slug."name" = name."unique_string"
         AND slug."field" = 'slug'
+  LEFT JOIN "group_data" ownerUid
+         ON ownerUid."name" = name."unique_string"
+        AND ownerUid."field" = 'ownerUid'
   LEFT JOIN "group_data" createtime
          ON createtime."name" = name."unique_string"
         AND createtime."field" = 'createtime'
