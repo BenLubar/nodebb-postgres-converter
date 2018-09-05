@@ -187,7 +187,7 @@
 ## hash (tdwtf)
 
 - [ ] `/pid:[0-9]+:postRevisions/`
-- [ ] `/tdwtf-post-cache:[0-9]+/`
+- [X] `/tdwtf-post-cache:[0-9]+/`
 
 ## zset (tdwtf)
 
