@@ -137,7 +137,7 @@
 - [ ] `/uid:[0-9]+:ignored_tids/`
 - [ ] `/uid:[0-9]+:ignored:cids/`
 - [X] `/uid:[0-9]+:ip/`
-- [ ] `/uid:[0-9]+:moderation:notes/`
+- [X] `/uid:[0-9]+:moderation:notes/`
 - [X] `/uid:[0-9]+:notifications:read/`
 - [X] `/uid:[0-9]+:notifications:unread/`
 - [X] `/uid:[0-9]+:posts:votes/`
