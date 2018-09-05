@@ -127,7 +127,7 @@
 - [X] `/tid:[0-9]+:posts/`
 - [X] `/uid:[0-9]+:bans/`
 - [ ] `/uid:[0-9]+:blocked_uids/`
-- [ ] `/uid:[0-9]+:bookmarks/`
+- [X] `/uid:[0-9]+:bookmarks/`
 - [ ] `/uid:[0-9]+:chat:room:[0-9]+:mids/`
 - [ ] `/uid:[0-9]+:chat:rooms:unread/`
 - [ ] `/uid:[0-9]+:chat:rooms/`
