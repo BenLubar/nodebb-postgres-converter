@@ -186,7 +186,7 @@
 
 ## hash (tdwtf)
 
-- [ ] `/pid:[0-9]+:postRevisions/`
+- [X] `/pid:[0-9]+:postRevisions/`
 - [X] `/tdwtf-post-cache:[0-9]+/`
 
 ## zset (tdwtf)
@@ -203,4 +203,4 @@
 - [X] `_telligent:_categories`
 - [X] `_telligent:_users`
 - [ ] `tdwtf-upstreams:started`
-- [ ] `/pid:[0-9]+:revisions/` (deprecated)
+- [X] `/pid:[0-9]+:revisions/` (deprecated)
