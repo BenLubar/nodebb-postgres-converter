@@ -121,7 +121,7 @@
 - [X] `/pid:[0-9]+:replies/`
 - [ ] `/post:[0-9]+:uploads/`
 - [ ] `/tag:%:topics/`
-- [ ] `/tid:[0-9]+:bookmarks/`
+- [X] `/tid:[0-9]+:bookmarks/`
 - [X] `/tid:[0-9]+:posters/`
 - [X] `/tid:[0-9]+:posts:votes/`
 - [X] `/tid:[0-9]+:posts/`
