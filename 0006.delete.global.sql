@@ -24,8 +24,10 @@ DELETE FROM "classify"."unclassified" uc
            'userCount',
 
            -- converted to sequences
+           'nextChatRoomId',
            'nextCid',
            'nextEid',
+           'nextMid',
            'nextPid',
            'nextTid',
            'nextUid'

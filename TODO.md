@@ -12,14 +12,14 @@
 - [X] `twid:uid`
 - [ ] `widgets:global`
 - [X] `/category:[0-9]+/`
-- [ ] `/chat:room:[0-9]+/`
+- [X] `/chat:room:[0-9]+/`
 - [ ] `/confirm:[0-9a-f-]+/`
 - [ ] `/diff:[0-9]+.[0-9]+/`
 - [X] `/event:[0-9]+/`
 - [ ] `/flag:[0-9]+/`
 - [X] `/group:[^:]+/`
 - [ ] `/group:cid:[0-9]+:privileges:(groups:)?(chat|find|moderate|posts:(delete|downvote|edit|history|view_deleted|upvote)|read|search:(content|tags|users)|signature|topics:(create|delete|read|reply|tag)|upload:post:(image|file))/`
-- [ ] `/message:[0-9]+/`
+- [X] `/message:[0-9]+/`
 - [X] `/notifications:%/`
 - [X] `/post:[0-9]+/`
 - [ ] `/post:queue:reply-[0-9]+/`
@@ -89,7 +89,7 @@
 - [X] `/analytics:posts:byCid:[0-9]+/`
 - [X] `/analytics:topics:byCid:[0-9]+/`
 - [X] `/banned:[0-9]+:reasons/`
-- [ ] `/chat:room:[0-9]+:uids/`
+- [X] `/chat:room:[0-9]+:uids/`
 - [X] `/cid:[0-9]+:children/`
 - [ ] `/cid:[0-9]+:ignorers/`
 - [X] `/cid:[0-9]+:pids/`
@@ -128,7 +128,7 @@
 - [X] `/uid:[0-9]+:bans/`
 - [ ] `/uid:[0-9]+:blocked_uids/`
 - [X] `/uid:[0-9]+:bookmarks/`
-- [ ] `/uid:[0-9]+:chat:room:[0-9]+:mids/`
+- [X] `/uid:[0-9]+:chat:room:[0-9]+:mids/`
 - [ ] `/uid:[0-9]+:chat:rooms:unread/`
 - [ ] `/uid:[0-9]+:chat:rooms/`
 - [X] `/uid:[0-9]+:downvote/`
