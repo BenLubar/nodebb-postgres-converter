@@ -16,7 +16,7 @@
 - [ ] `/confirm:[0-9a-f-]+/`
 - [ ] `/diff:[0-9]+.[0-9]+/`
 - [X] `/event:[0-9]+/`
-- [ ] `/flag:[0-9]+/`
+- [X] `/flag:[0-9]+/`
 - [X] `/group:[^:]+/`
 - [ ] `/group:cid:[0-9]+:privileges:(groups:)?(chat|find|moderate|posts:(delete|downvote|edit|history|view_deleted|upvote)|read|search:(content|tags|users)|signature|topics:(create|delete|read|reply|tag)|upload:post:(image|file))/`
 - [X] `/message:[0-9]+/`
@@ -50,8 +50,8 @@
 - [X] `email:uid`
 - [X] `errors:404`
 - [X] `events:time`
-- [ ] `flags:datetime`
-- [ ] `flags:hash`
+- [X] `flags:datetime`
+- [X] `flags:hash`
 - [X] `fullname:uid`
 - [X] `groups:createtime`
 - [X] `groups:visible:createtime`
@@ -101,15 +101,15 @@
 - [X] `/cid:[0-9]+:tids:votes/`
 - [X] `/cid:[0-9]+:tids/`
 - [X] `/cid:[0-9]+:uid:[0-9]+:tids/`
-- [ ] `/flag:[0-9]+:history/`
-- [ ] `/flag:[0-9]+:notes/`
-- [ ] `/flags:byAssignee:(undefined|[0-9]*)/`
-- [ ] `/flags:byCid:[0-9]+/`
-- [ ] `/flags:byPid:[0-9]+/`
-- [ ] `/flags:byReporter:[0-9]+/`
-- [ ] `/flags:byState:(open|resolved|rejected|wip)/`
-- [ ] `/flags:byTargetUid:[0-9]+/`
-- [ ] `/flags:byType:(post|user)/`
+- [X] `/flag:[0-9]+:history/`
+- [X] `/flag:[0-9]+:notes/`
+- [X] `/flags:byAssignee:(undefined|[0-9]*)/`
+- [X] `/flags:byCid:[0-9]+/`
+- [X] `/flags:byPid:[0-9]+/`
+- [X] `/flags:byReporter:[0-9]+/`
+- [X] `/flags:byState:(open|resolved|rejected|wip)/`
+- [X] `/flags:byTargetUid:[0-9]+/`
+- [X] `/flags:byType:(post|user)/`
 - [X] `/followers:[0-9]+/`
 - [X] `/following:[0-9]+/`
 - [X] `/group:[^:]+:member:pids/`
