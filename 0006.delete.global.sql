@@ -20,7 +20,7 @@ DELETE FROM "classify"."unclassified" uc
            -- manually-maintained statistics
            'postCount',
            'topicCount',
-           'uniqueIPCount'
+           'uniqueIPCount',
            'userCount',
 
            -- converted to sequences
