@@ -22,6 +22,8 @@ CREATE TABLE "classify"."topics" (
 	"timestamp" TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
 	"thumb" TEXT COLLATE "C",
 
+	"tags" TEXT[] COLLATE "C" NOT NULL DEFAULT '{}',
+
 	"mainPid" BIGINT NOT NULL,
 	"teaserPid" BIGINT NOT NULL,
 	"postcount" BIGINT NOT NULL DEFAULT 1,
@@ -50,6 +52,10 @@ SELECT tid."unique_string"::BIGINT,
        title."value",
        TO_TIMESTAMP(timestamp."value"::NUMERIC / 1000),
        NULLIF(thumb."value", ''),
+       ARRAY(SELECT tag."unique_string"
+               FROM "classify"."unclassified" tag
+              WHERE tag."_key" = 'topic:' || tid."unique_string" || ':tags'
+                AND tag."type" = 'set'),
        mainPid."value"::BIGINT,
        COALESCE(NULLIF(NULLIF(teaserPid."value", ''), '0'), mainPid."value")::BIGINT,
        COALESCE(NULLIF(postcount."value", ''), '0')::BIGINT,
@@ -149,4 +155,5 @@ CREATE INDEX ON "classify"."topics"("lastposttime");
 CREATE INDEX ON "classify"."topics"("deleted");
 CREATE INDEX ON "classify"."topics"("viewcount");
 CREATE INDEX ON "classify"."topics"(("upvotes" - "downvotes"));
+CREATE INDEX ON "classify"."topics" USING GIN ("tags");
 CREATE INDEX ON "classify"."topics" USING GIN ("title_tsvector");

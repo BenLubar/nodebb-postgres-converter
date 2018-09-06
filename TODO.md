@@ -68,7 +68,7 @@
 - [X] `posts:votes`
 - [ ] `registration:queue`
 - [ ] `schemaLog`
-- [ ] `tags:topic:count`
+- [X] `tags:topic:count`
 - [X] `topics:posts`
 - [X] `topics:recent`
 - [X] `topics:tid`
@@ -120,7 +120,7 @@
 - [ ] `/pid:[0-9]+:flag:uids/`
 - [X] `/pid:[0-9]+:replies/`
 - [ ] `/post:[0-9]+:uploads/`
-- [ ] `/tag:%:topics/`
+- [X] `/tag:%:topics/`
 - [X] `/tid:[0-9]+:bookmarks/`
 - [X] `/tid:[0-9]+:posters/`
 - [X] `/tid:[0-9]+:posts:votes/`
@@ -170,7 +170,7 @@
 - [ ] `/pid:[0-9]+:users_bookmarked/`
 - [ ] `/tid:[0-9]+:followers/`
 - [ ] `/tid:[0-9]+:ignorers/`
-- [ ] `/topic:[0-9]+:tags/`
+- [X] `/topic:[0-9]+:tags/`
 - [ ] `/uid:[0-9]+:flagged_by/`
 - [ ] `/uid:[0-9]+:tokens/`
 
