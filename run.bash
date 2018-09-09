@@ -28,6 +28,6 @@ postgres_ip=$(docker inspect -f '{{.NetworkSettings.Networks.wtdwtf.IPAddress}}'
 echo '.PHONY: %.do' >> Makefile
 echo '%.do: %.sql' >> Makefile
 echo $'\t'"@echo Running $<..." >> Makefile
-echo $'\t'"@env PGOPTIONS='-c client_min_messages=WARNING' psql -q -h $postgres_ip"' -U postgres -v ON_ERROR_STOP=1 nodebb -1 -b -f $<' >> Makefile
+echo $'\t'"@psql -q -h $postgres_ip"' -U postgres -c "SET CLIENT_MIN_MESSAGES TO WARNING" -v ON_ERROR_STOP=1 -P pager=off nodebb -1 -b -f $<' >> Makefile
 
 make "$@" || echo 'FAILED!'

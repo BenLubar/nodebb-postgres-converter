@@ -1,44 +1,59 @@
+CREATE TEMPORARY TABLE "message_data" ON COMMIT DROP AS
+SELECT SPLIT_PART("_key", ':', 2)::BIGINT "mid",
+       "unique_string" "field",
+       "value_string" "value"
+  FROM "classify"."unclassified"
+ WHERE "_key" SIMILAR TO 'message:[0-9]+'
+   AND "type" = 'hash';
+
+INSERT INTO "message_data"
+SELECT DISTINCT
+       "unique_string"::BIGINT,
+       'roomId',
+       SPLIT_PART("_key", ':', 5)
+  FROM "classify"."unclassified"
+  LEFT JOIN "message_data"
+         ON "mid" = "unique_string"::BIGINT
+ WHERE "_key" SIMILAR TO 'uid:[0-9]+:chat:room:[0-9]+:mids'
+   AND "type" = 'zset'
+   AND "mid" IS NULL;
+
+ALTER TABLE "message_data"
+	ADD PRIMARY KEY ("mid", "field"),
+	CLUSTER ON "message_data_pkey";
+
+ANALYZE "message_data";
+
 CREATE TABLE "classify"."messages" (
 	"mid" BIGSERIAL NOT NULL,
 	"roomId" BIGINT NOT NULL,
 	"uid" BIGINT NOT NULL,
 	"timestamp" TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
 	"content" TEXT COLLATE "C" NOT NULL,
-	"ip" INET NOT NULL
+	"ip" INET
 ) WITHOUT OIDS;
 
 INSERT INTO "classify"."messages"
-SELECT mid."value_string"::BIGINT,
-       roomId."value_string"::BIGINT,
-       uid."value_string"::BIGINT,
-       TO_TIMESTAMP(timestamp."value_string"::NUMERIC / 1000),
-       content."value_string",
-       SPLIT_PART(ip."value_string", ',', 1)::INET
-  FROM "classify"."unclassified" mid
- INNER JOIN "classify"."unclassified" roomId
-         ON roomId."_key" = mid."_key"
-        AND roomId."type" = 'hash'
-        AND roomId."unique_string" = 'roomId'
- INNER JOIN "classify"."unclassified" uid
-         ON uid."_key" = mid."_key"
-        AND uid."type" = 'hash'
-        AND uid."unique_string" = 'uid'
- INNER JOIN "classify"."unclassified" timestamp
-         ON timestamp."_key" = mid."_key"
-        AND timestamp."type" = 'hash'
-        AND timestamp."unique_string" = 'timestamp'
- INNER JOIN "classify"."unclassified" content
-         ON content."_key" = mid."_key"
-        AND content."type" = 'hash'
-        AND content."unique_string" = 'content'
- INNER JOIN "classify"."unclassified" ip
-         ON ip."_key" = mid."_key"
-        AND ip."type" = 'hash'
-        AND ip."unique_string" = 'ip'
- WHERE mid."_key" SIMILAR TO 'message:[0-9]+'
-   AND mid."type" = 'hash'
-   AND mid."unique_string" = 'mid'
-   AND mid."value_string" = SPLIT_PART(mid."_key", ':', 2);
+SELECT fromuid."mid",
+       roomId."value"::BIGINT,
+       fromuid."value"::BIGINT,
+       TO_TIMESTAMP(timestamp."value"::NUMERIC / 1000),
+       content."value",
+       SPLIT_PART(ip."value", ',', 1)::INET
+  FROM "message_data" fromuid
+ INNER JOIN "message_data" roomId
+         ON roomId."mid" = fromuid."mid"
+        AND roomId."field" = 'roomId'
+ INNER JOIN "message_data" timestamp
+         ON timestamp."mid" = fromuid."mid"
+        AND timestamp."field" = 'timestamp'
+ INNER JOIN "message_data" content
+         ON content."mid" = fromuid."mid"
+        AND content."field" = 'content'
+  LEFT JOIN "message_data" ip
+         ON ip."mid" = fromuid."mid"
+        AND ip."field" = 'ip'
+ WHERE fromuid."field" = 'fromuid';
 
 \o /dev/null
 SELECT setval('classify.messages_mid_seq', (
@@ -52,5 +67,6 @@ SELECT setval('classify.messages_mid_seq', (
 ALTER TABLE "classify"."messages"
 	ADD PRIMARY KEY ("mid"),
 	CLUSTER ON "messages_pkey";
-CREATE INDEX ON "classify"."messages"("roomId", "timestamp");
+CREATE INDEX ON "classify"."messages"("roomId");
+CREATE INDEX ON "classify"."messages"("timestamp");
 CREATE INDEX ON "classify"."messages"("uid");

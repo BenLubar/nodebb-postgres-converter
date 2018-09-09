@@ -33,7 +33,7 @@ SELECT flagId."value_string"::BIGINT,
          ON datetime."_key" = flagId."_key"
         AND datetime."type" = 'hash'
         AND datetime."unique_string" = 'datetime'
- INNER JOIN "classify"."unclassified" description
+  LEFT JOIN "classify"."unclassified" description
          ON description."_key" = flagId."_key"
         AND description."type" = 'hash'
         AND description."unique_string" = 'description'
@@ -41,7 +41,7 @@ SELECT flagId."value_string"::BIGINT,
          ON state."_key" = flagId."_key"
         AND state."type" = 'hash'
         AND state."unique_string" = 'state'
- INNER JOIN "classify"."unclassified" assignee
+  LEFT JOIN "classify"."unclassified" assignee
          ON assignee."_key" = flagId."_key"
         AND assignee."type" = 'hash'
         AND assignee."unique_string" = 'assignee'
