@@ -20,7 +20,9 @@ async function insertOne(client, data) {
 	if (nk === 3 && data.hasOwnProperty('score') && data.hasOwnProperty('value')) {
 		client.zadd(data._key, data.score, data.value);
 	} else if (nk === 2 && data.hasOwnProperty('members')) {
-		client.sadd(data._key, data.members);
+		if (data.members.length > 0) {
+			client.sadd(data._key, data.members);
+		}
 	} else if (nk === 2 && data.hasOwnProperty('array')) {
 		client.lpush(data._key, data.array);
 	} else if (nk === 2 && data.hasOwnProperty('data') || data.hasOwnProperty('value')) {
@@ -32,7 +34,9 @@ async function insertOne(client, data) {
 				command.push(key, data[key]);
 			}
 		}
-		client.hmset(command);
+		if (command[1]) {
+			client.hmset(command);
+		}
 	}
 
 	if (expireAt) {
