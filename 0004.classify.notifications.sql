@@ -15,7 +15,7 @@ ANALYZE "notification_data";
 CREATE TABLE "classify"."notifications" (
 	"nid" BIGSERIAL NOT NULL,
 	"nid_legacy" TEXT COLLATE "C" NOT NULL,
-	"path" TEXT COLLATE "C" NOT NULL,
+	"path" TEXT COLLATE "C",
 	"bodyShort" TEXT COLLATE "C" NOT NULL,
 	"importance" INT NOT NULL,
 	"datetime" TIMESTAMPTZ NOT NULL,

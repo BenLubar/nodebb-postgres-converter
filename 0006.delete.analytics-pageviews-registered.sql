@@ -1,7 +1,7 @@
 DELETE FROM "classify"."unclassified" uc
  USING "classify"."analytics_pageviews" ap
- WHERE uc."_key" = 'analytics:pageviews'
+ WHERE uc."_key" = 'analytics:pageviews:registered'
    AND uc."type" = 'zset'
    AND uc."unique_string" = (EXTRACT(EPOCH FROM ap."hour") * 1000)::TEXT
    AND uc."value_numeric" = ap."count"::NUMERIC
-   AND ap."category" = 'none';
+   AND ap."category" = 'registered';

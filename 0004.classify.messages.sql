@@ -14,6 +14,7 @@ SELECT DISTINCT
   FROM "classify"."unclassified"
   LEFT JOIN "message_data"
          ON "mid" = "unique_string"::BIGINT
+        AND "field" = 'roomId'
  WHERE "_key" SIMILAR TO 'uid:[0-9]+:chat:room:[0-9]+:mids'
    AND "type" = 'zset'
    AND "mid" IS NULL;
@@ -30,7 +31,9 @@ CREATE TABLE "classify"."messages" (
 	"uid" BIGINT NOT NULL,
 	"timestamp" TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
 	"content" TEXT COLLATE "C" NOT NULL,
-	"ip" INET
+	"ip" INET,
+	"edited" TIMESTAMPTZ,
+	"deleted" BOOLEAN NOT NULL DEFAULT FALSE
 ) WITHOUT OIDS;
 
 INSERT INTO "classify"."messages"
@@ -39,7 +42,9 @@ SELECT fromuid."mid",
        fromuid."value"::BIGINT,
        TO_TIMESTAMP(timestamp."value"::NUMERIC / 1000),
        content."value",
-       SPLIT_PART(ip."value", ',', 1)::INET
+       SPLIT_PART(ip."value", ',', 1)::INET,
+       TO_TIMESTAMP(edited."value"::NUMERIC / 1000),
+       COALESCE(deleted."value" = '1', FALSE)
   FROM "message_data" fromuid
  INNER JOIN "message_data" roomId
          ON roomId."mid" = fromuid."mid"
@@ -53,6 +58,12 @@ SELECT fromuid."mid",
   LEFT JOIN "message_data" ip
          ON ip."mid" = fromuid."mid"
         AND ip."field" = 'ip'
+  LEFT JOIN "message_data" edited
+         ON edited."mid" = fromuid."mid"
+        AND edited."field" = 'edited'
+  LEFT JOIN "message_data" deleted
+         ON deleted."mid" = fromuid."mid"
+        AND deleted."field" = 'deleted'
  WHERE fromuid."field" = 'fromuid';
 
 \o /dev/null

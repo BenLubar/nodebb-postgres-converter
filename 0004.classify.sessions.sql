@@ -23,7 +23,7 @@ SELECT "sid",
        NULLIF("sess"->'meta'->>'browser', ''),
        NULLIF("sess"->'meta'->>'version', ''),
        NULLIF("sess"->'meta'->>'platform', ''),
-       "sess" - 'meta' - 'cookie' - 'csrfSecret' - 'passport'
+       "sess"::JSONB - 'meta' - 'cookie' - 'csrfSecret' - 'passport'
   FROM "session";
 
 CREATE INDEX ON "classify"."sessions"("expires_at");
