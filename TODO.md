@@ -18,7 +18,7 @@
 - [X] `/event:[0-9]+/`
 - [X] `/flag:[0-9]+/`
 - [X] `/group:[^:]+/`
-- [ ] `/group:cid:[0-9]+:privileges:(groups:)?(chat|find|moderate|posts:(delete|downvote|edit|history|view_deleted|upvote)|read|search:(content|tags|users)|signature|topics:(create|delete|read|reply|tag)|upload:post:(image|file))/`
+- [X] `/group:cid:[0-9]+:privileges:(groups:)?(chat|find|local:login|moderate|posts:(delete|downvote|edit|history|view_deleted|upvote)|read|search:(content|tags|users)|signature|topics:(create|delete|read|reply|tag)|upload:post:(image|file)|view:(groups|tags|users))/`
 - [X] `/message:[0-9]+/`
 - [X] `/notifications:%/`
 - [X] `/post:[0-9]+/`
@@ -80,7 +80,7 @@
 - [X] `users:banned`
 - [ ] `users:flags`
 - [X] `users:joindate`
-- [ ] `users:notvalidated`
+- [X] `users:notvalidated`
 - [X] `users:online`
 - [X] `users:postcount`
 - [X] `users:reputation`
@@ -114,7 +114,7 @@
 - [X] `/following:[0-9]+/`
 - [X] `/group:[^:]+:member:pids/`
 - [X] `/group:[^:]+:members/`
-- [ ] `/group:cid:[0-9]+:privileges:(groups:)?(chat|find|moderate|posts:(delete|downvote|edit|history|view_deleted|upvote)|read|search:(content|tags|users)|signature|topics:(create|delete|read|reply|tag)|upload:post:(image|file)):members/`
+- [X] `/group:cid:[0-9]+:privileges:(groups:)?(chat|find|local:login|moderate|posts:(delete|downvote|edit|history|view_deleted|upvote)|read|search:(content|tags|users)|signature|topics:(create|delete|read|reply|tag)|upload:post:(image|file)|view:(groups|tags|users)):members/`
 - [X] `/ip:(::ffff:)?[0-9]+.[0-9]+.[0-9]+.[0-9]+:uid/`
 - [ ] `/pid:[0-9]+:flag:uid:reason/`
 - [ ] `/pid:[0-9]+:flag:uids/`
@@ -144,8 +144,8 @@
 - [X] `/uid:[0-9]+:posts/`
 - [ ] `/uid:[0-9]+:rewards/`
 - [X] `/uid:[0-9]+:sessions/`
-- [ ] `/uid:[0-9]+:tids_read/`
-- [ ] `/uid:[0-9]+:tids_unread/`
+- [X] `/uid:[0-9]+:tids_read/`
+- [X] `/uid:[0-9]+:tids_unread/`
 - [X] `/uid:[0-9]+:topics/`
 - [ ] `/uid:[0-9]+:uploads/`
 - [X] `/uid:[0-9]+:upvote/`

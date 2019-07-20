@@ -10,3 +10,8 @@ DELETE FROM "classify"."unclassified" uc1
 DELETE FROM "classify"."unclassified"
  WHERE "_key" = 'events:time'
    AND "type" = 'zset';
+
+DELETE FROM "classify"."unclassified" uc
+ USING "events" e
+ WHERE uc."_key" = 'events:time:' || e."type"
+   AND uc."type" = 'zset';

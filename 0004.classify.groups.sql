@@ -178,6 +178,7 @@ CREATE INDEX ON "classify"."group_members" ("uid");
 CREATE TYPE "classify".PRIVILEGE_TYPE AS ENUM (
 	'chat',
 	'find',
+	'local:login',
 	'moderate',
 	'posts:delete',
 	'posts:downvote',
@@ -196,7 +197,10 @@ CREATE TYPE "classify".PRIVILEGE_TYPE AS ENUM (
 	'topics:reply',
 	'topics:tag',
 	'upload:post:file',
-	'upload:post:image'
+	'upload:post:image',
+	'view:groups',
+	'view:tags',
+	'view:users'
 );
 
 CREATE TABLE "classify"."user_privileges" (
@@ -219,7 +223,7 @@ SELECT "unique_string"::BIGINT,
        REPLACE(SUBSTRING("_key" FROM LENGTH(SPLIT_PART("_key", ':', 3)) + LENGTH('group:cid::privileges:') + 1), ':members', '')::"classify".PRIVILEGE_TYPE,
        TO_TIMESTAMP("value_numeric" / 1000)
   FROM "classify"."unclassified"
- WHERE "_key" SIMILAR TO 'group:cid:[0-9]+:privileges:(chat|find|moderate|posts:(delete|downvote|edit|history|view_deleted|upvote)|read|search:(content|tags|users)|signature|topics:(create|delete|read|reply|tag)|upload:post:(image|file)):members'
+ WHERE "_key" SIMILAR TO 'group:cid:[0-9]+:privileges:(chat|find|local:login|moderate|posts:(delete|downvote|edit|history|view_deleted|upvote)|read|search:(content|tags|users)|signature|topics:(create|delete|read|reply|tag)|upload:post:(image|file)|view:(groups|tags|users)):members'
    AND "type" = 'zset';
 
 INSERT INTO "classify"."group_privileges"
@@ -230,7 +234,7 @@ SELECT g."gid",
   FROM "classify"."unclassified" uc
  INNER JOIN "classify"."groups" g
          ON g."name" = uc."unique_string"
- WHERE uc."_key" SIMILAR TO 'group:cid:[0-9]+:privileges:groups:(chat|find|moderate|posts:(delete|downvote|edit|history|view_deleted|upvote)|read|search:(content|tags|users)|signature|topics:(create|delete|read|reply|tag)|upload:post:(image|file)):members'
+ WHERE uc."_key" SIMILAR TO 'group:cid:[0-9]+:privileges:groups:(chat|find|local:login|moderate|posts:(delete|downvote|edit|history|view_deleted|upvote)|read|search:(content|tags|users)|signature|topics:(create|delete|read|reply|tag)|upload:post:(image|file)|view:(groups|tags|users)):members'
    AND uc."type" = 'zset';
 
 CREATE UNIQUE INDEX ON "classify"."user_privileges"("uid", COALESCE("cid", 0), "privilege");
