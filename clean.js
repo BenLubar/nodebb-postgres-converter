@@ -8,7 +8,16 @@ module.exports.data = function (obj) {
 		return null;
 	}
 	var key = obj._key;
-
+	// Check if object keys contains ".". Skip as mongodb won't be able to create them.
+	// Keys found when migrating production db "username:uid_old", "email:uid_old" and "email:confirmed".
+	// Hopefully we can live without them.
+	if (Object.keys(obj).find(k => k.includes("."))) {
+		return null;
+	}
+	// Cleanup some "problematic" keys that could result in too long keys for index. They are not needed.
+	if (key === "errors:404" || key === "ip:recent")
+		return null;
+	
 	// clean up importer bugs
 	delete obj.undefined;
 	if ((key.startsWith('chat:room:') && key.endsWith('uids') && !key.endsWith(':uids')) || (key.startsWith('uid:') && key.endsWith('sessionUUID:sessionId') && !key.endsWith(':sessionUUID:sessionId'))) {
