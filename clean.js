@@ -8,12 +8,7 @@ module.exports.data = function (obj) {
 		return null;
 	}
 	var key = obj._key;
-	// Check if object keys contains ".". Skip as mongodb won't be able to create them.
-	// Keys found when migrating production db "username:uid_old", "email:uid_old" and "email:confirmed".
-	// Hopefully we can live without them.
-	if (Object.keys(obj).find(k => k.includes("."))) {
-		return null;
-	}
+	
 	// Cleanup some "problematic" keys that could result in too long keys for index. They are not needed.
 	if (key === "errors:404" || key === "ip:recent")
 		return null;
@@ -36,12 +31,19 @@ module.exports.data = function (obj) {
 	return module.exports.value(obj);
 }
 
+function isNumber(n) {
+	return !isNaN(parseFloat(n)) && isFinite(n);
+}
+
 module.exports.value = function (obj) {
 	for (var k in obj) {
 		if (!Object.prototype.hasOwnProperty.call(obj, k)) {
 			continue;
 		}
 		var v = obj[k];
+		// if there is a '.' in the field name it inserts subdocument in mongo, replace '.'s with \uff0E
+		k = k.replace(/\./g, '\uff0E');
+		
 		if (!v || v === true) {
 			continue;
 		}
@@ -54,6 +56,10 @@ module.exports.value = function (obj) {
 				obj[k] = 'NaN';
 			}
 			continue;
+		}
+		// Convert value to a real number (to allow mongo $inc operation to work after migration)
+		if (isNumber(v)) {
+			obj[k] = Number(v);
 		}
 		if (typeof v === 'string') {
 			if (v.indexOf('\x00') !== -1) {
