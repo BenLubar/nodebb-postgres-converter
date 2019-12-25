@@ -35,15 +35,20 @@ function isNumber(n) {
 	return !isNaN(parseFloat(n)) && isFinite(n);
 }
 
+var dotRE = /\./g;
+
 module.exports.value = function (obj) {
+	var key = obj._key;
 	for (var k in obj) {
 		if (!Object.prototype.hasOwnProperty.call(obj, k)) {
 			continue;
 		}
 		var v = obj[k];
-		// if there is a '.' in the field name it inserts subdocument in mongo, replace '.'s with \uff0E
-		k = k.replace(/\./g, '\uff0E');
-		
+		// if there is a '.' in the field name it inserts subdocument in mongo, replace '.'s with \uff0E,
+		if (dotRE.test(k)) {
+                        delete obj[k];
+                        k = k.replace(dotRE, '\uff0E');
+                }
 		if (!v || v === true) {
 			continue;
 		}
@@ -58,7 +63,8 @@ module.exports.value = function (obj) {
 			continue;
 		}
 		// Convert value to a real number (to allow mongo $inc operation to work after migration)
-		if (isNumber(v)) {
+		// Skipping some objects that should keep value as string
+		if (!key.startsWith("nodebbpostsearch:object") && isNumber(v)) {
 			obj[k] = Number(v);
 		}
 		if (typeof v === 'string') {
