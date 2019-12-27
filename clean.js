@@ -15,9 +15,9 @@ module.exports.data = function (obj) {
 	
 	// clean up importer bugs
 	delete obj.undefined;
-	if ((key.startsWith('chat:room:') && key.endsWith('uids') && !key.endsWith(':uids')) || (key.startsWith('uid:') && key.endsWith('sessionUUID:sessionId') && !key.endsWith(':sessionUUID:sessionId'))) {
-		return null;
-	}
+	// if ((key.startsWith('chat:room:') && key.endsWith('uids') && !key.endsWith(':uids')) || (key.startsWith('uid:') && key.endsWith('sessionUUID:sessionId') && !key.endsWith(':sessionUUID:sessionId'))) {
+	// 	return null;
+	// }
 
 	// remove importer cache on live objects
 	if (!key.startsWith('_imported')) {
@@ -63,8 +63,8 @@ module.exports.value = function (obj) {
 			continue;
 		}
 		// Convert value to a real number (to allow mongo $inc operation to work after migration)
-		// Skipping some objects that should keep value as string
-		if (!key.startsWith("nodebbpostsearch:object") && isNumber(v)) {
+		// Skipping some objects that should keep value as string && !key.endsWith(":members") 
+		if (k !== "value" && isNumber(v)) {
 			obj[k] = Number(v);
 		}
 		if (typeof v === 'string') {
